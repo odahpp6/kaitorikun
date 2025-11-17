@@ -26,7 +26,10 @@ Route::middleware('guest')->group(function () {
     
     Route::put('user/{id}/update', [RegisteredUserController::class, 'update'])->name('user.update');
 
-    Route::delete('user/{id}/delete_confirm', [RegisteredUserController::class, 'delete_confirm'])->name('user.delete_confirm');
+    Route::get('user/{id}/delete_confirm', [RegisteredUserController::class, 'delete_confirm'])->name('user.delete_confirm');
+    
+    // 実行処理（DELETE）
+    Route::delete('user/{id}', [RegisteredUserController::class, 'destroy'])->name('user.destroy');
     
 
 

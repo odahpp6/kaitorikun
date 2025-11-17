@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EstimateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,20 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+//見積システム
+Route::get('/estimate', [EstimateController::class, 'create'])->name('estimate.register'); 
+Route::post('/estimate', [EstimateController::class, 'store']); 
+
+//見積一覧
+Route::get('/estimate/list', [EstimateController::class, 'list'])->name('estimate.list');
+
+
+
+
+
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');

@@ -17,10 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('raw_password')->nullable(); // 平文（管理用）
-            $table->string('company_name')->nullabel();
-            $table->string('name');
-            $table->string('address');
-            $table->string('phone_number');
+           $table->string('company_name')->nullable();
+            $table->string('postal_code')->nullable(); // ← これを追加
+            $table->string('name')->nullable();
+            $table->string('address')->nullable();
+           $table->string('phone_number')->nullable();
             $table->string('role')->default('user');
         });
     }

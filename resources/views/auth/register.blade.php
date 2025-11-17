@@ -2,8 +2,8 @@
 
 @section('title', 'ユーザー登録')
 @section('content')
+<form @submit.prevent="handleSubmit" action="{{ route('register') }}" ref="formEl" method="POST">
 
-<form @submit.prevent="handleSubmit" ref="formEl" method="POST">
 @csrf
 
 
@@ -57,4 +57,5 @@
 </form>
 
 
+ <script src="{{ asset('js/register_app.js') }}" charset="UTF-8"></script>
 @endsection
