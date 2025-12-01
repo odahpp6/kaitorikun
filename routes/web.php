@@ -24,11 +24,18 @@ Route::get('/', function () {
 Route::get('/estimate', [EstimateController::class, 'create'])->name('estimate.register'); 
 Route::post('/estimate', [EstimateController::class, 'store']); 
 
+
 //見積一覧
 Route::get('/estimate/list', [EstimateController::class, 'list'])->name('estimate.list');
+//見積詳細
+Route::get('/estimate/{id}/detail', [EstimateController::class, 'detail'])->name('estimate.detail');
+//見積更新
+// web.php
+// 見積更新 (GET)
+Route::get('/estimate/{id}/edit', [EstimateController::class, 'edit'])->name('estimate.edit'); 
 
-
-
+// 見積更新処理 (PATCH)
+Route::patch('/estimate/{id}/edit', [EstimateController::class, 'update'])->name('estimate.update');
 
 
 
