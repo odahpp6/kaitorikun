@@ -47,7 +47,8 @@
         </tfoot>
     </table>
 
-    <div class="flex justify-end gap-4">
+    <div class="flex justify-center gap-4">
+        <a href="/estimate/{{$Estimate->id}}/edit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow">更新</a> 
         <a href="{{ route('estimate.list') }}" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow">一覧に戻る</a>
         {{-- 必要に応じて印刷ボタンなどを追加 --}}
     </div>

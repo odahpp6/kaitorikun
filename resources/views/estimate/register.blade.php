@@ -137,6 +137,11 @@
 
 
 <p class="mb-4">タイトル:<input type="text" name="title" :min="0" class="w-50 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" /></p>
+     @error('title')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+@enderror
+
+
   <table class="w-full border border-gray-300 text-sm mb-4">
     <thead>
     <tr class="bg-gray-100">
@@ -279,7 +284,7 @@
               </div>
               </td>
               <td class="border px-2 py-1 text-center">
-              <a @click="removeRow(index)" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">削除</a>
+              <a @click="removeRow(index)" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs whitespace-nowrap">削除</a>
               </td>
             </tr>
              <tr>

@@ -23,19 +23,19 @@
     </div>
 </header>
 <div class="flex flex-wrap ">
-<aside class="w-full md:w-1/4 p-0 bg-stone-950 text-white">
+<aside class="w-full md:w-1/6 p-0 bg-stone-950 text-white">
 <nav role="navigation" aria-label="サイドナビ">
     <ul class="p-4 space-y-2">
         <!-- 見積グループ -->
         <li class="mt-2 mb-1 text-xs font-bold text-blue-300">見積管理</li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors duration-200">
+            <a href="/estimate" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors duration-200">
                 <i class="fa-solid fa-file-pen w-4 h-4 text-white"></i>
                 <span>見積登録</span>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-blue-200 hover:bg-blue-800 transition-colors duration-200">
+            <a href="/estimate/list" class="flex items-center gap-3 px-4 py-2 rounded-lg text-blue-200 hover:bg-blue-800 transition-colors duration-200">
                 <i class="fa-solid fa-clock-rotate-left w-4 h-4 text-blue-200"></i>
                 <span>見積履歴</span>
             </a>
@@ -124,7 +124,7 @@
     </ul>
 </nav>
 </aside>
-<main class="w-full md:w-3/4 p-6 bg-amber-50 min-h-screen" id="main">
+<main class="w-full md:w-5/6 p-6 bg-amber-50 min-h-screen" id="main">
 
   @yield('content')
 
