@@ -53,12 +53,35 @@ public function create()
 
     public function store(Request $request): RedirectResponse // 戻り値の型を修正
     {
+        // $request->validate() は第1引数にルール、第2引数にカスタムメッセージ、
+        // 第3引数にカスタム属性（表示名）を取ることができます。
+        
+        $request->validate(
+            // 第1引数: バリデーションルール
+            [
+                'title' => ['required', 'string', 'max:50'], 
+                'adjustment' => ['nullable', 'numeric'],
+            ], 
+            
+            // 第2引数: カスタムメッセージ (標準の日本語訳を使う場合は空の配列でOK)
+            [], 
+            
+            // 🚨 第3引数: カスタム属性 (フィールド名を日本語にする) 🚨
+            [
+                'title' => 'タイトル',
+                'adjustment' => '調整金額',
+            ]
+        );
+        
+        
         // 1. 認証ユーザーなどからDBに必要な情報を取得（仮の値として設定）
         $storeId = 1; // ログインユーザーの店舗IDなどを設定
         $role = 'user'; // デフォルトの権限を設定
 
         // 2. トランザクションで処理をラップし、データの整合性を保証
         $estimateId = DB::transaction(function () use ($request, $storeId, $role) {
+
+        
             
             // 2-1. 見積登録テーブル (estimates) への登録
             $estimate = Estimate::create([
@@ -88,7 +111,7 @@ public function create()
         });
         
         // 3. 処理後のリダイレクト
-        return redirect()->route('estimate.register', ['id' => $estimateId])
+        return redirect()->route('estimate.list', ['id' => $estimateId])
                          ->with('success', '見積登録が完了しました。');
     }
     //一覧表示
@@ -218,9 +241,32 @@ public function create()
         });
         
         // 3. 処理後のリダイレクト
-        return redirect()->route('estimate.register', ['id' => $estimateId])
+        return redirect()->route('estimate.list', ['id' => $estimateId])
                          ->with('success', '見積登録更新しました。');
+    }//edit終了
+
+    //見積削除確認
+    public function deleteConfirm($id){
+        $Estimate = Estimate::findOrFail($id);
+        return view('estimate.delete', compact('Estimate'));
     }
+
+    //見積削除処理
+    public function delete($id): RedirectResponse
+    {
+        // 1. トランザクションで処理をラップし、データの整合性を保証
+        DB::transaction(function () use ($id) {
+            // 1-1. 見積行テーブル (estimate_items) から関連する明細を削除
+            EstimateItem::where('estimate_no', $id)->delete();
+
+            // 1-2. 見積登録テーブル (estimates) から見積自体を削除
+            Estimate::where('id', $id)->delete();
+        });
+
+        // 2. 処理後のリダイレクト
+        return redirect()->route('estimate.list')
+                         ->with('success', '見積が削除されました。');
+    } 
 
 
 
