@@ -40,14 +40,14 @@
     <tr class="hover:bg-gray-50">
     
       <td class="border px-2 py-1">
-        <a href="/estimate/{{$Estimate->id}}/detail">{{$Estimate->created_at}}</a>
+        <a href="/estimate/{{$Estimate->id}}/detail" class="text-blue-600 hover:underline">{{$Estimate->created_at}}</a>
     
       </td>
       <td class="border px-2 py-1">
       {{$Estimate->title}}
       </td>
       <td class="border px-2 py-1">
-     <a href="/estimate/{{$Estimate->id}}/delete_confirm">削除</a>
+     <a href="/estimate/{{$Estimate->id}}/delete_confirm"class="text-blue-600 hover:underline">削除</a>
       </td>
     </tr>
     @endforeach

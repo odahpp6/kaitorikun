@@ -131,7 +131,9 @@
 <form action="{{ url('/estimate') }}" method="POST">
 @csrf
 
-<p class="mb-4">タイトル:<input type="text" placeholder="タイトルを入力してください" name="title" :min="0" value="{{ old('title') }}" class="w-50 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" /></p>
+<p class="mb-4">タイトル:<input type="text" placeholder="タイトルを入力してください" name="title" :min="0" value="{{ old('title') }}" class="w-50 border-2 border-blue-600 rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-700" />
+<span class="block text-xs text-red-600 mt-1">わかりやすいタイトルを入れてください。</span>
+</p>
  @error('title')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
 @enderror
@@ -472,6 +474,22 @@ Vue.createApp({
             }
           }
    }).mount('#app');
+
+  // タイトルが空なら本日日時(YYYY-MM-DD-HH-mm)を初期値でセット
+  document.addEventListener('DOMContentLoaded', () => {
+    const titleInput = document.querySelector('input[name="title"]');
+    if (!titleInput || (titleInput.value && titleInput.value.trim().length)) {
+      return;
+    }
+    const now = new Date();
+    const pad = (num) => String(num).padStart(2, '0');
+    const formatted = [
+      now.getFullYear(),
+      pad(now.getMonth() + 1),
+      pad(now.getDate())
+    ].join('-') + '-' + [pad(now.getHours()), pad(now.getMinutes())].join('-');
+    titleInput.value = formatted;
+  });
 
   </script>
 
