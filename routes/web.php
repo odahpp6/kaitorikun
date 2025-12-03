@@ -37,8 +37,16 @@ Route::get('/estimate/{id}/edit', [EstimateController::class, 'edit'])->name('es
 // 見積更新処理 (PATCH)
 Route::patch('/estimate/{id}/edit', [EstimateController::class, 'update'])->name('estimate.update');
 
+
 // 見積削除処理 確認
+Route::get('/estimate/{id}/delete_confirm', [EstimateController::class, 'deleteConfirm'])->name('estimate.delete_confirm');
+
+// 見積削除処理
 Route::delete('/estimate/{id}/delete', [EstimateController::class, 'delete'])->name('estimate.delete');
+
+
+
+
 
 
 

@@ -127,17 +127,12 @@
 </div>
 
 
-
-
 <div id="app" class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
-
 <form action="{{ url('/estimate') }}" method="POST">
-
 @csrf
 
-
-<p class="mb-4">タイトル:<input type="text" name="title" :min="0" class="w-50 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" /></p>
-     @error('title')
+<p class="mb-4">タイトル:<input type="text" placeholder="タイトルを入力してください" name="title" :min="0" value="{{ old('title') }}" class="w-50 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" /></p>
+ @error('title')
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
 @enderror
 

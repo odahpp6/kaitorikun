@@ -47,7 +47,7 @@
       {{$Estimate->title}}
       </td>
       <td class="border px-2 py-1">
-     <a href="/estimate/{{$Estimate->id}}/delete">削除</a>
+     <a href="/estimate/{{$Estimate->id}}/delete_confirm">削除</a>
       </td>
     </tr>
     @endforeach

@@ -248,9 +248,9 @@ public function create()
     //見積削除確認
     public function deleteConfirm($id){
         $Estimate = Estimate::findOrFail($id);
-        return view('estimate.delete', compact('Estimate'));
+        return view('estimate.delete_confirm', compact('Estimate'));
     }
-
+    
     //見積削除処理
     public function delete($id): RedirectResponse
     {
