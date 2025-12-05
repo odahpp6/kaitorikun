@@ -7,7 +7,7 @@ use App\Models\Estimate;
 use App\Models\EstimateItem;
 use Illuminate\Support\Facades\DB; // ★追加：トランザクション用
 use Illuminate\Http\RedirectResponse; // ★追加：戻り値の型用
-
+use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
 
 
 class EstimateController extends Controller
@@ -51,6 +51,8 @@ public function create()
     return intval(preg_replace('/[^\d]/u', '', $text));
     }
 
+    //見積登録処理
+
     public function store(Request $request): RedirectResponse // 戻り値の型を修正
     {
         // $request->validate() は第1引数にルール、第2引数にカスタムメッセージ、
@@ -74,9 +76,16 @@ public function create()
         );
         
         
-        // 1. 認証ユーザーなどからDBに必要な情報を取得（仮の値として設定）
-        $storeId = 1; // ログインユーザーの店舗IDなどを設定
+        // 1. 認証ユーザーからDBに必要な情報を取得（仮の値から認証情報に変更）
+        
+        // 🚨 認証ユーザーのIDを store_id として取得 🚨
+        $storeId = Auth::id(); // ログインユーザーのIDを取得
+        
+        // 🚨 認証ユーザーの role を取得 🚨
+        // Userモデルにroleカラムがあることが前提
+        $role = Auth::user()->role ?? 'user'; // ログインユーザーの権限を取得。未設定なら'user'
         $role = 'user'; // デフォルトの権限を設定
+        
 
         // 2. トランザクションで処理をラップし、データの整合性を保証
         $estimateId = DB::transaction(function () use ($request, $storeId, $role) {
