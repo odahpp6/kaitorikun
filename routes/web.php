@@ -41,7 +41,6 @@ Route::middleware('auth')->group(function () {
     // 見積更新処理 (PATCH)
     Route::patch('/estimate/{id}/edit', [EstimateController::class, 'update'])->name('estimate.update');
 
-
     // 見積削除処理 確認
     Route::get('/estimate/{id}/delete_confirm', [EstimateController::class, 'deleteConfirm'])->name('estimate.delete_confirm');
 
