@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('master_campaigns', function (Blueprint $table) {
             $table->id();
-             $table->bigInteger('store_id')->nullable()->comment('所持店舗ID'); // BIGINT
+            $table->bigInteger('store_id')->comment('所持店舗ID'); // BIGINT
             $table->timestamps();
             $table->string('campaign',100)->comment('キャンペーン名');
             $table->date('distribution_date')->nullable()->comment('配布日');

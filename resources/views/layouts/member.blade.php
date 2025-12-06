@@ -16,10 +16,16 @@
         <h1 class="text-2xl">
             <img src="{{asset('images/logo.png')}}" alt="" class="h-8">
         </h1>
-        <div class="flex items-center gap-2">
-            <img src="{{asset('images/user.png')}}" alt="ユーザー" class="w-8 h-8 rounded-full">
-            <p class="font-medium">ユーザー名</p>
-        </div>
+      <div class="flex items-center gap-2">
+    <img src="{{asset('images/user.png')}}" alt="ユーザー" class="w-8 h-8 rounded-full">
+        <p class="font-medium">
+        @auth
+            {{ Auth::user()->name }}
+        @else
+            ゲスト
+        @endauth
+    </p>
+</div>
     </div>
 </header>
 <div class="flex flex-wrap ">
