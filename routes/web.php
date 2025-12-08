@@ -55,6 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/master/create_campaign',[MasterCampaignController::class, 'create_campaign'])->name('master.create_campaign');
     Route::post('/master/create_campaign',[MasterCampaignController::class, 'store_campaign'])->name('master.store_campaign');
 
+    
+    //卸売りマスター登録
+    Route::get('/master/create_wholesale',[MasterCampaignController::class, 'create_wholesale'])->name('master.create_wholesale');
+    Route::post('/master/create_wholesale',[MasterCampaignController::class, 'store_wholesale'])->name('master.store_wholesale');
+
 
 });
 
