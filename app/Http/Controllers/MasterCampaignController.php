@@ -28,7 +28,7 @@ class MasterCampaignController extends Controller
 
     }
 
-    public function store_campaign(Request $request)
+  public function store_campaign(Request $request)
     {
       //バリデーションルール
       $validated = $request->validate([
@@ -53,6 +53,19 @@ class MasterCampaignController extends Controller
         return redirect('/master/');
 
     }
-
-
+    public function edit_campaign(Request $request)
+    {
+      return view('master.edit_campaign',compact('mastercampaign'));
+    }
+    
+    public function update_campaign(Request $request)
+    {
+      $validated = $request->validate([
+        'campaign' => 'required|string|max:255',
+        'distribution_date' => 'nullable|date',
+        'remarks' => 'nullable|string|min:0|max:255',
+      ]);
+      $mastercampaign = MasterCampaign::find($request->id);
+      $mastercampaign->update($validated);
+    }
 }
