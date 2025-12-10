@@ -56,21 +56,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/master/create_campaign',[MasterCampaignController::class, 'create_campaign'])->name('master.create_campaign');
     Route::post('/master/create_campaign',[MasterCampaignController::class, 'store_campaign'])->name('master.store_campaign');
 
-<<<<<<< HEAD
     //卸先マスター登録
     Route::get('/master/create_wholesale',[MasterWholesaleController::class, 'create_wholesale'])->name('master.create_wholesale');
+    //卸売りマスター登録
+    Route::post('/master/create_wholesale',[MasterCampaignController::class, 'store_wholesale'])->name('master.store_wholesale');
 
     //卸先マスター登録DB保存
     Route::post('/master/create_wholesale',[MasterWholesaleController::class, 'store_wholesale'])->name('master.store_wholesale');
 
     //卸先マスター一覧
-    Route::post('/master/list_wholesale',[MasterWholesaleController::class, 'list_wholesale'])->name('master.list_wholesale');
-=======
-    
-    //卸売りマスター登録
-    Route::get('/master/create_wholesale',[MasterCampaignController::class, 'create_wholesale'])->name('master.create_wholesale');
-    Route::post('/master/create_wholesale',[MasterCampaignController::class, 'store_wholesale'])->name('master.store_wholesale');
->>>>>>> 0890d37d0e9ec0e5c59c7b872f5b48fa6971177f
+    Route::get('/master/list_wholesale',[MasterWholesaleController::class, 'list_wholesale'])->name('master.list_wholesale');
+   
+    //卸先マスター削除確認
+    Route::get('/master/list_wholesale/{id}/delete',[MasterWholesaleController::class, 'delete_wholesale'])->name('master.delete_wholesale_confirm');
+
+    //卸先マスター削除
+    Route::delete('/master/list_wholesale/{id}/delete',[MasterWholesaleController::class, 'delete'])->name('master.delete_wholesale');
 
 
 });

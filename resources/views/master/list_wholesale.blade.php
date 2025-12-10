@@ -12,18 +12,17 @@
         <thead>
             <tr class="bg-gray-100">
                 <th class="border px-2 py-2">名称</th>
-                <th class="border px-2 py-2">発行日</th>
-                <th class="border px-2 py-2"></th>
+                <th class="border px-2 py-2">更新日</th>
                 <th class="border px-2 py-2">備考</th>
             </tr>
         </thead>
         <tbody>
           
-            @foreach ($masterwholesales as $masterwholesale)
+            @foreach ($wholesales as $wholesale)
             <tr class="hover:bg-gray-50">
-                <td class="border px-2 py-1">{{ $masterwholesale->wholesale }}</td>
-                <td class="border px-2 py-1 text-right">{{ $masterwholesale->updated_at }}</td>
-                <td class="border px-2 py-1 whitespace-pre-wrap">{{ $masterwholesale->remarks }}</td>
+                <td class="border px-2 py-1">{{ $wholesale->wholesale }}</td>
+                    <td class="border px-2 py-1">{{ $wholesale->created_at }}</td>
+                <td class="border px-2 py-1 whitespace-pre-wrap">{{ $wholesale->remarks }}</td>
             </tr>
             @endforeach
         </tbody>
