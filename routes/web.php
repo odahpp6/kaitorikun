@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstimateController;
 // ★★★ この行を追加 ★★★
 use App\Http\Controllers\MasterCampaignController;
+use App\Http\Controllers\MasterWholesaleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,6 +55,15 @@ Route::middleware('auth')->group(function () {
     //折り込みマスター登録
     Route::get('/master/create_campaign',[MasterCampaignController::class, 'create_campaign'])->name('master.create_campaign');
     Route::post('/master/create_campaign',[MasterCampaignController::class, 'store_campaign'])->name('master.store_campaign');
+
+    //卸先マスター登録
+    Route::get('/master/create_wholesale',[MasterWholesaleController::class, 'create_wholesale'])->name('master.create_wholesale');
+
+    //卸先マスター登録DB保存
+    Route::post('/master/create_wholesale',[MasterWholesaleController::class, 'store_wholesale'])->name('master.store_wholesale');
+
+    //卸先マスター一覧
+    Route::post('/master/list_wholesale',[MasterWholesaleController::class, 'list_wholesale'])->name('master.list_wholesale');
 
 
 });

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->bigInteger('store_id')->comment('所持店舗ID'); // BIGINT
+            $table->text('remarks')->nullable()->comment('備考');
             $table->string('wholesale')->comment('卸先名');
         });
     }

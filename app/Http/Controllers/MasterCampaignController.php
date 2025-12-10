@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
-use App\Models\MasterWholesale;
+
 use App\Models\MasterCampaign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
