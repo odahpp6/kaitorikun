@@ -2,8 +2,8 @@
 
 @section('title', 'マスター登録')
 @section('content')
-<form  action="{{ route('master.store_campaign') }}" ref="formEl" method="POST">
-
+<form  action="{{ route('master.edit_campaign') }}" ref="formEl" method="PUT">
+@method('PUT')  
 @csrf
 
 
@@ -27,8 +27,6 @@
     <input type="tel" class="border border-gray-300 rounded-lg p-2 w-[90%] mb-4" placeholder="0312345678" name="remarks">
  </div>
 </div>
-
-
 
 
 
