@@ -54,11 +54,19 @@ class MasterCampaignController extends Controller
 
     }
 
+    //キャンペーン更新画面表示
+
     public function edit_campaign(Request $request)
-    { $mastercampaign = MasterCampaign::findOrFail($request->id);
+    { 
+      $storeId = Auth::id(); // ログインユーザーのIDを取得
+      $mastercampaign = MasterCampaign::where($request->id)
+                                      ->where('store_id', $storeId)
+                                      ->firstOrFail();
+                
       return view('master.edit_campaign',compact('mastercampaign'));
     }
     
+    //キャンペーン更新処理
     public function update_campaign(Request $request)
     {
       $validated = $request->validate([
@@ -74,6 +82,27 @@ class MasterCampaignController extends Controller
       } else {
         return back()->with('error', 'キャンペーンマスターの更新に失敗しました。');
       }
+    }
+
+    
+    //キャンペーン削除確認画面表示
+
+    public function delete_campaign(Request $request)
+    { 
+      $storeId = Auth::id(); // ログインユーザーのIDを取得
+      $mastercampaign = MasterCampaign::where($request->id)
+                                      ->where('store_id', $storeId)
+                                      ->firstOrFail();
+                
+      return view('master.delete_campaign',compact('mastercampaign'));
+    }
+    
+     public function delete_campaign_excecute($id)
+    {   $storeId = Auth::id(); // ログインユーザーのIDを取得
+        $deleted = MasterCampaign::where('id', $id)
+                              ->where('store_id', $storeId)
+                              ->delete();
+
     }
 
 

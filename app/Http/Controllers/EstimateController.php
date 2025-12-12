@@ -142,7 +142,7 @@ public function create()
      $Estimate = Estimate::with('items')
                             ->where('id', $id)
                             ->where('store_id', $storeId)   
-                            ->findOrFail($id); 
+                            ->firstOrFail(); 
 
     // ビューには $Estimate (親データ) のみを渡す
     // 明細データは $Estimate->items でアクセス可能になる
@@ -158,7 +158,7 @@ public function create()
         $Estimate = Estimate::with('items')
                                 ->where('id', $id)
                                 ->where('store_id', $storeId)   
-                                ->findOrFail($id);
+                                ->firstOrFail();
         
         // 2. ★価格情報の取得ロジック（ロバストなエラーハンドリングを実装）★
         require_once public_path('simple_html_dom.php'); 
@@ -274,7 +274,7 @@ public function create()
         $Estimate = Estimate::with('items')
                             ->where('id', $id)
                             ->where('store_id', $storeId)   
-                            ->findOrFail($id); 
+                            ->firstOrFail(); 
         return view('estimate.delete_confirm', compact('Estimate'));
     }
     
