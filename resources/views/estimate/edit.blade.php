@@ -132,9 +132,8 @@
 <div id="app" class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
 
 <form action="{{ route('estimate.update', $Estimate->id) }}" method="POST">
-
 @csrf
-@method('PATCH')
+@method('PUT')
 
 
 <input type="text" name="title" v-model="title" :min="0" class="w-50 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" />

@@ -1,32 +1,37 @@
 @extends('layouts.member')
 
-@section('title', '卸売り先マスター登録')
+@section('title', '卸売り先削除確認')
 @section('content')
-<form  action="{{ route('master.store_wholesale') }}" ref="formEl" method="">
 
-@csrf
+<div class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
+    <h1 class="text-center text-2xl font-bold my-4">卸売り先削除確認</h1>
+    
+    {{-- コントローラーから渡された単一のレコード情報 ($wholesale) を表示 --}}
+    <div class="mb-4 p-4 border rounded-lg bg-gray-50">
+        <p><strong>ID:</strong> {{ $wholesale->id }}</p>
+        <p><strong>卸売り会社名:</strong> {{ $wholesale->wholesale }}</p>
+        <p><strong>備考:</strong> {{ $wholesale->remarks }}</p>
+        <p><strong>登録日:</strong> {{ $wholesale->created_at->format('Y/m/d H:i') }}</p>
+    </div>
 
+    {{-- 削除フォーム: master.delete_wholesale ルートをDELETEメソッドで呼び出す --}}
+    <div class="flex justify-center gap-4">
+        
+        <form action="{{ route('master.delete_wholesale', ['id' => $wholesale->id]) }}" method="POST">
+            @csrf
+            @method('DELETE') {{-- 削除処理はDELETEメソッドを使用 --}}
 
-<h2>卸売り先登録</h2>
-<div class="flex flex-wrap mb-4">
-  <div class="w-full md:w-1/2">
-    <p class="text-sm text-stone-600mb-2">卸売り会社名<span class="text-red-600 font-medium">※必須</span></p>
- 
-    <p>{{}}</p>
- </div>
-  <div class="w-full md:w-1/2">
-    <p class="text-sm text-stone-600 mb-2">備考</p>
-    <input type="tel" class="border border-gray-300 rounded-lg p-2 w-[90%] mb-4" placeholder="0312345678" name="remarks">
-    <p>{{}}</p>
- </div>
+            <button type="submit" 
+                    class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-200">
+                この卸売り先を削除する
+            </button>
+        </form>
+
+        {{-- キャンセルボタン (一覧に戻る) --}}
+        <a href="{{ route('master.list_wholesale') }}" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+            キャンセルして一覧に戻る
+        </a>
+    </div>
 </div>
-
-
-
-
-
-<input type="submit" value="登録" v-bind:class="message.buttunClass"  class="bg-blue-100 text-white px-6 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors duration-200">
-</form>
-
 
 @endsection

@@ -123,9 +123,12 @@ public function create()
         return redirect()->route('estimate.list', ['id' => $estimateId])
                          ->with('success', '見積登録が完了しました。');
     }
+
+
     //一覧表示
     public function list(){
-        $Estimates=Estimate::all();
+        $storeId = Auth::id(); // ログインユーザーのIDを取得
+        $Estimates=Estimate::where('store_id',$storeId)->get();
         // ★修正★ キー名を 'Estimates' (複数形) に変更
     return view('estimate.list', ['Estimates' => $Estimates]);
     //'Estimates'はキーである。bladeには変数で渡る
@@ -135,17 +138,27 @@ public function create()
     public function detail($id){
       // ★修正（改善）：Eager Loading（with('items')）を使用
     // Estimate Modelに定義されたitems()リレーションを通じて、明細も同時に取得
-    $Estimate = Estimate::with('items')->findOrFail($id); 
+     $storeId = Auth::id(); // ✅ これを追加
+     $Estimate = Estimate::with('items')
+                            ->where('id', $id)
+                            ->where('store_id', $storeId)   
+                            ->findOrFail($id); 
 
     // ビューには $Estimate (親データ) のみを渡す
     // 明細データは $Estimate->items でアクセス可能になる
     return view('estimate.detail', compact('Estimate'));
     }
 
+
+
     //見積更新表示
     public function edit($id){
         // 1. 既存の見積データと明細をEager Loadingで取得
-        $Estimate = Estimate::with('items')->findOrFail($id);
+        $storeId = Auth::id(); // ✅ これを追加
+        $Estimate = Estimate::with('items')
+                                ->where('id', $id)
+                                ->where('store_id', $storeId)   
+                                ->findOrFail($id);
         
         // 2. ★価格情報の取得ロジック（ロバストなエラーハンドリングを実装）★
         require_once public_path('simple_html_dom.php'); 
@@ -216,7 +229,7 @@ public function create()
     public function update(Request $request): RedirectResponse // 戻り値の型を修正
     {
         // 1. 認証ユーザーなどからDBに必要な情報を取得（仮の値として設定）
-        $storeId = 1; // ログインユーザーの店舗IDなどを設定
+        $storeId = Auth::id(); // ✅ これを追加
         $role = 'user'; // デフォルトの権限を設定
 
         // 2. トランザクションで処理をラップし、データの整合性を保証
@@ -254,9 +267,14 @@ public function create()
                          ->with('success', '見積登録更新しました。');
     }//edit終了
 
+
     //見積削除確認
     public function deleteConfirm($id){
-        $Estimate = Estimate::findOrFail($id);
+        $storeId = Auth::id(); // ログインユーザーのIDを取得
+        $Estimate = Estimate::with('items')
+                            ->where('id', $id)
+                            ->where('store_id', $storeId)   
+                            ->findOrFail($id); 
         return view('estimate.delete_confirm', compact('Estimate'));
     }
     

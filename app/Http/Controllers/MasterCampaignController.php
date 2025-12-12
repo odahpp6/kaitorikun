@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
-
 use App\Models\MasterCampaign;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
 
 class MasterCampaignController extends Controller
@@ -53,8 +53,9 @@ class MasterCampaignController extends Controller
         return redirect('/master/');
 
     }
+
     public function edit_campaign(Request $request)
-    {
+    { $mastercampaign = MasterCampaign::findOrFail($request->id);
       return view('master.edit_campaign',compact('mastercampaign'));
     }
     
@@ -65,7 +66,15 @@ class MasterCampaignController extends Controller
         'distribution_date' => 'nullable|date',
         'remarks' => 'nullable|string|min:0|max:255',
       ]);
+      
       $mastercampaign = MasterCampaign::find($request->id);
-      $mastercampaign->update($validated);
+      $update = $mastercampaign->update($validated);
+      if($update) {
+        return redirect('/master/')->with('success', 'キャンペーンマスターが更新されました。');
+      } else {
+        return back()->with('error', 'キャンペーンマスターの更新に失敗しました。');
+      }
     }
+
+
 }

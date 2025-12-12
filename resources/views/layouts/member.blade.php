@@ -122,11 +122,30 @@
         <!-- マスタ管理グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-gray-300">マスタ管理</li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200"></a>
+            <a href="/master/create_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
                 <i class="fa-solid fa-gear w-4 h-4 text-gray-200"></i>
-                <span>マスタ管理</span>
+                <span>取引先マスタ登録</span>
             </a>
         </li>
+        <li>
+            <a href="/master/list_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
+                <i class="fa-solid fa-list w-4 h-4 text-gray-200"></i>
+                <span>取引先マスタ一覧</span>
+            </a>
+        </li>
+          <li>
+            <a href="/master/create_campaign" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
+                <i class="fa-solid fa-gear w-4 h-4 text-gray-200"></i>
+                <span>折り込みマスタ登録</span>
+            </a>
+        </li>
+        <li>
+            <a href="/master/campaign_list" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
+                <i class="fa-solid fa-list w-4 h-4 text-gray-200"></i>
+                <span>折り込みマスタ一覧</span>
+            </a>
+        </li>
+
     </ul>
 </nav>
 </aside>
