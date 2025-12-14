@@ -60,9 +60,11 @@ Route::middleware('auth')->group(function () {
     //折り込みマスター更新処理
     Route::put('/master/{id}/edit_campaign', [MasterCampaignController::class, 'update_campaign'])->name('master.update_campaign');
      //折り込みマスター削除確認
-    Route::get('/master/dlete_campaign',[MasterCampaignController::class, 'delete_campaign'])->name('master.delete_campaign');
+    Route::get('/master/{id}/dlete_campaign',[MasterCampaignController::class, 'delete_campaign'])->name('master.delete_campaign');
+   
+   
     //折り込みマスター削除実行
-    Route::delete('/master/dlete_campaign',[MasterCampaignController::class, 'delete_campaign_excecute'])->name('master.delete_campaign_excecute');
+    Route::delete('/master/{id}/dlete_campaign',[MasterCampaignController::class, 'delete_campaign_excecute'])->name('master.delete_campaign_excecute');
 
 
 

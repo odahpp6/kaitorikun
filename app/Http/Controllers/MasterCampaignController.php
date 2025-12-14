@@ -24,7 +24,9 @@ class MasterCampaignController extends Controller
 //キャンペーン登録画面表示
   public function create_campaign()
     {
-      return view('master.create_campaign');
+      $storeId = Auth::id(); // ログインユーザーのIDを取得
+      $mastercampaigns = MasterCampaign::where('store_id', $storeId)->get(); 
+      return view('master.create_campaign',compact('mastercampaigns'));
 
     }
 
@@ -50,7 +52,8 @@ class MasterCampaignController extends Controller
           'remarks' => $validated['remarks'] ?? null,
         ]);
 
-        return redirect('/master/');
+        
+         return redirect()->route('master.create_campaign')->with('success', '卸売り先マスターが登録されました。');
 
     }
 
@@ -90,7 +93,7 @@ class MasterCampaignController extends Controller
     public function delete_campaign(Request $request)
     { 
       $storeId = Auth::id(); // ログインユーザーのIDを取得
-      $mastercampaign = MasterCampaign::where($request->id)
+      $mastercampaign = MasterCampaign::where('id', $request->id)
                                       ->where('store_id', $storeId)
                                       ->firstOrFail();
                 
@@ -102,6 +105,9 @@ class MasterCampaignController extends Controller
         $deleted = MasterCampaign::where('id', $id)
                               ->where('store_id', $storeId)
                               ->delete();
+       if ($deleted) {
+        return redirect()->route('master.create_campaign')->with('success', '卸売り先マスターが削除されました。');
+    }                      
 
     }
 

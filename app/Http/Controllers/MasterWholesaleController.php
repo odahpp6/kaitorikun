@@ -8,11 +8,17 @@ use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
 
 class MasterWholesaleController extends Controller
 {
-    //
+
+//登録画面表示
 public function create_wholesale()
     {
-        return view('master.create_wholesale');
+      $storeId = Auth::id(); // ログインユーザーのIDを取得
+     // 認証ユーザーの store_id に基づいて卸売り先マスターを取得
+     $wholesales = MasterWholesale::where('store_id', $storeId)->get();
+      return view('master.create_wholesale',compact('wholesales'));
     }
+
+//登録処理
 public function store_wholesale(Request $request)
     {
         // バリデーション
@@ -33,7 +39,7 @@ public function store_wholesale(Request $request)
         // データベースへの保存処理などをここに追加
 
         // 登録完了後のリダイレクト
-        return redirect()->route('master.list_wholesale')->with('success', '卸売り先マスターが登録されました。');
+        return redirect()->route('master.create_wholesale')->with('success', '卸売り先マスターが登録されました。');
     }
 
 
