@@ -5,7 +5,7 @@
 
 
 
-<h2>卸売り登録一覧表示</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">卸売り登録一覧表示</h2>
   <!-- 成功メッセージ -->
              @if (session('success'))
     <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">

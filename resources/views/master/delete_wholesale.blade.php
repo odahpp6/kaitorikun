@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h1 class="text-center text-2xl font-bold my-4">卸売り先削除確認</h1>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">卸売り先削除確認</h1>
     
     {{-- コントローラーから渡された単一のレコード情報 ($wholesale) を表示 --}}
     <div class="mb-4 p-4 border rounded-lg bg-gray-50">

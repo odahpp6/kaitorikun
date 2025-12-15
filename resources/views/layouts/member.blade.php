@@ -14,10 +14,10 @@
 <header>
     <div class="p-4 flex justify-between items-center border-b border-gray-200">
         <h1 class="text-2xl">
-            <img src="{{asset('images/logo.png')}}" alt="" class="h-8">
+            <a href="/dashboard"><img src="{{asset('images/logo.png')}}" alt="" class="h-8"></a>
         </h1>
       <div class="flex items-center gap-2">
-    <img src="{{asset('images/user.png')}}" alt="ユーザー" class="w-8 h-8 rounded-full">
+  <img src="{{asset('images/user.png')}}" alt="ユーザー" class="w-8 h-8 rounded-full">
         <p class="font-medium">
         @auth
             {{ Auth::user()->name }}
@@ -25,6 +25,10 @@
             ゲスト
         @endauth
     </p>
+    <form method="POST" action="{{ route('logout') }}"> 
+        @csrf
+        <button type="submit" class="text-sm text-red-600 hover:underline">ログアウト</button>
+    </form>
 </div>
     </div>
 </header>
@@ -155,9 +159,21 @@
 
 </main>
 </div>
+<style>
+    body {
+  opacity: 0;
+   transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+body.is-loaded {
+  opacity: 1;
+}
+</style>
 
-
-
+<script>
+    window.addEventListener('load', () => {
+  document.body.classList.add('is-loaded');
+});
+</script>
 
 </body>
 </html>

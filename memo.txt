@@ -2,3 +2,11 @@
 ./vendor/bin/sail artisan cache:clear
 ./vendor/bin/sail artisan route:clear
 ./vendor/bin/sail artisan config:clear
+
+
+
+やること
+
+外部キー制約
+ユーザー登録のリダイレクト
+pagenation

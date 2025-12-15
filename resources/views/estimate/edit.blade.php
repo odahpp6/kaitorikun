@@ -309,7 +309,7 @@
           <div class="flex items-center gap-4">
             <a @click="addRow" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">行を追加</a>
             
-             <button class="bg-blue-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">確定</button>
+             <button class="bg-blue-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">更新</button>
            </form>
           </div>
   </div>

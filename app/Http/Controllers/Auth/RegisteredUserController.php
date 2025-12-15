@@ -52,7 +52,7 @@ class RegisteredUserController extends Controller
         'address' => $request->address,
         'role' => 'user',
     ]);
-        dd('登録成功');
+        return redirect()->route('auth.list')->with('success', 'ユーザーが登録されました。');
         } catch (\Exception $e) {
         dd('登録失敗', $e->getMessage());
         }

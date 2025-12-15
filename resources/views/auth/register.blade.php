@@ -2,6 +2,10 @@
 
 @section('title', 'ユーザー登録')
 @section('content')
+
+
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">ユーザー登録画面</h2>
+
 <form @submit.prevent="handleSubmit" action="{{ route('register') }}" ref="formEl" method="POST">
 
 @csrf
@@ -53,7 +57,7 @@
 </div>
 
 
-<input type="submit" value="登録" v-bind:class="message.buttunClass"  class="bg-blue-100 text-white px-6 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors duration-200">
+<input type="submit" value="登録" v-bind:class="message.buttunClass"  class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-700 cursor-pointer transition-colors duration-200">
 </form>
 
 

@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('estimates', function (Blueprint $table) {
-           $table->id(); // ID (BIGINT) - 主キー
-            $table->bigInteger('store_id')->nullable()->comment('所持店舗ID'); // BIGINT
+            $table->id(); // ID (BIGINT) - 主キー
+            $table->foreignId('store_id')
+                  ->nullable()
+                  ->constrained(table: 'users')
+                  ->onDelete('cascade')
+                  ->comment('所持店舗ID (users.id)');
             $table->string('role', 50)->nullable()->comment('権限 (ユーザー権限かステータスか確認)'); // VARCHAR(50)
             $table->string('title', 50)->comment('タイトル名'); // VARCHAR(50)
             $table->decimal('adjustment', 10, 0)->default(0)->comment('調整金額'); // DECIMAL(10, 0)

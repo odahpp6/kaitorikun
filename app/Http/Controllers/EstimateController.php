@@ -226,24 +226,42 @@ public function create()
     }
 
 
-    public function update(Request $request): RedirectResponse // 戻り値の型を修正
+    public function update(Request $request, $id): RedirectResponse // ★$idパラメータを追加
     {
-        // 1. 認証ユーザーなどからDBに必要な情報を取得（仮の値として設定）
-        $storeId = Auth::id(); // ✅ これを追加
+        // バリデーション
+        $request->validate(
+            [
+                'title' => ['required', 'string', 'max:50'], 
+                'adjustment' => ['nullable', 'numeric'],
+            ], 
+            [], 
+            [
+                'title' => 'タイトル',
+                'adjustment' => '調整金額',
+            ]
+        );
+        
+        // 1. 認証ユーザーなどからDBに必要な情報を取得
+        $storeId = Auth::id();
         $role = 'user'; // デフォルトの権限を設定
 
         // 2. トランザクションで処理をラップし、データの整合性を保証
-        $estimateId = DB::transaction(function () use ($request, $storeId, $role) {
+        DB::transaction(function () use ($request, $id, $storeId, $role) {
             
-            // 2-1. 見積登録テーブル (estimates) への登録
-            $estimate = Estimate::create([
+            // 2-1. 既存の見積を取得して更新
+            $estimate = Estimate::where('id', $id)
+                                ->where('store_id', $storeId)
+                                ->firstOrFail();
+            
+            $estimate->update([
                 'title' => $request->title,
                 'adjustment' => $request->adjustment,
-                'store_id' => $storeId, // ★必須：store_idを設定
-                'role' => $role,         // ★必須：roleを設定
             ]);
 
-            // 2-2. 見積行テーブル (estimate_items) への登録
+            // 2-2. 既存の見積行を全て削除
+            EstimateItem::where('estimate_no', $id)->delete();
+
+            // 2-3. 新しい見積行を登録
             if ($request->has('text') && is_array($request->input('text'))) {
                 foreach ($request->input('text') as $index => $text) {
                     if (empty($text) && empty($request->input('num1')[$index])) {
@@ -259,13 +277,12 @@ public function create()
                     ]);
                 }
             }
-            return $estimate->id;
         });
         
-        // 3. 処理後のリダイレクト
-        return redirect()->route('estimate.list', ['id' => $estimateId])
-                         ->with('success', '見積登録更新しました。');
-    }//edit終了
+        // 3. 処理後のリダイレクト(詳細ページへ)
+        return redirect()->route('estimate.detail', ['id' => $id])
+                         ->with('success', '見積を更新しました。');
+    }//update終了
 
 
     //見積削除確認

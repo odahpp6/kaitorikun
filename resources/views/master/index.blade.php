@@ -5,7 +5,7 @@
 
 
 
-<h2>折り込みキャンペーン表示</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">折り込みキャンペーン表示</h2>
 
   <!-- 成功メッセージ -->
              @if (session('success'))

@@ -25,6 +25,7 @@ Route::get('/', function () {
 
 //認証済みユーザーのみアクセス可能
 Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     //見積システム
     Route::get('/estimate', [EstimateController::class, 'create'])->name('estimate.register'); 

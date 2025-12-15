@@ -7,12 +7,14 @@
 @csrf
 
 
-<h2>卸売り先登録</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">卸売り先登録</h2>
 <div class="flex flex-wrap mb-4">
   <div class="w-full md:w-1/2">
     <p class="text-sm text-stone-600mb-2">卸売り会社名<span class="text-red-600 font-medium">※必須</span></p>
     <input type="text"  class=" border border-gray-300 rounded-lg p-2 w-[90%] mb-4" placeholder="卸売り会社名" name="wholesale">
-    <p></p>
+     @error('wholesale')
+          <p class="error text-red-600"><span>{{ $message }}</span></p>
+    @enderror
  </div>
   <div class="w-full md:w-1/2">
     <p class="text-sm text-stone-600 mb-2">備考</p>
@@ -26,7 +28,7 @@
 
 
 
-<h2 class="my-4 text-2xl">卸売り登録一覧表示</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-6 mt-8 pb-2 border-b-2 border-blue-500">卸売り登録一覧表示</h2>
   <!-- 成功メッセージ -->
              @if (session('success'))
     <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
@@ -58,7 +60,7 @@
                 <td class="border px-2 py-1">{{ $wholesale->wholesale }}</td>
                     <td class="border px-2 py-1">{{ $wholesale->created_at }}</td>
                 <td class="border px-2 py-1 whitespace-pre-wrap">{{ $wholesale->remarks }}</td>
-                <td class="border px-2 py-1 whitespace-pre-wrap"><a href="/master/list_wholesale/{{ $wholesale->id }}/delete">削除</a></td>
+                <td class="border px-2 py-1 whitespace-pre-wrap"><a href="/master/list_wholesale/{{ $wholesale->id }}/delete" class="text-blue-600 hover:text-blue-700">削除</a></td>
             </tr>
             @endforeach
         </tbody>

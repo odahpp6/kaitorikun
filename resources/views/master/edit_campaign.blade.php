@@ -7,7 +7,7 @@
 @csrf
 
 
-<h2>キャンペーン登録</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">キャンペーン登録</h2>
 <div class="flex flex-wrap mb-4">
   <div class="w-full md:w-1/2">
     <p class="text-sm text-stone-600mb-2">キャンペーン名<span class="text-red-600 font-medium">※必須</span></p>
