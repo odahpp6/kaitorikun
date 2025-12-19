@@ -5,6 +5,7 @@ use App\Http\Controllers\EstimateController;
 // ★★★ この行を追加 ★★★
 use App\Http\Controllers\MasterCampaignController;
 use App\Http\Controllers\MasterWholesaleController;
+use App\Http\Controllers\BuyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,8 +91,13 @@ Route::get('/master/list_wholesale/{id}/delete',[MasterWholesaleController::clas
 // ★DELETEルートを追加し、フォームが参照する名前を付ける
 Route::delete('/master/list_wholesale/{id}/delete',[MasterWholesaleController::class, 'delete'])->name('master.delete_wholesale');
 
-// ★ 以前の提案で追加した未使用のルートは削除またはコメントアウト
-// Route::delete('/master/delete_wholesale_execute', [MasterWholesaleController::class, 'deleteExecute'])->name('master.delete_wholesale_execute');
+// 買取契約登録
+Route::get('/purchase ',[BuyController::class, 'purchase'])->name('purchase.register');
+
+
+
+
+
 
 
 });
