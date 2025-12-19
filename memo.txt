@@ -10,3 +10,15 @@
 外部キー制約
 ユーザー登録のリダイレクト
 pagenation
+
+php artisan make:migration create_テーブル名_table --create=テーブル名
+sail artisan make:migration create_customer_table --create=customer
+sail artisan make:migration create_deals_table --create=deals
+sail artisan make:migration create_buy_items_table --create=buy_items
+
+
+sail artisan make:model BuyItem
+
+Customer
+Deal
+BuyItem
