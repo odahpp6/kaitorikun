@@ -39,14 +39,14 @@
         <!-- 見積グループ -->
         <li class="mt-2 mb-1 text-xs font-bold text-blue-300">見積管理</li>
         <li>
-            <a href="/estimate" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors duration-200">
-                <i class="fa-solid fa-file-pen w-4 h-4 text-white"></i>
+            <a href="/estimate" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('estimate') ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'text-blue-200 hover:bg-blue-800' }}">
+                <i class="fa-solid fa-file-pen w-4 h-4 {{ request()->is('estimate') ? 'text-white' : 'text-blue-200' }}"></i>
                 <span>見積登録</span>
             </a>
         </li>
         <li>
-            <a href="/estimate/list" class="flex items-center gap-3 px-4 py-2 rounded-lg text-blue-200 hover:bg-blue-800 transition-colors duration-200">
-                <i class="fa-solid fa-clock-rotate-left w-4 h-4 text-blue-200"></i>
+            <a href="/estimate/list" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('estimate/list*') ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'text-blue-200 hover:bg-blue-800' }}">
+                <i class="fa-solid fa-clock-rotate-left w-4 h-4 {{ request()->is('estimate/list*') ? 'text-white' : 'text-blue-200' }}"></i>
                 <span>見積履歴</span>
             </a>
         </li>
@@ -54,14 +54,14 @@
         <!-- 契約グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-green-300">契約管理</li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-green-200 hover:bg-green-800 transition-colors duration-200">
-                <i class="fa-solid fa-file-signature w-4 h-4 text-green-200"></i>
+            <a href="/purchase" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
+                <i class="fa-solid fa-file-signature w-4 h-4 {{ request()->is('purchase') ? 'text-white' : 'text-green-200' }}"></i>
                 <span>契約登録</span>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-green-200 hover:bg-green-800 transition-colors duration-200">
-                <i class="fa-solid fa-file-lines w-4 h-4 text-green-200"></i>
+            <a href="/purchase/list" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase/list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
+                <i class="fa-solid fa-file-lines w-4 h-4 {{ request()->is('purchase/list*') ? 'text-white' : 'text-green-200' }}"></i>
                 <span>契約履歴</span>
             </a>
         </li>
@@ -126,26 +126,26 @@
         <!-- マスタ管理グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-gray-300">マスタ管理</li>
         <li>
-            <a href="/master/create_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
-                <i class="fa-solid fa-gear w-4 h-4 text-gray-200"></i>
+            <a href="/master/create_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_wholesale') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_wholesale') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>取引先マスタ登録</span>
             </a>
         </li>
         <li>
-            <a href="/master/list_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
-                <i class="fa-solid fa-list w-4 h-4 text-gray-200"></i>
+            <a href="/master/list_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/list_wholesale') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                <i class="fa-solid fa-list w-4 h-4 {{ request()->is('master/list_wholesale') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>取引先マスタ一覧</span>
             </a>
         </li>
           <li>
-            <a href="/master/create_campaign" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
-                <i class="fa-solid fa-gear w-4 h-4 text-gray-200"></i>
+            <a href="/master/create_campaign" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_campaign') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_campaign') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>折り込みマスタ登録</span>
             </a>
         </li>
         <li>
-            <a href="/master/campaign_list" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-800 transition-colors duration-200">
-                <i class="fa-solid fa-list w-4 h-4 text-gray-200"></i>
+            <a href="/master/campaign_list" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/campaign_list') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                <i class="fa-solid fa-list w-4 h-4 {{ request()->is('master/campaign_list') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>折り込みマスタ一覧</span>
             </a>
         </li>

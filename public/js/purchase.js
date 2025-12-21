@@ -1,0 +1,1 @@
+// Purchase page scripts (placeholder).

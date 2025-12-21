@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EstimateController;
 // ★★★ この行を追加 ★★★
@@ -19,10 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/', [AuthenticatedSessionController::class, 'create'])
+                ->name('login');
 
 //認証済みユーザーのみアクセス可能
 Route::middleware('auth')->group(function () {
@@ -92,10 +90,14 @@ Route::get('/master/list_wholesale/{id}/delete',[MasterWholesaleController::clas
 Route::delete('/master/list_wholesale/{id}/delete',[MasterWholesaleController::class, 'delete'])->name('master.delete_wholesale');
 
 // 買取契約登録
-Route::get('/purchase ',[BuyController::class, 'purchase'])->name('purchase.register');
+Route::get('/purchase',[BuyController::class, 'purchase'])->name('purchase.register');
+Route::post('/purchase',[BuyController::class, 'store'])->name('purchase.store');
 
+// 買取契約登録一覧
+Route::get('/purchase/list',[BuyController::class, 'purchase_list'])->name('purchase.list');
 
-
+// 買取登録詳細
+Route::get('/purchase/{id}/detail',[BuyController::class, 'purchase_detail'])->name('purchase.detail');
 
 
 
