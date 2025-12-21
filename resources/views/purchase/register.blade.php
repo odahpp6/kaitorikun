@@ -411,6 +411,7 @@
             <p class="text-xs text-gray-500 mt-2">※署名後に送信すると画像として保存されます</p>
         </div>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.umd.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script>
   const canvas = document.getElementById('sigCanvas');
   const signaturePad = new SignaturePad(canvas);
@@ -621,9 +622,7 @@
     });
 </script>
 
-
-
-
+<script src="{{ asset('js/purchase.js') }}" charset="UTF-8"></script>
 
 <script>
 
