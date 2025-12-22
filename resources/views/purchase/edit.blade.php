@@ -3,7 +3,7 @@
 @section('title', '見積詳細')
 @section('content')
 
-<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">見積詳細</h2>
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約詳細</h2>
 
 @if ($errors->any())
     <div class="alert alert-danger">

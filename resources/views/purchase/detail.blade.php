@@ -14,7 +14,7 @@
 @endphp
 
 <div class="max-w-6xl mx-auto p-6 space-y-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">見積詳細</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約詳細</h2>
     <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
         <h2 class="text-xl font-bold mb-6 flex items-center">
             <span class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2 text-sm">1</span>

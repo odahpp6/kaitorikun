@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="max-w-6xl mx-auto p-6 space-y-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取削除確認</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約削除確認</h2>
 
     <div class="p-4 border rounded-lg bg-gray-50 text-sm">
         <div class="flex flex-wrap -mx-3">
