@@ -15,8 +15,25 @@
     </div>
 @endif
 
-  <form action="{{ route('purchase.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8" id="purchase-form">
+@php
+    $customer = $deal->customer;
+    $initialItems = old('items');
+    if ($initialItems === null) {
+        $initialItems = $deal->buyItems->map(function ($item) {
+            return [
+                'product' => $item->product,
+                'classification' => $item->classification,
+                'remarks_2' => $item->remarks_2,
+                'quantity' => $item->quantity,
+                'buy_price' => $item->buy_price,
+            ];
+        })->values()->toArray();
+    }
+@endphp
+
+  <form action="{{ route('purchase.update', $deal->id) }}" method="POST" enctype="multipart/form-data" class="space-y-8" id="purchase-form">
         @csrf
+        @method('PUT')
         <div id="item-container" class="space-y-4">
         </div>
         @error('items.*.product')
@@ -33,9 +50,9 @@
             <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-right">
                 <p class="text-sm text-gray-600">総合計</p>
                 <p class="text-2xl font-bold">
-                    <span id="total-price-display">0</span>円
+                    <span id="total-price-display">{{ number_format(old('total_price', $deal->total_price ?? 0)) }}</span>円
                 </p>
-                <input type="hidden" name="total_price" id="total-price-input" value="{{ old('total_price', 0) }}">
+                <input type="hidden" name="total_price" id="total-price-input" value="{{ old('total_price', $deal->total_price ?? 0) }}">
             </div>
             <button type="button" onclick="addItem()" id="add-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
                 ＋ 商品を追加する (最大30件)
@@ -105,7 +122,7 @@
                     <select name="proof_type" class="w-full border border-gray-300 rounded-md" required>
                         <option value="">選択してください</option>
                         @foreach(['免許証','マイナンバーカード','パスポート','在留カード','その他'] as $type)
-                            <option value="{{ $type }}" @selected(old('proof_type') === $type)>{{ $type }}</option>
+                            <option value="{{ $type }}" @selected(old('proof_type', $customer->proof_type ?? null) === $type)>{{ $type }}</option>
                         @endforeach
                     </select>
                     @error('proof_type')
@@ -114,7 +131,7 @@
                     </div>
                     <div class="w-full md:w-1/2 px-3">
                     <label class="block text-sm font-bold mb-1">身分証明書番号 <span class="text-red-500">必須</span></label>
-                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num') }}" required>
+                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num', $customer->proof_num ?? null) }}" required>
                     @error('proof_num')
                         <p class="text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -125,7 +142,7 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/2 px-3">
                     <label class="block text-sm font-bold mb-1">身分証明書画像（表面） ※最大ファイルサイズ: 100MB <span class="text-red-500">必須</span></label>
-                    <input type="file" name="proof_img_1" class="w-full text-sm border border-gray-300 rounded-md" required>
+                    <input type="file" name="proof_img_1" class="w-full text-sm border border-gray-300 rounded-md" >
                     @error('proof_img_1')
                         <p class="text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -145,21 +162,21 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">顧客名 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md animate-shadow-red" value="{{ old('name') }}" required>
+                        <input type="text" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md animate-shadow-red" value="{{ old('name', $customer->name ?? null) }}" required>
                         @error('name')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">フリガナ</label>
-                        <input type="text" name="furigana" maxlength="50" placeholder="カタカナ" class="w-full border border-gray-300 rounded-md" value="{{ old('furigana') }}">
+                        <input type="text" name="furigana" maxlength="50" placeholder="カタカナ" class="w-full border border-gray-300 rounded-md" value="{{ old('furigana', $customer->furigana ?? null) }}">
                         @error('furigana')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">電話番号 <span class="text-red-500">必須</span></label>
-                        <input type="tel" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md" value="{{ old('phone_number') }}" required>
+                        <input type="tel" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md" value="{{ old('phone_number', $customer->phone_number ?? null) }}" required>
                         @error('phone_number')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -187,7 +204,7 @@
                         <select name="birth_y" class="w-full border border-gray-300 rounded-md" required>
                             @for ($i = date('Y') - 18; $i >= 1920; $i--)
                                 @php $era = $eraLabel($i); @endphp
-                                <option value="{{ $i }}" @selected((string) old('birth_y') === (string) $i)>
+                                <option value="{{ $i }}" @selected((string) old('birth_y', $customer->birth_y ?? null) === (string) $i)>
                                     {{ $i }}年@if ($era) ({{ $era }})@endif
                                 </option>
                             @endfor
@@ -198,7 +215,7 @@
                     </div>
                     <div class="w-24">
                         <select name="birth_m" class="w-full border border-gray-300 rounded-md" required>
-                            @for ($m = 1; $m <= 12; $m++) <option value="{{ $m }}" @selected((string) old('birth_m') === (string) $m)>{{ $m }}月</option> @endfor
+                            @for ($m = 1; $m <= 12; $m++) <option value="{{ $m }}" @selected((string) old('birth_m', $customer->birth_m ?? null) === (string) $m)>{{ $m }}月</option> @endfor
                         </select>
                         @error('birth_m')
                             <p class="text-sm text-red-600">{{ $message }}</p>
@@ -206,7 +223,7 @@
                     </div>
                     <div class="w-24">
                         <select name="birth_d" class="w-full border border-gray-300 rounded-md" required>
-                            @for ($d = 1; $d <= 31; $d++) <option value="{{ $d }}" @selected((string) old('birth_d') === (string) $d)>{{ $d }}日</option> @endfor
+                            @for ($d = 1; $d <= 31; $d++) <option value="{{ $d }}" @selected((string) old('birth_d', $customer->birth_d ?? null) === (string) $d)>{{ $d }}日</option> @endfor
                         </select>
                         @error('birth_d')
                             <p class="text-sm text-red-600">{{ $message }}</p>
@@ -220,15 +237,15 @@
                         <label class="block text-sm font-bold mb-1">性別 <span class="text-red-500">必須</span></label>
                         <div class="flex flex-wrap gap-4 text-sm">
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="male" @checked(old('gender') === 'male') required>
+                                <input type="radio" name="gender" value="male" @checked(old('gender', $customer->gender ?? null) === 'male') required>
                                 <span>男性</span>
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="female" @checked(old('gender') === 'female') required>
+                                <input type="radio" name="gender" value="female" @checked(old('gender', $customer->gender ?? null) === 'female') required>
                                 <span>女性</span>
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="other" @checked(old('gender') === 'other') required>
+                                <input type="radio" name="gender" value="other" @checked(old('gender', $customer->gender ?? null) === 'other') required>
                                 <span>その他</span>
                             </label>
                         </div>
@@ -240,13 +257,13 @@
                         <label class="block text-sm font-bold mb-1">職業 <span class="text-red-500">必須</span></label>
                         <select name="occupation" class="w-full border border-gray-300 rounded-md" required>
                             <option value="">選択してください</option>
-                            <option value="会社員" @selected(old('occupation') === '会社員')>会社員</option>
-                            <option value="役員" @selected(old('occupation') === '役員')>役員</option>
-                            <option value="個人事業主" @selected(old('occupation') === '個人事業主')>個人事業主</option>
-                            <option value="パートアルバイト" @selected(old('occupation') === 'パートアルバイト')>パートアルバイト</option>
-                            <option value="学生" @selected(old('occupation') === '学生')>学生</option>
-                            <option value="定年退職" @selected(old('occupation') === '定年退職')>定年退職</option>
-                            <option value="その他" @selected(old('occupation') === 'その他')>その他</option>
+                            <option value="会社員" @selected(old('occupation', $customer->occupation ?? null) === '会社員')>会社員</option>
+                            <option value="役員" @selected(old('occupation', $customer->occupation ?? null) === '役員')>役員</option>
+                            <option value="個人事業主" @selected(old('occupation', $customer->occupation ?? null) === '個人事業主')>個人事業主</option>
+                            <option value="パートアルバイト" @selected(old('occupation', $customer->occupation ?? null) === 'パートアルバイト')>パートアルバイト</option>
+                            <option value="学生" @selected(old('occupation', $customer->occupation ?? null) === '学生')>学生</option>
+                            <option value="定年退職" @selected(old('occupation', $customer->occupation ?? null) === '定年退職')>定年退職</option>
+                            <option value="その他" @selected(old('occupation', $customer->occupation ?? null) === 'その他')>その他</option>
                         </select>
                         @error('occupation')
                             <p class="text-sm text-red-600">{{ $message }}</p>
@@ -258,7 +275,7 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">郵便番号</label>
-                        <input type="text" name="postal_code" placeholder="1234567" class="w-full border border-gray-300 rounded-md" value="{{ old('postal_code') }}">
+                        <input type="text" name="postal_code" placeholder="1234567" class="w-full border border-gray-300 rounded-md" value="{{ old('postal_code', $customer->postal_code ?? null) }}">
                         @error('postal_code')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -268,7 +285,7 @@
                         <select name="prefecture" class="w-full border border-gray-300 rounded-md" required>
                             <option value="">選択</option>
                             @foreach(['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'] as $pref)
-                                <option value="{{ $pref }}" @selected(old('prefecture') === $pref)>{{ $pref }}</option>
+                                <option value="{{ $pref }}" @selected(old('prefecture', $customer->prefecture ?? null) === $pref)>{{ $pref }}</option>
                             @endforeach
                         </select>
                         @error('prefecture')
@@ -277,7 +294,7 @@
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">市区町村 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="city" class="w-full border border-gray-300 rounded-md" value="{{ old('city') }}" required>
+                        <input type="text" name="city" class="w-full border border-gray-300 rounded-md" value="{{ old('city', $customer->city ?? null) }}" required>
                         @error('city')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -286,14 +303,14 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-2/3 px-3">
                         <label class="block text-sm font-bold mb-1">番地以降 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="address_detail" class="w-full border border-gray-300 rounded-md" value="{{ old('address_detail') }}" required>
+                        <input type="text" name="address_detail" class="w-full border border-gray-300 rounded-md" value="{{ old('address_detail', $customer->address_detail ?? null) }}" required>
                         @error('address_detail')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">建物名</label>
-                        <input type="text" name="address_building" class="w-full border border-gray-300 rounded-md" value="{{ old('address_building') }}">
+                        <input type="text" name="address_building" class="w-full border border-gray-300 rounded-md" value="{{ old('address_building', $customer->address_building ?? null) }}">
                         @error('address_building')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -305,8 +322,8 @@
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">買取区分 <span class="text-red-500">必須</span></label>
                         <select name="buy_type" class="w-full border border-gray-300 rounded-md" required>
-                            <option value="店頭買取" @selected(old('buy_type', '店頭買取') === '店頭買取')>店頭買取</option>
-                            <option value="そのほか" @selected(old('buy_type') === 'そのほか')>そのほか</option>
+                            <option value="店頭買取" @selected(old('buy_type', $deal->buy_type ?? '店頭買取') === '店頭買取')>店頭買取</option>
+                            <option value="そのほか" @selected(old('buy_type', $deal->buy_type ?? null) === 'そのほか')>そのほか</option>
                         </select>
                         @error('buy_type')
                             <p class="text-sm text-red-600">{{ $message }}</p>
@@ -317,7 +334,7 @@
                         <select name="arrival_type" class="w-full border border-gray-300 rounded-md" required>
                             <option value="">選択してください</option>
                             @foreach(['店舗前','折込','顧客','紹介','ホームページ','ポスティング','テレビ','情報誌','テレアポ','Googleマップ','呼び込み','電話問合せ','ティッシュ','LP','SNS','エキテン','DM','LINE査定','2次アポ','リスティング広告'] as $arrival)
-                                <option value="{{ $arrival }}" @selected(old('arrival_type', '店舗前') === $arrival)>{{ $arrival }}</option>
+                                <option value="{{ $arrival }}" @selected(old('arrival_type', $deal->arrival_type ?? '店舗前') === $arrival)>{{ $arrival }}</option>
                             @endforeach
                         </select>
                         @error('arrival_type')
@@ -329,9 +346,9 @@
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">キャンペーン区分</label>
                         <select name="campaign_id" class="w-full border border-gray-300 rounded-md">
-                            <option value="" @selected(old('campaign_id') === '')></option>
+                            <option value="" @selected((string) old('campaign_id', $deal->campaign_id ?? '') === '')></option>
                             @foreach ($mastercampaigns ?? [] as $campaign)
-                                <option value="{{ $campaign->id }}" @selected((string) old('campaign_id') === (string) $campaign->id)>
+                                <option value="{{ $campaign->id }}" @selected((string) old('campaign_id', $deal->campaign_id ?? null) === (string) $campaign->id)>
                                     {{ $campaign->campaign }}
                                 </option>
                             @endforeach
@@ -344,11 +361,11 @@
                         <label class="block text-sm font-bold mb-1">お支払い方法</label>
                         <div class="flex flex-wrap gap-4 text-sm">
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="payment_method" value="現金" @checked(old('payment_method', '現金') === '現金')>
+                                <input type="radio" name="payment_method" value="現金" @checked(old('payment_method', $deal->payment_method ?? '現金') === '現金')>
                                 <span>現金</span>
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="payment_method" value="振込" @checked(old('payment_method') === '振込')>
+                                <input type="radio" name="payment_method" value="振込" @checked(old('payment_method', $deal->payment_method ?? null) === '振込')>
                                 <span>振込</span>
                             </label>
                         </div>
@@ -367,15 +384,15 @@
             <p class="text-sm font-bold">下記の注意事項に同意の上サインをお願いします。<span class="text-red-500">（必須）</span></p>
             <div class="space-y-3 text-sm">
                 <label class="flex items-start gap-2">
-                    <input type="checkbox" name="agree_received_amount" class="mt-1" @checked(old('agree_received_amount')) required>
+                    <input type="checkbox" name="agree_received_amount" class="mt-1" @checked(old('agree_received_amount', $deal->agree_received_amount ?? false)) required>
                     <span>提示金額を受領しました。<span class="text-red-500">（必須）</span></span>
                 </label>
                 <label class="flex items-start gap-2">
-                    <input type="checkbox" name="agree_no_return" class="mt-1" @checked(old('agree_no_return')) required>
+                    <input type="checkbox" name="agree_no_return" class="mt-1" @checked(old('agree_no_return', $deal->agree_no_return ?? false)) required>
                     <span>買取商品の返品は致しかねます。また、お売り頂いた商品が盗品・コピー品と判明した場合はご返金頂きます。<span class="text-red-500">（必須）</span></span>
                 </label>
                 <label class="flex items-start gap-2">
-                    <input type="checkbox" name="agree_privacy" class="mt-1" @checked(old('agree_privacy')) required>
+                    <input type="checkbox" name="agree_privacy" class="mt-1" @checked(old('agree_privacy', $deal->agree_privacy ?? false)) required>
                     <span>個人情報取り扱いに関する表明の説明を受け、個人情報の取扱いについて同意します。<span class="text-red-500">（必須）</span></span>
                 </label>
             </div>
@@ -391,11 +408,11 @@
             <div class="space-y-2 text-sm">
                 <p class="font-bold">私（売主）は、消費税における適格請求書発行事業者ではありません。<span class="text-red-500">（どちらか必須）</span></p>
                 <label class="flex items-center gap-2">
-                    <input type="radio" name="invoice_issuer" value="適格請求書発行事業者ではありません" @checked(old('invoice_issuer', 'not_issuer') === 'not_issuer') required>
+                    <input type="radio" name="invoice_issuer" value="適格請求書発行事業者ではありません" @checked(old('invoice_issuer', $deal->invoice_issuer ?? null) === '適格請求書発行事業者ではありません') required>
                     <span>私（売主）は、消費税における適格請求書発行事業者ではありません。<span class="text-red-500">（どちらか必須）</span></span>
                 </label>
                 <label class="flex items-center gap-2">
-                    <input type="radio" name="invoice_issuer" value="適格請求書発行事業者です" @checked(old('invoice_issuer') === 'issuer') required>
+                    <input type="radio" name="invoice_issuer" value="適格請求書発行事業者です" @checked(old('invoice_issuer', $deal->invoice_issuer ?? null) === '適格請求書発行事業者です') required>
                     <span>私（売主）は、消費税における適格請求書発行事業者です。<span class="text-red-500">（どちらか必須）</span></span>
                 </label>
             </div>
@@ -425,13 +442,10 @@
     signatureInput.value = oldSignature;
   }
 
-  form.addEventListener('submit', (e) => {
-    if (signaturePad.isEmpty()) {
-      e.preventDefault();
-      alert('署名を入力してください。');
-      return;
-    }
-    signatureInput.value = signaturePad.toDataURL('image/png');
+  form.addEventListener('submit', () => {
+    signatureInput.value = signaturePad.isEmpty()
+      ? ''
+      : signaturePad.toDataURL('image/png');
   });
 </script>
 
@@ -484,7 +498,7 @@
         {{-- 3. 署名・確認事項 --}}
         <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-gray-800 text-center">
              <button type="submit" class="bg-blue-600 text-white px-12 py-4 rounded-lg text-xl font-bold hover:bg-blue-700 transition shadow-xl">
-                上記の内容で契約を完了する
+                上記の内容で契約を修正する
             </button>
         </div>
     </form>
@@ -507,7 +521,7 @@
 </style>
 
 <script>
-    const oldItems = @json(old('items', []));
+    const initialItems = @json($initialItems ?? []);
     let itemIdx = 0; // 行を特定するためのカウンター
 
     function updateButtonState() {
@@ -580,8 +594,8 @@
 
     window.addEventListener('load', () => {
         const container = document.getElementById('item-container');
-        if (oldItems.length > 0) {
-            oldItems.forEach((item) => {
+        if (initialItems.length > 0) {
+            initialItems.forEach((item) => {
                 addItem();
                 const row = container ? container.lastElementChild : null;
                 if (!row) {

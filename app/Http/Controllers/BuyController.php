@@ -158,4 +158,131 @@ class BuyController extends Controller
         return view('purchase.detail', compact('deal'));
     }
 
+    
+    // 買取契約修正画面表示
+    public function purchase_edit($id)
+    {
+        $storeId = Auth::id(); // ログイン中の店舗ID
+        $deal = Deal::where('id', $id)
+                    ->where('store_id', $storeId)
+                    ->with(['customer', 'buyItems'])
+                    ->firstOrFail();
+        $mastercampaigns = MasterCampaign::where('store_id', $storeId)->get(); 
+        return view('purchase.edit', compact('deal', 'mastercampaigns'));
+    }
+
+    public function purchase_update(Request $request, $id) // IDを受け取る
+{
+    // 1. バリデーション（画像などは更新時のみ任意にすることが多い）
+    $request->validate([
+        'name' => 'required|max:50',
+        'phone_number' => 'required',
+        // 更新時は画像が必須でない場合が多いので nullable や required_without などにする
+        'items.*.product' => 'required',
+        'items.*.buy_price' => 'required|numeric',
+        'payment_method' => 'required|string',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        $storeId = Auth::id();
+
+        // 2. 既存の取引を取得
+        $deal = Deal::where('id', $id)->where('store_id', $storeId)->firstOrFail();
+        
+        // 3. 顧客情報の更新
+        $customer = Customer::findOrFail($deal->customer_id);
+        $customer->fill($request->only([
+            'name', 'furigana', 'birth_y', 'birth_m', 'birth_d', 'gender', 
+            'occupation', 'postal_code', 'prefecture', 'city', 
+            'address_detail', 'address_building', 'phone_number', 'proof_type', 'proof_num'
+        ]));
+
+        // 画像が新しくアップロードされた場合のみ上書き
+        if ($request->hasFile('proof_img_1')) {
+            $customer->proof_img_1 = $request->file('proof_img_1')->store('proofs', 'public');
+        }
+        $customer->save();
+
+        // 4. 取引情報の更新
+        $deal->fill($request->only([
+            'buy_type', 'arrival_type', 'campaign_id', 'payment_method', 'invoice_issuer'
+        ]));
+        $deal->agree_received_amount = $request->has('agree_received_amount');
+        $deal->agree_no_return = $request->has('agree_no_return');
+        $deal->agree_privacy = $request->has('agree_privacy');
+
+        // 署名が新しく送られてきた場合のみ上書き
+        if ($request->signature_image_data && str_contains($request->signature_image_data, 'base64')) {
+            $sigData = str_replace(['data:image/png;base64,', ' '], ['', '+'], $request->signature_image_data);
+            $sigImageName = 'sig_' . time() . '_' . Str::random(10) . '.png';
+            Storage::disk('public')->put('signatures/' . $sigImageName, base64_decode($sigData));
+            $deal->signature_image_data = 'signatures/' . $sigImageName;
+        }
+        $deal->save();
+
+        // 5. 商品情報の更新（一度消して作り直すのが確実）
+        // ※ 古い画像の削除処理を入れるとなお良い
+        $deal->buyItems()->delete(); 
+
+        if ($request->items) {
+            foreach ($request->items as $itemData) {
+                $item = new BuyItem();
+                $item->store_id = $storeId;
+                $item->deal_id = $deal->id;
+                $item->product = $itemData['product'];
+                $item->classification = $itemData['classification'] ?? '未分類';
+                $item->buy_price = $itemData['buy_price'];
+                
+                // 画像が新しい場合は保存、ない場合は以前のパスを引き継ぐロジックが必要（今回は新規のみ想定）
+                if (isset($itemData['product_img']) && $itemData['product_img'] instanceof \Illuminate\Http\UploadedFile) {
+                    $item->product_img = $itemData['product_img']->store('products', 'public');
+                }
+                $item->save();
+            }
+        }
+
+        DB::commit();
+        return redirect()->route('purchase.list')->with('success', '契約を更新しました。');
+
+        } catch (Exception $e) {
+        DB::rollBack();
+        return back()->withInput()->with('error', '更新に失敗しました。' . $e->getMessage());
+        }
+    }
+    // 買取契約削除確認
+    public function purchase_delete_confirm($id)
+    {
+        $storeId = Auth::id(); // ログイン中の店舗ID
+        $deal = Deal::where('id', $id)
+                    ->where('store_id', $storeId)
+                    ->with(['customer', 'buyItems'])
+                    ->firstOrFail();        
+
+        return view('purchase.delete_confirm', compact('deal'));
+    }
+
+    // 買取契約削除実行
+    public function purchase_delete($id)
+    {
+        $storeId = Auth::id();
+
+        DB::beginTransaction();
+        try {
+            $deal = Deal::where('id', $id)
+                        ->where('store_id', $storeId)
+                        ->firstOrFail();
+
+            $deal->buyItems()->delete();
+            $deal->delete();
+
+            DB::commit();
+            return redirect()->route('purchase.list')->with('success', '契約を削除しました。');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->route('purchase.list')->with('error', '削除に失敗しました。' . $e->getMessage());
+        }
+    }
+
+
 }

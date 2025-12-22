@@ -98,6 +98,15 @@ Route::get('/purchase/list',[BuyController::class, 'purchase_list'])->name('purc
 
 // 買取登録詳細
 Route::get('/purchase/{id}/detail',[BuyController::class, 'purchase_detail'])->name('purchase.detail');
+// 買取登録修正画面表示
+Route::get('/purchase/{id}/edit',[BuyController::class, 'purchase_edit'])->name('purchase.edit');
+// 買取登録更新処理
+Route::put('/purchase/{id}/edit',[BuyController::class, 'purchase_update'])->name('purchase.update');
+// 買取登録削除確認
+Route::get('/purchase/{id}/delete_confirm',[BuyController::class, 'purchase_delete_confirm'])->name('purchase.delete_confirm');
+// 買取登録削除実行
+Route::delete('/purchase/{id}/delete',[BuyController::class, 'purchase_delete'])->name('purchase.delete');
+
 
 
 

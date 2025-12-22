@@ -3,6 +3,8 @@
 @section('title', '見積登録')
 @section('content')
 
+<h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">見積登録</h2>
+
 <div id="tanka">
 <div v-show="Visible">
   
