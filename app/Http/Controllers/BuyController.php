@@ -29,6 +29,7 @@ class BuyController extends Controller
         $request->validate([
              'name' => 'required|max:50',
              'phone_number' => 'required',
+             'email' => 'nullable|email',
              'proof_img_1' => 'required|image|max:10240', // 10MB
              'items.*.product' => 'required',
              'items.*.quantity' => 'required|integer|min:1',
@@ -57,6 +58,7 @@ class BuyController extends Controller
             $customer->address_detail = $request->address_detail;
             $customer->address_building = $request->address_building;
             $customer->phone_number = $request->phone_number;
+            $customer->email = $request->email;
             $customer->proof_type = $request->proof_type;
             $customer->proof_num = $request->proof_num;
 
@@ -177,6 +179,7 @@ class BuyController extends Controller
     $request->validate([
         'name' => 'required|max:50',
         'phone_number' => 'required',
+        'email' => 'nullable|email',
         // 更新時は画像が必須でない場合が多いので nullable や required_without などにする
         'items.*.product' => 'required',
         'items.*.buy_price' => 'required|numeric',
@@ -195,7 +198,7 @@ class BuyController extends Controller
         $customer->fill($request->only([
             'name', 'furigana', 'birth_y', 'birth_m', 'birth_d', 'gender', 
             'occupation', 'postal_code', 'prefecture', 'city', 
-            'address_detail', 'address_building', 'phone_number', 'proof_type', 'proof_num'
+            'address_detail', 'address_building', 'phone_number', 'email', 'proof_type', 'proof_num'
         ]));
 
         // 画像が新しくアップロードされた場合のみ上書き

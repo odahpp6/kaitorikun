@@ -53,17 +53,24 @@
             </div>
 
             <div class="flex flex-wrap -mx-3">
-                <div class="w-full md:w-1/3 px-3">
+                <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">顧客名</p>
                     <p class="font-semibold">{{ $customer->name ?? '—' }}</p>
                 </div>
-                <div class="w-full md:w-1/3 px-3">
+                <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">フリガナ</p>
                     <p class="font-semibold">{{ $customer->furigana ?? '—' }}</p>
                 </div>
-                <div class="w-full md:w-1/3 px-3">
+            </div>
+
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">電話番号</p>
                     <p class="font-semibold">{{ $customer->phone_number ?? '—' }}</p>
+                </div>
+                <div class="w-full md:w-1/2 px-3">
+                    <p class="text-xs text-gray-500">Email</p>
+                    <p class="font-semibold">{{ $customer->email ?? '—' }}</p>
                 </div>
             </div>
 

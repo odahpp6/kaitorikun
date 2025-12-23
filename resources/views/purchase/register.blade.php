@@ -15,6 +15,7 @@
     </div>
 @endif
 
+    <div id="app_mount">
   <form action="{{ route('purchase.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8" id="purchase-form">
         @csrf
         <div id="item-container" class="space-y-4">
@@ -102,7 +103,8 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/2 px-3">
                     <label class="block text-sm font-bold mb-1">身分証明書種類 <span class="text-red-500">必須</span></label>
-                    <select name="proof_type" class="w-full border border-gray-300 rounded-md" required>
+                    <select name="proof_type" v-on:change="checkProofType" :class="{
+                    'animate-shadow-red':!message.proof_type.valid && message.proof_type.touched}" class="w-full border border-gray-300 rounded-md" required>
                         <option value="">選択してください</option>
                         @foreach(['免許証','マイナンバーカード','パスポート','在留カード','その他'] as $type)
                             <option value="{{ $type }}" @selected(old('proof_type') === $type)>{{ $type }}</option>
@@ -113,8 +115,8 @@
                     @enderror
                     </div>
                     <div class="w-full md:w-1/2 px-3">
-                    <label class="block text-sm font-bold mb-1">身分証明書番号 <span class="text-red-500">必須</span></label>
-                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num') }}" required>
+                    <label class="block text-sm font-bold mb-1">身分証明書番号 </label>
+                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num') }}">
                     @error('proof_num')
                         <p class="text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -125,7 +127,7 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/2 px-3">
                     <label class="block text-sm font-bold mb-1">身分証明書画像（表面） ※最大ファイルサイズ: 100MB <span class="text-red-500">必須</span></label>
-                    <input type="file" name="proof_img_1" class="w-full text-sm border border-gray-300 rounded-md" required>
+                    <input type="file" name="proof_img_1" v-on:input="checkProofImage" v-bind:class="message.proof_img_1.class" class="w-full text-sm border border-gray-300 rounded-md" required>
                     @error('proof_img_1')
                         <p class="text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -143,24 +145,34 @@
 
                 {{-- 基本情報 --}}
                 <div class="flex flex-wrap -mx-3">
-                    <div class="w-full md:w-1/3 px-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">顧客名 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md animate-shadow-red" value="{{ old('name') }}" required>
+                        <input type="text" v-on:input="checkName"v-bind:class="message.name.class" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md"  value="{{ old('name') }}" required>
                         @error('name')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/3 px-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">フリガナ</label>
                         <input type="text" name="furigana" maxlength="50" placeholder="カタカナ" class="w-full border border-gray-300 rounded-md" value="{{ old('furigana') }}">
                         @error('furigana')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/3 px-3">
+                </div>
+
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">電話番号 <span class="text-red-500">必須</span></label>
-                        <input type="tel" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md" value="{{ old('phone_number') }}" required>
+                        <input type="tel" v-on:input="checkTel"v-bind:class="message.tel.class" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md" value="{{ old('phone_number') }}" required>
                         @error('phone_number')
+                            <p class="text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label class="block text-sm font-bold mb-1">Email</label>
+                        <input type="email" name="email" class="w-full border border-gray-300 rounded-md" value="{{ old('email') }}">
+                        @error('email')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -238,7 +250,8 @@
                     </div>
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">職業 <span class="text-red-500">必須</span></label>
-                        <select name="occupation" class="w-full border border-gray-300 rounded-md" required>
+                        <select name="occupation" v-on:change="checkOccupation" :class="{
+                        'animate-shadow-red':!message.occupation.valid && message.occupation.touched}" class="w-full border border-gray-300 rounded-md" required>
                             <option value="">選択してください</option>
                             <option value="会社員" @selected(old('occupation') === '会社員')>会社員</option>
                             <option value="役員" @selected(old('occupation') === '役員')>役員</option>
@@ -265,7 +278,8 @@
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">都道府県 <span class="text-red-500">必須</span></label>
-                        <select name="prefecture" class="w-full border border-gray-300 rounded-md" required>
+                        <select name="prefecture" v-on:change="checkPrefecture" :class="{
+                        'animate-shadow-red':!message.prefecture.valid && message.prefecture.touched}" class="w-full border border-gray-300 rounded-md" required>
                             <option value="">選択</option>
                             @foreach(['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'] as $pref)
                                 <option value="{{ $pref }}" @selected(old('prefecture') === $pref)>{{ $pref }}</option>
@@ -277,7 +291,8 @@
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">市区町村 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="city" class="w-full border border-gray-300 rounded-md" value="{{ old('city') }}" required>
+                        <input type="text" name="city" v-on:input="checkCity" :class="{
+                        'animate-shadow-red':!message.city.valid && message.city.touched}" class="w-full border border-gray-300 rounded-md" value="{{ old('city') }}" required>
                         @error('city')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -286,7 +301,8 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-2/3 px-3">
                         <label class="block text-sm font-bold mb-1">番地以降 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="address_detail" class="w-full border border-gray-300 rounded-md" value="{{ old('address_detail') }}" required>
+                        <input type="text" name="address_detail" v-on:input="checkAddressDetail" :class="{
+                        'animate-shadow-red':!message.address_detail.valid && message.address_detail.touched}" class="w-full border border-gray-300 rounded-md" value="{{ old('address_detail') }}" required>
                         @error('address_detail')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -413,27 +429,6 @@
         </div>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.umd.min.js"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script>
-  const canvas = document.getElementById('sigCanvas');
-  const signaturePad = new SignaturePad(canvas);
-  const form = document.getElementById('purchase-form');
-  const signatureInput = document.getElementById('signature_image_data');
-  const oldSignature = @json(old('signature_image_data'));
-
-  if (oldSignature) {
-    signaturePad.fromDataURL(oldSignature);
-    signatureInput.value = oldSignature;
-  }
-
-  form.addEventListener('submit', (e) => {
-    if (signaturePad.isEmpty()) {
-      e.preventDefault();
-      alert('署名を入力してください。');
-      return;
-    }
-    signatureInput.value = signaturePad.toDataURL('image/png');
-  });
-</script>
 
         </div>
 
@@ -488,6 +483,7 @@
             </button>
         </div>
     </form>
+   </div><!--#app  -->
 </div>
 
 
@@ -663,5 +659,26 @@
     }
 </script>
 
+<script>
+  const canvas = document.getElementById('sigCanvas');
+  const signaturePad = new SignaturePad(canvas);
+  const form = document.getElementById('purchase-form');
+  const signatureInput = document.getElementById('signature_image_data');
+  const oldSignature = @json(old('signature_image_data'));
+
+  if (oldSignature) {
+    signaturePad.fromDataURL(oldSignature);
+    signatureInput.value = oldSignature;
+  }
+
+  form.addEventListener('submit', (e) => {
+    if (signaturePad.isEmpty()) {
+      e.preventDefault();
+      alert('署名を入力してください。');
+      return;
+    }
+    signatureInput.value = signaturePad.toDataURL('image/png');
+  });
+</script>
 
 @endsection

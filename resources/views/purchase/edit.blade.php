@@ -160,24 +160,34 @@
 
                 {{-- 基本情報 --}}
                 <div class="flex flex-wrap -mx-3">
-                    <div class="w-full md:w-1/3 px-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">顧客名 <span class="text-red-500">必須</span></label>
                         <input type="text" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md animate-shadow-red" value="{{ old('name', $customer->name ?? null) }}" required>
                         @error('name')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/3 px-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">フリガナ</label>
                         <input type="text" name="furigana" maxlength="50" placeholder="カタカナ" class="w-full border border-gray-300 rounded-md" value="{{ old('furigana', $customer->furigana ?? null) }}">
                         @error('furigana')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                    <div class="w-full md:w-1/3 px-3">
+                </div>
+
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">電話番号 <span class="text-red-500">必須</span></label>
                         <input type="tel" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md" value="{{ old('phone_number', $customer->phone_number ?? null) }}" required>
                         @error('phone_number')
+                            <p class="text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="w-full md:w-1/2 px-3">
+                        <label class="block text-sm font-bold mb-1">Email</label>
+                        <input type="email" name="email" class="w-full border border-gray-300 rounded-md" value="{{ old('email', $customer->email ?? null) }}">
+                        @error('email')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
@@ -430,24 +440,6 @@
         </div>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.umd.min.js"></script>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script>
-  const canvas = document.getElementById('sigCanvas');
-  const signaturePad = new SignaturePad(canvas);
-  const form = document.getElementById('purchase-form');
-  const signatureInput = document.getElementById('signature_image_data');
-  const oldSignature = @json(old('signature_image_data'));
-
-  if (oldSignature) {
-    signaturePad.fromDataURL(oldSignature);
-    signatureInput.value = oldSignature;
-  }
-
-  form.addEventListener('submit', () => {
-    signatureInput.value = signaturePad.isEmpty()
-      ? ''
-      : signaturePad.toDataURL('image/png');
-  });
-</script>
 
         </div>
 
@@ -675,6 +667,25 @@
     if (proofInput2 && proofPreview2) {
         proofInput2.addEventListener('change', () => updateImagePreview(proofInput2, proofPreview2));
     }
+</script>
+
+<script>
+  const canvas = document.getElementById('sigCanvas');
+  const signaturePad = new SignaturePad(canvas);
+  const form = document.getElementById('purchase-form');
+  const signatureInput = document.getElementById('signature_image_data');
+  const oldSignature = @json(old('signature_image_data'));
+
+  if (oldSignature) {
+    signaturePad.fromDataURL(oldSignature);
+    signatureInput.value = oldSignature;
+  }
+
+  form.addEventListener('submit', () => {
+    signatureInput.value = signaturePad.isEmpty()
+      ? ''
+      : signaturePad.toDataURL('image/png');
+  });
 </script>
 
 
