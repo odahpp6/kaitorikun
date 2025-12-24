@@ -13,6 +13,7 @@ const app = Vue.createApp({
                 prefecture: { valid: false, touched: true },
                 city: { valid: false, touched: true },
                 address_detail: { valid: false, touched: true },
+                gendarCheck:{class: 'animate-shadow-red', valid: false },
                 buttunClass: ''
             }
         };
@@ -30,10 +31,26 @@ const app = Vue.createApp({
             this.message.name.valid = !isEmpty;
         },
         checkTel(event) {
-            const tel = event.target.value.trim();
-            const isEmpty = tel === "";
-            this.message.tel.class = isEmpty ? 'animate-shadow-red' : '';
-            this.message.tel.valid = !isEmpty;
+       // 1. 入力された値を取得
+    let val = event.target.value;
+
+    // 2. 全角数字を半角に変換（ここをより安全な正規表現に変更）
+    val = val.replace(/[０-９]/g, (s) => {
+        return String.fromCharCode(s.charCodeAt(0) - 65248);
+    });
+
+    // 3. 数字以外のすべての文字（ハイフン「-」「ー」、スペース、記号など）を削除
+    const tel = val.replace(/[^0-9]/g, '');
+
+    // 4. 入力欄の値を上書き（ハイフンなどが消えた数字だけの状態になる）
+    event.target.value = tel;
+
+    // 5. バリデーション判定
+    const isEmpty = tel === "";
+    const isValid = !isEmpty && tel.length >= 10; 
+
+    this.message.tel.class = isValid ? '' : 'animate-shadow-red';
+    this.message.tel.valid = isValid;
         },
         checkProofImage(event) {
             const fileInput = event.target;
@@ -63,6 +80,11 @@ const app = Vue.createApp({
             const value = event.target.value.trim();
             this.message.address_detail.touched = true;
             this.message.address_detail.valid = value !== '';
+        },
+        checkGender(event) {
+            const value = event.target.value;
+            this.message.gendarCheck.valid = value === 'male' || value === 'female';
+            this.message.gendarCheck.class = this.message.gendarCheck.valid ? '' : 'animate-shadow-red';
         }
         
 

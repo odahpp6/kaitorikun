@@ -15,7 +15,7 @@
     </div>
 @endif
 
-    <div id="app_mount">
+    
   <form action="{{ route('purchase.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8" id="purchase-form">
         @csrf
         <div id="item-container" class="space-y-4">
@@ -43,6 +43,7 @@
             </button>
         </div>
 {{-- 修正後の商品テンプレート：name属性を INDEX に置き換え可能にする --}}
+<div id="app_mount">
 <div id="item-template" style="display: none;">
     <div class="item-row border p-4 rounded-lg bg-gray-50 relative">
         <div class="flex flex-wrap -mx-2">
@@ -228,20 +229,16 @@
 
                 {{-- 性別・職業 --}}
                 <div class="flex flex-wrap -mx-3">
-                    <div class="w-full md:w-1/2 px-3">
+                    <div class="w-full md:w-1/2 px-3" v-bind:class="message.gendarCheck.class">
                         <label class="block text-sm font-bold mb-1">性別 <span class="text-red-500">必須</span></label>
                         <div class="flex flex-wrap gap-4 text-sm">
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="male" @checked(old('gender') === 'male') required>
+                                <input type="radio" name="gender" v-on:input="checkGender" value="male" @checked(old('gender') === 'male') required>
                                 <span>男性</span>
                             </label>
                             <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="female" @checked(old('gender') === 'female') required>
+                                <input type="radio" name="gender" v-on:input="checkGender"   value="female" @checked(old('gender') === 'female') required>
                                 <span>女性</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="other" @checked(old('gender') === 'other') required>
-                                <span>その他</span>
                             </label>
                         </div>
                         @error('gender')
@@ -418,16 +415,42 @@
             @error('invoice_issuer')
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror
+             </div><!--#app  -->
         <div class="mt-4">
             <p class="text-sm text-gray-600 mb-2">上記確認の上サインお願いします<span class="text-red-500">（必須）</span></p>
             <canvas id="sigCanvas" width="600" height="240" class="w-full max-w-xl h-48 border-2 border-gray-400 rounded-md bg-white shadow-sm"></canvas>
             <input type="hidden" name="signature_image_data" id="signature_image_data" value="{{ old('signature_image_data') }}">
+
+           <button type="button" id="clear-btn" class="mt-2 px-4 py-2 bg-red-500 text-white rounded shadow-sm hover:bg-red-600"> 書き直す（全部消す）</button>         
             @error('signature_image_data')
                 <p class="text-sm text-red-600">{{ $message }}</p>
             @enderror
             <p class="text-xs text-gray-500 mt-2">※署名後に送信すると画像として保存されます</p>
         </div>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad/dist/signature_pad.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('sigCanvas');
+    const signaturePad = new SignaturePad(canvas);
+    const clearBtn = document.getElementById('clear-btn');
+    const hiddenInput = document.getElementById('signature_image_data');
+
+    // 署名を消す
+    clearBtn.addEventListener('click', function () {
+        signaturePad.clear();          // canvasをクリア
+        hiddenInput.value = '';        // hiddenの画像データもクリア
+    });
+
+    // 署名完了時に画像をhiddenに保存
+    signaturePad.onEnd = function () {
+        if (!signaturePad.isEmpty()) {
+            hiddenInput.value = signaturePad.toDataURL('image/png');
+        }
+    };
+});
+</script>
+
+
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
         </div>
@@ -483,7 +506,7 @@
             </button>
         </div>
     </form>
-   </div><!--#app  -->
+  
 </div>
 
 
@@ -501,6 +524,10 @@
   animation: pulseShadowRed 1.6s ease-in-out infinite;
 }
 </style>
+
+
+
+
 
 <script>
     const oldItems = @json(old('items', []));
