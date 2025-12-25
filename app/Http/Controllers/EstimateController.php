@@ -8,6 +8,7 @@ use App\Models\EstimateItem;
 use Illuminate\Support\Facades\DB; // ★追加：トランザクション用
 use Illuminate\Http\RedirectResponse; // ★追加：戻り値の型用
 use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class EstimateController extends Controller
@@ -147,6 +148,25 @@ public function create()
     // ビューには $Estimate (親データ) のみを渡す
     // 明細データは $Estimate->items でアクセス可能になる
     return view('estimate.detail', compact('Estimate'));
+    }
+
+    // 見積書印刷（PDF）
+    public function print($id)
+    {
+        $storeId = Auth::id();
+        $Estimate = Estimate::with('items')
+                            ->where('id', $id)
+                            ->where('store_id', $storeId)
+                            ->firstOrFail();
+
+        $pdf = Pdf::loadView('estimate.print', compact('Estimate'))
+            ->setPaper('A4')
+            ->setOption('defaultFont', 'ipaexg')
+            ->setOption('fontDir', storage_path('fonts'))
+            ->setOption('fontCache', storage_path('fonts'))
+            ->setOption('chroot', realpath(base_path()));
+
+        return $pdf->stream('estimate_' . $Estimate->id . '.pdf');
     }
 
 
@@ -326,4 +346,3 @@ public function create()
 
 
  
-
