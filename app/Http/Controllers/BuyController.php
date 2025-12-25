@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PurchaseRegistered;
 
 class BuyController extends Controller
 {
@@ -36,6 +40,8 @@ class BuyController extends Controller
              'items.*.buy_price' => 'required|numeric',
              'signature_image_data' => 'required', // 署名は必須
              'payment_method' => 'required|string', // arrayではなくstringにする
+             'payment_remarks' => 'nullable|string',
+             'remarks' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -81,7 +87,9 @@ class BuyController extends Controller
             $deal->arrival_type = $request->arrival_type;
             $deal->campaign_id = $request->campaign_id;
             $deal->payment_method = $request->payment_method;
+            $deal->payment_remarks = $request->payment_remarks;
             $deal->invoice_issuer = $request->invoice_issuer;
+            $deal->remarks = $request->remarks;
             
             // 同意フラグ
             $deal->agree_received_amount = $request->has('agree_received_amount');
@@ -128,7 +136,13 @@ class BuyController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('purchase.list')->with('success', '契約を完了しました。伝票番号: ' . $deal->slip_number);
+
+            $storeEmail = Auth::user()?->email;
+            if (!empty($storeEmail)) {
+                Mail::to($storeEmail)->send(new PurchaseRegistered($deal));
+            }
+
+            return redirect('/purchase/list')->with('success', '契約を完了しました。伝票番号: ' . $deal->slip_number);
 
         } catch (Exception $e) {
             DB::rollBack();
@@ -160,6 +174,66 @@ class BuyController extends Controller
         return view('purchase.detail', compact('deal'));
     }
 
+    // 買取契約書印刷
+    public function purchase_print($id)
+    {
+        $storeId = Auth::id();
+
+        $deal = Deal::where('id', $id)
+                    ->where('store_id', $storeId)
+                    ->with(['customer', 'buyItems'])
+                    ->firstOrFail();
+
+        $store = User::find($storeId);
+
+        $pdf = Pdf::loadView('purchase.print_pdf', compact('deal', 'store'))
+            ->setPaper('A4')
+            ->setOption('defaultFont', 'ipaexg')
+            ->setOption('fontDir', storage_path('fonts'))
+            ->setOption('fontCache', storage_path('fonts'))
+            ->setOption('chroot', realpath(base_path()));
+
+        return $pdf->stream('purchase_' . ($deal->slip_number ?? $deal->id) . '.pdf');
+    }
+
+// 買取契約検索機能
+
+public function index(Request $request)
+{
+    // 1. クエリの準備（Eager Loadingでリレーションも取得）
+    $query = Deal::with(['customer', 'buyItems']);
+
+    // 2. 顧客名で検索 (Customerテーブルを結合して検索)
+    if ($request->filled('customer_name')) {
+        $name = $request->customer_name;
+        $query->whereHas('customer', function($q) use ($name) {
+            $q->where('name', 'like', "%{$name}%");
+        });
+    }
+
+    // 3. 日時〜日時で検索
+    if ($request->filled('date_from')) {
+        $query->whereDate('created_at', '>=', $request->date_from);
+    }
+    if ($request->filled('date_to')) {
+        $query->whereDate('created_at', '<=', $request->date_to);
+    }
+
+    // 4. 商品名で検索 (BuyItemsテーブルの中身を検索)
+    if ($request->filled('product_name')) {
+        $product = $request->product_name;
+        $query->whereHas('buyItems', function($q) use ($product) {
+            $q->where('product', 'like', "%{$product}%");
+        });
+    }
+
+    // 5. 結果を取得（ページネーションを使うのがおすすめ）
+    $deals = $query->orderBy('created_at', 'desc')->paginate(20);
+
+    return view('purchase.list', compact('deals'));
+}
+
+
     
     // 買取契約修正画面表示
     public function purchase_edit($id)
@@ -176,15 +250,17 @@ class BuyController extends Controller
     public function purchase_update(Request $request, $id) // IDを受け取る
 {
     // 1. バリデーション（画像などは更新時のみ任意にすることが多い）
-    $request->validate([
-        'name' => 'required|max:50',
-        'phone_number' => 'required',
-        'email' => 'nullable|email',
-        // 更新時は画像が必須でない場合が多いので nullable や required_without などにする
-        'items.*.product' => 'required',
-        'items.*.buy_price' => 'required|numeric',
-        'payment_method' => 'required|string',
-    ]);
+        $request->validate([
+            'name' => 'required|max:50',
+            'phone_number' => 'required',
+            'email' => 'nullable|email',
+            // 更新時は画像が必須でない場合が多いので nullable や required_without などにする
+            'items.*.product' => 'required',
+            'items.*.buy_price' => 'required|numeric',
+            'payment_method' => 'required|string',
+            'payment_remarks' => 'nullable|string',
+            'remarks' => 'nullable|string',
+        ]);
 
     DB::beginTransaction();
     try {
@@ -209,7 +285,7 @@ class BuyController extends Controller
 
         // 4. 取引情報の更新
         $deal->fill($request->only([
-            'buy_type', 'arrival_type', 'campaign_id', 'payment_method', 'invoice_issuer'
+            'buy_type', 'arrival_type', 'campaign_id', 'payment_method', 'payment_remarks', 'invoice_issuer', 'remarks'
         ]));
         $deal->agree_received_amount = $request->has('agree_received_amount');
         $deal->agree_no_return = $request->has('agree_no_return');
@@ -246,7 +322,7 @@ class BuyController extends Controller
         }
 
         DB::commit();
-        return redirect()->route('purchase.list')->with('success', '契約を更新しました。');
+            return redirect('/purchase/list')->with('success', '契約を更新しました。');
 
         } catch (Exception $e) {
         DB::rollBack();
@@ -280,10 +356,10 @@ class BuyController extends Controller
             $deal->delete();
 
             DB::commit();
-            return redirect()->route('purchase.list')->with('success', '契約を削除しました。');
+            return redirect('/purchase/list')->with('success', '契約を削除しました。');
         } catch (Exception $e) {
             DB::rollBack();
-            return redirect()->route('purchase.list')->with('error', '削除に失敗しました。' . $e->getMessage());
+            return redirect('/purchase/list')->with('error', '削除に失敗しました。' . $e->getMessage());
         }
     }
 

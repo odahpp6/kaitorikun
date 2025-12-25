@@ -370,6 +370,24 @@
                         @enderror
                     </div>
                 </div>
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full px-3">
+                        <label class="block text-sm font-bold mb-1">備考</label>
+                        <textarea name="payment_remarks" rows="2" class="w-full border border-gray-300 rounded-md">{{ old('payment_remarks') }}</textarea>
+                        @error('payment_remarks')
+                            <p class="text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full px-3">
+                        <label class="block text-sm font-bold mb-1">取引備考</label>
+                        <textarea name="remarks" rows="2" class="w-full border border-gray-300 rounded-md">{{ old('remarks') }}</textarea>
+                        @error('remarks')
+                            <p class="text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
 
             </div>
         </div>

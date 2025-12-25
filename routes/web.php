@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/estimate/list', [EstimateController::class, 'list'])->name('estimate.list');
     //見積詳細
     Route::get('/estimate/{id}/detail', [EstimateController::class, 'detail'])->name('estimate.detail');
+    //見積印刷（PDF）
+    Route::get('/estimate/{id}/print', [EstimateController::class, 'print'])->name('estimate.print');
     //見積更新
     // web.php
     // 見積更新 (GET)
@@ -96,8 +98,16 @@ Route::post('/purchase',[BuyController::class, 'store'])->name('purchase.store')
 // 買取契約登録一覧
 Route::get('/purchase/list',[BuyController::class, 'purchase_list'])->name('purchase.list');
 
+// 買取契約検索
+Route::get('/purchase/list',[BuyController::class, 'index'])->name('purchase.search');
+
 // 買取登録詳細
 Route::get('/purchase/{id}/detail',[BuyController::class, 'purchase_detail'])->name('purchase.detail');
+
+// 買取登録契約書印刷
+Route::get('/purchase/{id}/print',[BuyController::class, 'purchase_print'])->name('purchase.print');
+
+
 // 買取登録修正画面表示
 Route::get('/purchase/{id}/edit',[BuyController::class, 'purchase_edit'])->name('purchase.edit');
 // 買取登録更新処理

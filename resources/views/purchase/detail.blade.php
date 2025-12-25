@@ -11,10 +11,17 @@
         $birthDate = sprintf('%04d/%02d/%02d', $customer->birth_y, $customer->birth_m, $customer->birth_d);
     }
     $paymentMethod = $deal->payment_method ?: '—';
+    $paymentRemarks = $deal->payment_remarks ?: '—';
+    $dealRemarks = $deal->remarks ?: '—';
 @endphp
 
 <div class="max-w-6xl mx-auto p-6 space-y-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約詳細</h2>
+    <div class="flex items-center justify-between mb-6 pb-2 border-b-2 border-blue-500">
+        <h2 class="text-2xl font-bold text-gray-800">買取契約詳細</h2>
+        <a href="{{ route('purchase.print', $deal->id) }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
+            PDF出力
+        </a>
+    </div>
     <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
         <h2 class="text-xl font-bold mb-6 flex items-center">
             <span class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2 text-sm">1</span>
@@ -160,6 +167,18 @@
                     <p class="font-semibold">{{ $paymentMethod }}</p>
                 </div>
             </div>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full px-3">
+                    <p class="text-xs text-gray-500">備考</p>
+                    <p class="font-semibold whitespace-pre-wrap">{{ $paymentRemarks }}</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full px-3">
+                    <p class="text-xs text-gray-500">取引備考</p>
+                    <p class="font-semibold whitespace-pre-wrap">{{ $dealRemarks }}</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -246,6 +265,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="flex justify-center">
+        <a href="{{ route('purchase.print', $deal->id) }}" class="inline-flex items-center px-6 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
+            PDF出力
+        </a>
     </div>
 </div>
 @endsection

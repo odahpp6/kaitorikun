@@ -4,7 +4,12 @@
 @section('content')
 
 <div class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h1 class="text-center text-2xl font-bold my-4">見積詳細</h1>
+    <div class="flex items-center justify-between my-4">
+        <h1 class="text-2xl font-bold">見積詳細</h1>
+        <a href="{{ route('estimate.print', $Estimate->id) }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
+            PDF出力
+        </a>
+    </div>
     
     <div class="mb-4 p-4 border rounded-lg bg-gray-50">
         <p><strong>タイトル:</strong> {{ $Estimate->title }}</p>
@@ -15,8 +20,8 @@
         <thead>
             <tr class="bg-gray-100">
                 <th class="border px-2 py-2">品目</th>
-                <th class="border px-2 py-2">査定価格 (num1)</th>
-                <th class="border px-2 py-2">数量 (num2)</th>
+                <th class="border px-2 py-2">査定価格</th>
+                <th class="border px-2 py-2">数量</th>
                 <th class="border px-2 py-2">備考</th>
             </tr>
         </thead>
@@ -59,6 +64,4 @@
 
  
  
-
-
 

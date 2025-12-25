@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->foreignId('customer_id')->constrained('customers'); // 契約者（顧客ID）
             $table->text('remarks_1')->nullable(); // 備考
             $table->text('payment_method'); // 支払い
+            $table->text('payment_remarks')->nullable(); // 支払い備考
             $table->text('invoice_issuer');//適格業者
             $table->string('buy_type', 50); // 買取区分
             $table->string('arrival_type', 50); // 来店区分
