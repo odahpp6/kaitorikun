@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('product', 255); // 商品名
             $table->string('classification', 50); // 買取分類
             $table->text('remarks_2')->nullable(); // 商品ごとの備考
+            $table->unsignedInteger('quantity')->default(1); // 数量
             $table->decimal('buy_price', 10, 0); // 買取金額（単価）
             $table->timestamps();
         });
