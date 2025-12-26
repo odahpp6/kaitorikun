@@ -6,6 +6,7 @@ use App\Http\Controllers\EstimateController;
 use App\Http\Controllers\MasterCampaignController;
 use App\Http\Controllers\MasterWholesaleController;
 use App\Http\Controllers\BuyController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -118,9 +119,7 @@ Route::get('/purchase/{id}/delete_confirm',[BuyController::class, 'purchase_dele
 Route::delete('/purchase/{id}/delete',[BuyController::class, 'purchase_delete'])->name('purchase.delete');
 
 // 販売登録
-Route::get('/sale', function () {
-    return view('sale.register');
-})->name('sale.register');
+Route::get('/sale', [SaleController::class, 'register_view'])->name('sale.register');
 
 
 

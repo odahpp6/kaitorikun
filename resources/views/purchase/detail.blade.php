@@ -22,6 +22,8 @@
             PDF出力
         </a>
     </div>
+
+    dd()
     <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
         <h2 class="text-xl font-bold mb-6 flex items-center">
             <span class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2 text-sm">1</span>
@@ -266,11 +268,24 @@
             </div>
         </div>
     </div>
-
+    
+@php
+    $firstItem = $deal->buyItems->first();
+@endphp
+<form action="{{ route('sale.register') }}" method="GET">
+    <input type="hidden" name="slip_number" value="{{ $deal->slip_number ?? '' }}">
+    <input type="hidden" name="deal_id" value="{{ $deal->id }}">
+    <input type="hidden" name="product" value="{{ $firstItem->product ?? '' }}">
+    <button type="submit">商品登録ページへ</button>
+</form>
     <div class="flex justify-center">
         <a href="{{ route('purchase.print', $deal->id) }}" class="inline-flex items-center px-6 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
             PDF出力
         </a>
     </div>
 </div>
+
+
+
+
 @endsection

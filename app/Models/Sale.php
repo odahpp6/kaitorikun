@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sale extends Model
 {
     use HasFactory;
+    protected $table = 'sale';
     // 一括保存を許可するカラムを指定
     protected $guarded = ['id' ];
 

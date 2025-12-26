@@ -26,8 +26,8 @@ return new class extends Migration
             $table->unsignedInteger('quantity'); // 数量
             $table->decimal('unit_price', 10, 2); // 単価
             $table->decimal('selling_price', 10, 2); // 合計金額
-            $table->date('remarks_1')->nullable(); // 販売日
-            $table->date('remarks_2')->nullable(); // 入金日
+            $table->date('sale_date')->nullable(); // 販売日
+            $table->date('deposit_date')->nullable(); // 入金日
             $table->boolean('is_confirmed')->nullable(); // 備考欄
             $table->foreignId('wholesale')
                   ->nullable() // 卸先名 
