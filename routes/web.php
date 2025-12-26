@@ -117,6 +117,10 @@ Route::get('/purchase/{id}/delete_confirm',[BuyController::class, 'purchase_dele
 // 買取登録削除実行
 Route::delete('/purchase/{id}/delete',[BuyController::class, 'purchase_delete'])->name('purchase.delete');
 
+// 販売登録
+Route::get('/sale', function () {
+    return view('sale.register');
+})->name('sale.register');
 
 
 
