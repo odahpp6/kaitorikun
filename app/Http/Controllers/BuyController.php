@@ -316,6 +316,8 @@ public function index(Request $request)
                 // 画像が新しい場合は保存、ない場合は以前のパスを引き継ぐロジックが必要（今回は新規のみ想定）
                 if (isset($itemData['product_img']) && $itemData['product_img'] instanceof \Illuminate\Http\UploadedFile) {
                     $item->product_img = $itemData['product_img']->store('products', 'public');
+                } elseif (!empty($itemData['product_img_existing'])) {
+                    $item->product_img = $itemData['product_img_existing'];
                 }
                 $item->save();
             }

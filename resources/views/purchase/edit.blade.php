@@ -26,7 +26,19 @@
                 'remarks_2' => $item->remarks_2,
                 'quantity' => $item->quantity,
                 'buy_price' => $item->buy_price,
+                'product_img' => $item->product_img,
+                'product_img_url' => $item->product_img ? asset('storage/' . $item->product_img) : null,
             ];
+        })->values()->toArray();
+    } else {
+        $initialItems = collect($initialItems)->map(function ($item) {
+            $existingPath = $item['product_img_existing'] ?? null;
+            if ($existingPath) {
+                $item['product_img'] = $existingPath;
+                $item['product_img_url'] = asset('storage/' . $existingPath);
+            }
+
+            return $item;
         })->values()->toArray();
     }
 @endphp
@@ -67,6 +79,7 @@
                 <label class="block text-sm font-bold mb-1">商品画像</label>
                 {{-- items[INDEX][xxx] 形式に変更 --}}
                 <input type="file" name="items[INDEX][product_img]" class="w-full text-sm border border-gray-300 bg-white rounded p-1" data-preview="product" disabled>
+                <input type="hidden" name="items[INDEX][product_img_existing]" data-existing="product" disabled>
                 <img class="mt-2 w-full h-28 object-contain border border-gray-200 rounded hidden" data-preview="product">
             </div>
 
@@ -616,6 +629,8 @@
                 const remarksInput = row.querySelector('textarea[name^="items"][name$="[remarks_2]"]');
                 const quantityInput = row.querySelector('input[name^="items"][name$="[quantity]"]');
                 const buyPriceInput = row.querySelector('input[name^="items"][name$="[buy_price]"]');
+                const existingImageInput = row.querySelector('input[name^="items"][name$="[product_img_existing]"]');
+                const imagePreview = row.querySelector('img[data-preview="product"]');
 
                 if (productInput && item.product !== undefined) {
                     productInput.value = item.product ?? '';
@@ -631,6 +646,13 @@
                 }
                 if (buyPriceInput && item.buy_price !== undefined) {
                     buyPriceInput.value = item.buy_price ?? '';
+                }
+                if (existingImageInput && item.product_img !== undefined) {
+                    existingImageInput.value = item.product_img ?? '';
+                }
+                if (imagePreview && item.product_img_url) {
+                    imagePreview.src = item.product_img_url;
+                    imagePreview.classList.remove('hidden');
                 }
             });
         } else {

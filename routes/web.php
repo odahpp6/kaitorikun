@@ -120,8 +120,19 @@ Route::delete('/purchase/{id}/delete',[BuyController::class, 'purchase_delete'])
 
 // 販売登録
 Route::get('/sale', [SaleController::class, 'register_view'])->name('sale.register');
-
-
+Route::post('/sale', [SaleController::class, 'register'])->name('sale.store');
+// 販売詳細画面表示
+Route::get('/sale/{id}/detail', [SaleController::class, 'detail'])->name('sale.detail');
+// 販売一覧画面表示
+Route::get('/sale/list', [SaleController::class, 'list'])->name('sale.list');
+//販売登録修正画面表示
+Route::get('/sale/{id}/edit', [SaleController::class, 'edit'])->name('sale.edit');
+//販売登録更新処理
+Route::put('/sale/{id}/edit', [SaleController::class, 'update'])->name('sale.update');
+//販売登録削除確認
+Route::get('/sale/{id}/delete_confirm', [SaleController::class, 'delete_confirm'])->name('sale.delete_confirm');
+//販売登録削除実行
+Route::delete('/sale/{id}/delete', [SaleController::class, 'delete'])->name('sale.delete');
 
 
 });

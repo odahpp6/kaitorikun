@@ -86,6 +86,14 @@
     $paymentMethod = $deal->payment_method ?: '—';
     $paymentRemarks = $deal->payment_remarks ?: '—';
     $dealRemarks = $deal->remarks ?: '—';
+    $hasBuyItems = $deal->buyItems->isNotEmpty();
+    $buyItemsTotal = $deal->buyItems->sum(function ($item) {
+        $quantity = $item->quantity ?? 1;
+        $price = $item->buy_price ?? 0;
+
+        return $quantity * $price;
+    });
+    $buyItemsTax = (int) floor($buyItemsTotal * 10 / 110);
 @endphp
 
 <h1>買取計算書（売買契約書）</h1>
@@ -215,8 +223,12 @@
         </tr>
     @endforelse
     <tr>
+        <th class="text-right" colspan="5">消費税額(10%)</th>
+        <td class="text-right">{{ $hasBuyItems ? number_format($buyItemsTax) : '—' }}</td>
+    </tr>
+    <tr>
         <th class="text-right" colspan="5">合計金額</th>
-        <td class="text-right">{{ $deal->total_price !== null ? number_format($deal->total_price) : '—' }}</td>
+        <td class="text-right">{{ $hasBuyItems ? number_format($buyItemsTotal) : '—' }}</td>
     </tr>
 </table>
 

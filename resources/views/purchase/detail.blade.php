@@ -190,6 +190,15 @@
             商品情報
         </h2>
 
+        @php
+            $buyItemsTotal = $deal->buyItems->sum(function ($item) {
+                $quantity = $item->quantity ?? 1;
+                $price = $item->buy_price ?? 0;
+
+                return $quantity * $price;
+            });
+            $buyItemsTax = (int) floor($buyItemsTotal * 10 / 110);
+        @endphp
         <div class="overflow-x-auto">
             <table class="w-full border border-gray-300 text-sm">
                 <thead>
@@ -226,6 +235,18 @@
                         </tr>
                     @endforelse
                 </tbody>
+                @if ($deal->buyItems->isNotEmpty())
+                    <tfoot>
+                        <tr class="bg-gray-50">
+                            <td class="border px-2 py-2 text-right font-semibold" colspan="6">消費税額(10%)</td>
+                            <td class="border px-2 py-2 text-right font-semibold">{{ number_format($buyItemsTax) }}</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="border px-2 py-2 text-right font-semibold" colspan="6">合計</td>
+                            <td class="border px-2 py-2 text-right font-semibold">{{ number_format($buyItemsTotal) }}</td>
+                        </tr>
+                    </tfoot>
+                @endif
             </table>
         </div>
     </div>
@@ -270,13 +291,47 @@
     </div>
     
 @php
-    $firstItem = $deal->buyItems->first();
+    $defaultItemIndex = $deal->buyItems->isNotEmpty() ? 0 : null;
 @endphp
-<form action="{{ route('sale.register') }}" method="GET">
+<form action="{{ route('sale.register') }}" method="GET" class="space-y-4">
     <input type="hidden" name="slip_number" value="{{ $deal->slip_number ?? '' }}">
     <input type="hidden" name="deal_id" value="{{ $deal->id }}">
-    <input type="hidden" name="product" value="{{ $firstItem->product ?? '' }}">
-    <button type="submit">商品登録ページへ</button>
+    <input type="hidden" name="product" id="selected-product" value="">
+    <input type="hidden" name="product_img" id="selected-product-img" value="">
+    <input type="hidden" name="classification" id="selected-classification" value="">
+    <input type="hidden" name="quantity" id="selected-quantity" value="">
+    <input type="hidden" name="buy_price" id="selected-buy-price" value="">
+    <input type="hidden" name="total_price" value="{{ $buyItemsTotal }}">
+
+    <div class="space-y-2">
+        <p class="text-sm font-semibold text-gray-700">販売登録する商品を選択</p>
+        @forelse ($deal->buyItems as $index => $item)
+            <label class="flex items-center gap-3 p-2 border border-gray-200 rounded hover:bg-gray-50">
+                <input
+                    type="radio"
+                    name="selected_item"
+                    value="{{ $index }}"
+                    data-product="{{ $item->product }}"
+                    data-product-img="{{ $item->product_img ?? '' }}"
+                    data-classification="{{ $item->classification ?? '' }}"
+                    data-quantity="{{ $item->quantity ?? 1 }}"
+                    data-buy-price="{{ $item->buy_price ?? 0 }}"
+                    @checked($defaultItemIndex === $index)
+                >
+                @if (!empty($item->product_img))
+                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" class="w-16 h-12 object-contain border border-gray-200 rounded">
+                @endif
+                <div class="text-sm">
+                    <p class="font-semibold">{{ $item->product }}</p>
+                    <p class="text-gray-600">分類: {{ $item->classification ?? '—' }} / 個数: {{ $item->quantity ?? 1 }}</p>
+                </div>
+            </label>
+        @empty
+            <p class="text-sm text-gray-500">商品が登録されていません</p>
+        @endforelse
+    </div>
+
+    <button type="submit" @disabled($deal->buyItems->isEmpty())>商品登録ページへ</button>
 </form>
     <div class="flex justify-center">
         <a href="{{ route('purchase.print', $deal->id) }}" class="inline-flex items-center px-6 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
@@ -287,5 +342,46 @@
 
 
 
+
+<script>
+    function syncSelectedItem(radio) {
+        if (!radio) {
+            return;
+        }
+        const productInput = document.getElementById('selected-product');
+        const productImgInput = document.getElementById('selected-product-img');
+        const classificationInput = document.getElementById('selected-classification');
+        const quantityInput = document.getElementById('selected-quantity');
+        const buyPriceInput = document.getElementById('selected-buy-price');
+
+        if (productInput) {
+            productInput.value = radio.dataset.product || '';
+        }
+        if (productImgInput) {
+            productImgInput.value = radio.dataset.productImg || '';
+        }
+        if (classificationInput) {
+            classificationInput.value = radio.dataset.classification || '';
+        }
+        if (quantityInput) {
+            quantityInput.value = radio.dataset.quantity || '1';
+        }
+        if (buyPriceInput) {
+            buyPriceInput.value = radio.dataset.buyPrice || '0';
+        }
+    }
+
+    document.addEventListener('change', (event) => {
+        const target = event.target;
+        if (target && target.matches('input[name="selected_item"]')) {
+            syncSelectedItem(target);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const checked = document.querySelector('input[name="selected_item"]:checked');
+        syncSelectedItem(checked);
+    });
+</script>
 
 @endsection

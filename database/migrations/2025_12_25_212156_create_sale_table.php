@@ -19,11 +19,15 @@ return new class extends Migration
                   ->constrained(table: 'users')
                   ->onDelete('cascade')
                   ->comment('所持店舗ID (users.id)');
-            $table->foreignId('deal_id')->constrained('deals')->onDelete('cascade'); // 取引ID
+            $table->foreignId('deal_id')
+                  ->nullable()
+                  ->constrained('deals')
+                  ->onDelete('cascade'); // 取引ID
             $table->string('product_img', 255)->nullable(); // 商品画像
             $table->string('product', 255); // 商品名
             $table->string('classification', 50); // 販売分類
             $table->unsignedInteger('quantity'); // 数量
+            $table->decimal('buy_price', 10, 2); // 買取価格
             $table->decimal('unit_price', 10, 2); // 単価
             $table->decimal('selling_price', 10, 2); // 合計金額
             $table->date('sale_date')->nullable(); // 販売日
