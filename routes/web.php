@@ -7,6 +7,7 @@ use App\Http\Controllers\MasterCampaignController;
 use App\Http\Controllers\MasterWholesaleController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\CashController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,6 +134,10 @@ Route::put('/sale/{id}/edit', [SaleController::class, 'update'])->name('sale.upd
 Route::get('/sale/{id}/delete_confirm', [SaleController::class, 'delete_confirm'])->name('sale.delete_confirm');
 //販売登録削除実行
 Route::delete('/sale/{id}/delete', [SaleController::class, 'delete'])->name('sale.delete');
+
+//現金残高登録
+Route::get('/cash_balance', [CashController::class, 'cash_balance_view'])->name('cash_balance.view');
+Route::post('/cash_balance', [CashController::class, 'cash_balance_register'])->name('cash_balance.register');
 
 
 });
