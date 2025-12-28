@@ -8,6 +8,8 @@ use App\Http\Controllers\MasterWholesaleController;
 use App\Http\Controllers\BuyController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CashController;
+use App\Http\Controllers\CashManagementController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -138,6 +140,19 @@ Route::delete('/sale/{id}/delete', [SaleController::class, 'delete'])->name('sal
 //現金残高登録
 Route::get('/cash_balance', [CashController::class, 'cash_balance_view'])->name('cash_balance.view');
 Route::post('/cash_balance', [CashController::class, 'cash_balance_register'])->name('cash_balance.register');
+//現金残高更新
+Route::put('/cash_balance', [CashController::class, 'cash_balance_update'])->name('cash_balance.update');
+//現金出納帳登録
+Route::get('/cash_management', [CashManagementController::class, 'cash_management_view'])->name('cash_management.view');
+Route::post('/cash_management', [CashManagementController::class, 'cash_management_register'])->name('cash_management.register');
+//現金出納帳一覧表示
+Route::get('/cash_management/list', [CashManagementController::class, 'cash_management_list'])->name('cash_management.list'); 
+
+//顧客検索
+Route::get('/customer/search', [CustomerController::class, 'customer_search'])->name('customer.search');
+
+
+
 
 
 });

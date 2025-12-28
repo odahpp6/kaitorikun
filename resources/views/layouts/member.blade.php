@@ -33,7 +33,7 @@
     </div>
 </header>
 <div class="flex flex-wrap ">
-<aside class="w-full md:w-1/6 p-0 bg-stone-950 text-white">
+<aside id="side-nav" class="w-full md:w-1/6 p-0 bg-stone-950 text-white transition-[width] duration-300 ease-in-out overflow-hidden">
 <nav role="navigation" aria-label="サイドナビ">
     <ul class="p-4 space-y-2">
         <!-- 見積グループ -->
@@ -69,14 +69,14 @@
         <!-- 販売グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-amber-300">販売管理</li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-amber-200 hover:bg-amber-800 transition-colors duration-200">
-                <i class="fa-solid fa-cart-plus w-4 h-4 text-amber-200"></i>
+            <a href="{{ route('sale.register') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('sale') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
+                <i class="fa-solid fa-cart-plus w-4 h-4 {{ request()->is('sale') ? 'text-white' : 'text-amber-200' }}"></i>
                 <span>販売登録</span>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-amber-200 hover:bg-amber-800 transition-colors duration-200">
-                <i class="fa-solid fa-receipt w-4 h-4 text-amber-200"></i>
+            <a href="{{ route('sale.list') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('sale/list*') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
+                <i class="fa-solid fa-receipt w-4 h-4 {{ request()->is('sale/list*') ? 'text-white' : 'text-amber-200' }}"></i>
                 <span>販売履歴</span>
             </a>
         </li>
@@ -84,27 +84,21 @@
         <!-- 金庫・入出金グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-purple-300">金庫・入出金管理</li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
+            <a href="{{ route('cash_balance.view') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-money-bill-wave w-4 h-4 text-purple-200"></i>
                 <span>金庫更新</span>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
+            <a href="{{ route('cash_management.view') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-right-left w-4 h-4 text-purple-200"></i>
                 <span>入出金管理</span>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
+            <a href="{{ route('cash_management.list') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-book w-4 h-4 text-purple-200"></i>
                 <span>出納帳</span>
-            </a>
-        </li>
-        <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
-                <i class="fa-solid fa-money-check-dollar w-4 h-4 text-purple-200"></i>
-                <span>現金残高確認</span>
             </a>
         </li>
 
@@ -155,24 +149,47 @@
 </aside>
 <main class="w-full md:w-5/6 p-6 bg-amber-50 min-h-screen" id="main">
 
+  <div class="mb-4">
+    <button type="button" id="side-nav-toggle" class="inline-flex items-center gap-2 rounded-md bg-stone-900 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-stone-800">
+        <i class="fa-solid fa-bars"></i>
+        <span>メニュー</span>
+    </button>
+  </div>
+
   @yield('content')
 
 </main>
 </div>
-<style>
-    body {
-  opacity: 0;
-   transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-body.is-loaded {
-  opacity: 1;
-}
-</style>
-
 <script>
-    window.addEventListener('load', () => {
-  document.body.classList.add('is-loaded');
-});
+  const sideNav = document.getElementById('side-nav');
+  const toggleBtn = document.getElementById('side-nav-toggle');
+  const mainEl = document.getElementById('main');
+  let isClosed = false;
+
+  const applySideNavState = () => {
+    if (!sideNav) return;
+    if (window.innerWidth < 768) {
+      sideNav.style.width = isClosed ? '0' : '100%';
+      if (mainEl) {
+        mainEl.classList.add('md:w-5/6');
+        mainEl.classList.remove('md:w-full');
+      }
+      return;
+    }
+    sideNav.style.width = isClosed ? '0' : '';
+    if (mainEl) {
+      mainEl.classList.toggle('md:w-full', isClosed);
+      mainEl.classList.toggle('md:w-5/6', !isClosed);
+    }
+  };
+
+  toggleBtn?.addEventListener('click', () => {
+    isClosed = !isClosed;
+    applySideNavState();
+  });
+
+  window.addEventListener('resize', applySideNavState);
+  applySideNavState();
 </script>
 
 </body>

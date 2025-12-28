@@ -23,7 +23,6 @@
         </a>
     </div>
 
-    dd()
     <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
         <h2 class="text-xl font-bold mb-6 flex items-center">
             <span class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2 text-sm">1</span>
@@ -46,7 +45,7 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">身分証明書画像（表面）</p>
                     @if (!empty($customer->proof_img_1))
-                        <img src="{{ asset('storage/' . $customer->proof_img_1) }}" alt="身分証明書画像（表面）" class="mt-2 w-full h-28 object-contain border border-gray-200 rounded">
+                        <img src="{{ asset('storage/' . $customer->proof_img_1) }}" alt="身分証明書画像（表面）" loading="lazy" class="mt-2 w-full h-28 object-contain border border-gray-200 rounded">
                     @else
                         <p class="text-gray-500">未登録</p>
                     @endif
@@ -54,7 +53,7 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">身分証明書画像（裏面）</p>
                     @if (!empty($customer->proof_img_2))
-                        <img src="{{ asset('storage/' . $customer->proof_img_2) }}" alt="身分証明書画像（裏面）" class="mt-2 w-full h-28 object-contain border border-gray-200 rounded">
+                        <img src="{{ asset('storage/' . $customer->proof_img_2) }}" alt="身分証明書画像（裏面）" loading="lazy" class="mt-2 w-full h-28 object-contain border border-gray-200 rounded">
                     @else
                         <p class="text-gray-500">未登録</p>
                     @endif
@@ -218,7 +217,7 @@
                             <td class="border px-2 py-1 text-center">{{ $index + 1 }}</td>
                             <td class="border px-2 py-1">
                                 @if (!empty($item->product_img))
-                                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" class="w-24 h-20 object-contain border border-gray-200 rounded">
+                                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" loading="lazy" class="w-24 h-20 object-contain border border-gray-200 rounded">
                                 @else
                                     <span class="text-gray-500">未登録</span>
                                 @endif
@@ -281,7 +280,7 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">署名画像</p>
                     @if (!empty($deal->signature_image_data))
-                        <img src="{{ asset('storage/' . $deal->signature_image_data) }}" alt="署名" class="mt-2 w-full max-w-xl h-40 object-contain border border-gray-200 rounded">
+                        <img src="{{ asset('storage/' . $deal->signature_image_data) }}" alt="署名" loading="lazy" class="mt-2 w-full max-w-xl h-40 object-contain border border-gray-200 rounded">
                     @else
                         <p class="text-gray-500">未登録</p>
                     @endif
@@ -303,10 +302,13 @@
     <input type="hidden" name="buy_price" id="selected-buy-price" value="">
     <input type="hidden" name="total_price" value="{{ $buyItemsTotal }}">
 
-    <div class="space-y-2">
-        <p class="text-sm font-semibold text-gray-700">販売登録する商品を選択</p>
+    <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+            <p class="text-sm font-semibold text-slate-800">販売登録する商品を選択</p>
+            <span class="text-xs text-slate-500">1点選択</span>
+        </div>
         @forelse ($deal->buyItems as $index => $item)
-            <label class="flex items-center gap-3 p-2 border border-gray-200 rounded hover:bg-gray-50">
+            <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-lg hover:bg-slate-50 transition">
                 <input
                     type="radio"
                     name="selected_item"
@@ -319,19 +321,25 @@
                     @checked($defaultItemIndex === $index)
                 >
                 @if (!empty($item->product_img))
-                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" class="w-16 h-12 object-contain border border-gray-200 rounded">
+                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" loading="lazy" class="w-16 h-12 object-contain border border-slate-200 rounded bg-white">
+                @else
+                    <div class="w-16 h-12 flex items-center justify-center rounded border border-dashed border-slate-300 text-slate-400 text-xs">No Image</div>
                 @endif
                 <div class="text-sm">
-                    <p class="font-semibold">{{ $item->product }}</p>
-                    <p class="text-gray-600">分類: {{ $item->classification ?? '—' }} / 個数: {{ $item->quantity ?? 1 }}</p>
+                    <p class="font-semibold text-slate-800">{{ $item->product }}</p>
+                    <p class="text-slate-600">分類: {{ $item->classification ?? '—' }} / 個数: {{ $item->quantity ?? 1 }}</p>
                 </div>
             </label>
         @empty
-            <p class="text-sm text-gray-500">商品が登録されていません</p>
+            <p class="text-sm text-slate-500">商品が登録されていません</p>
         @endforelse
     </div>
 
-    <button type="submit" @disabled($deal->buyItems->isEmpty())>商品登録ページへ</button>
+    <div class="flex justify-end">
+        <button type="submit" @disabled($deal->buyItems->isEmpty()) class="inline-flex items-center rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">
+            商品登録ページへ
+        </button>
+    </div>
 </form>
     <div class="flex justify-center">
         <a href="{{ route('purchase.print', $deal->id) }}" class="inline-flex items-center px-6 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
@@ -342,46 +350,5 @@
 
 
 
-
-<script>
-    function syncSelectedItem(radio) {
-        if (!radio) {
-            return;
-        }
-        const productInput = document.getElementById('selected-product');
-        const productImgInput = document.getElementById('selected-product-img');
-        const classificationInput = document.getElementById('selected-classification');
-        const quantityInput = document.getElementById('selected-quantity');
-        const buyPriceInput = document.getElementById('selected-buy-price');
-
-        if (productInput) {
-            productInput.value = radio.dataset.product || '';
-        }
-        if (productImgInput) {
-            productImgInput.value = radio.dataset.productImg || '';
-        }
-        if (classificationInput) {
-            classificationInput.value = radio.dataset.classification || '';
-        }
-        if (quantityInput) {
-            quantityInput.value = radio.dataset.quantity || '1';
-        }
-        if (buyPriceInput) {
-            buyPriceInput.value = radio.dataset.buyPrice || '0';
-        }
-    }
-
-    document.addEventListener('change', (event) => {
-        const target = event.target;
-        if (target && target.matches('input[name="selected_item"]')) {
-            syncSelectedItem(target);
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const checked = document.querySelector('input[name="selected_item"]:checked');
-        syncSelectedItem(checked);
-    });
-</script>
 
 @endsection

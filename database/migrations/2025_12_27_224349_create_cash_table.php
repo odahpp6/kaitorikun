@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('coin_5');
             $table->unsignedSmallInteger('coin_1');
             $table->decimal('total_amount', 10, 0);
+            $table->text('remarks')->nullable()->comment('備考');
         });
     }
 

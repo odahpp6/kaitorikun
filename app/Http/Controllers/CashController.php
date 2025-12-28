@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cash;
+use App\Models\CashManagement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,7 +11,9 @@ class CashController extends Controller
 {
     public function cash_balance_view()
     {
-        return view('cash.balance');
+        $cash = Cash::where('store_id', Auth::id())->latest()->first();
+
+        return view('cash.balance', compact('cash'));
     }
 
     public function cash_balance_register(Request $request)
@@ -25,6 +28,7 @@ class CashController extends Controller
             'coin_10' => 'required|integer|min:0',
             'coin_5' => 'required|integer|min:0',
             'coin_1' => 'required|integer|min:0',
+            'remarks' => 'nullable|string|max:1000',
         ]);
 
         $totalAmount =
@@ -50,8 +54,34 @@ class CashController extends Controller
         $cash->coin_5 = $validated['coin_5'];
         $cash->coin_1 = $validated['coin_1'];
         $cash->total_amount = $totalAmount;
+        $cash->remarks = $validated['remarks'] ?? null;
         $cash->save();
 
         return redirect()->back()->with('success', '現金残高を登録しました。');
+    }
+
+    public function cash_management_view()
+    {
+        return view('cash.cash_management');
+    }
+
+    public function cash_management_register(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:in,out',
+            'amount' => 'required|integer|min:1',
+            'description' => 'required|string|max:255',
+            'remarks' => 'nullable|string|max:1000',
+        ]);
+
+        $management = new CashManagement();
+        $management->store_id = Auth::id();
+        $management->type = $validated['type'];
+        $management->amount = $validated['amount'];
+        $management->description = $validated['description'];
+        $management->remarks = $validated['remarks'] ?? null;
+        $management->save();
+
+        return redirect()->back()->with('success', '現金出納帳を登録しました。');
     }
 }

@@ -6,6 +6,9 @@
     <div class="mb-6">
         <h1 class="text-2xl font-semibold text-slate-900">現金残高登録</h1>
         <p class="mt-2 text-sm text-slate-600">各金種の枚数を入力して登録してください。</p>
+        @if ($cash?->updated_at)
+            <p class="mt-1 text-xs text-slate-500">更新日時: {{ $cash->updated_at->format('Y-m-d H:i') }}</p>
+        @endif
     </div>
 
     @if (session('success'))
@@ -41,7 +44,7 @@
                         <label for="bill_10000" class="font-medium">1万円札</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="bill_10000" id="bill_10000" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('bill_10000', 0) }}" required>
+                        <input type="number" name="bill_10000" id="bill_10000" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('bill_10000', $cash?->bill_10000 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -49,7 +52,7 @@
                         <label for="bill_5000" class="font-medium">5千円札</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="bill_5000" id="bill_5000" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('bill_5000', 0) }}" required>
+                        <input type="number" name="bill_5000" id="bill_5000" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('bill_5000', $cash?->bill_5000 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -57,7 +60,7 @@
                         <label for="bill_1000" class="font-medium">千円札</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="bill_1000" id="bill_1000" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('bill_1000', 0) }}" required>
+                        <input type="number" name="bill_1000" id="bill_1000" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('bill_1000', $cash?->bill_1000 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -65,7 +68,7 @@
                         <label for="coin_500" class="font-medium">500円玉</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="coin_500" id="coin_500" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_500', 0) }}" required>
+                        <input type="number" name="coin_500" id="coin_500" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_500', $cash?->coin_500 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -73,7 +76,7 @@
                         <label for="coin_100" class="font-medium">100円玉</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="coin_100" id="coin_100" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_100', 0) }}" required>
+                        <input type="number" name="coin_100" id="coin_100" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_100', $cash?->coin_100 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -81,7 +84,7 @@
                         <label for="coin_50" class="font-medium">50円玉</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="coin_50" id="coin_50" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_50', 0) }}" required>
+                        <input type="number" name="coin_50" id="coin_50" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_50', $cash?->coin_50 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -89,7 +92,7 @@
                         <label for="coin_10" class="font-medium">10円玉</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="coin_10" id="coin_10" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_10', 0) }}" required>
+                        <input type="number" name="coin_10" id="coin_10" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_10', $cash?->coin_10 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -97,7 +100,7 @@
                         <label for="coin_5" class="font-medium">5円玉</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="coin_5" id="coin_5" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_5', 0) }}" required>
+                        <input type="number" name="coin_5" id="coin_5" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_5', $cash?->coin_5 ?? 0) }}" required>
                     </td>
                 </tr>
                 <tr>
@@ -105,7 +108,7 @@
                         <label for="coin_1" class="font-medium">1円玉</label>
                     </td>
                     <td class="px-4 py-4">
-                        <input type="number" name="coin_1" id="coin_1" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_1', 0) }}" required>
+                        <input type="number" name="coin_1" id="coin_1" class="w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500" min="0" value="{{ old('coin_1', $cash?->coin_1 ?? 0) }}" required>
                     </td>
                 </tr>
                 </tbody>
@@ -118,6 +121,11 @@
                 </tr>
                 </tfoot>
             </table>
+        </div>
+
+        <div>
+            <label for="remarks" class="block text-sm font-semibold text-slate-700">備考</label>
+            <textarea id="remarks" name="remarks" rows="3" class="mt-2 w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500">{{ old('remarks', $cash?->remarks) }}</textarea>
         </div>
 
         <div class="flex justify-end">

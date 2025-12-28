@@ -137,10 +137,7 @@ class BuyController extends Controller
 
             DB::commit();
 
-            $storeEmail = Auth::user()?->email;
-            if (!empty($storeEmail)) {
-                Mail::to($storeEmail)->send(new PurchaseRegistered($deal));
-            }
+            // Mail sending disabled temporarily.
 
             return redirect('/purchase/list')->with('success', '契約を完了しました。伝票番号: ' . $deal->slip_number);
 
