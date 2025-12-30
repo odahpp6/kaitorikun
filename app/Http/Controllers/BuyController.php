@@ -362,5 +362,95 @@ public function index(Request $request)
         }
     }
 
+    public function buy_analysis(Request $request)
+    {
+        $storeId = Auth::id();
+
+        $baseDealsQuery = Deal::query()->where('store_id', $storeId);
+        if ($request->filled('date_from')) {
+            $baseDealsQuery->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $baseDealsQuery->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $arrivalCounts = (clone $baseDealsQuery)
+            ->whereNotNull('arrival_type')
+            ->where('arrival_type', '!=', '')
+            ->select('arrival_type', DB::raw('COUNT(*) as count'))
+            ->groupBy('arrival_type')
+            ->orderByDesc('count')
+            ->get();
+
+        $arrivalTotal = $arrivalCounts->sum('count');
+        $arrivalStats = $arrivalCounts->map(function ($row) use ($arrivalTotal) {
+            $percent = $arrivalTotal > 0 ? round(($row->count / $arrivalTotal) * 100, 1) : 0;
+            return [
+                'label' => $row->arrival_type,
+                'count' => $row->count,
+                'percent' => $percent,
+            ];
+        });
+
+        $classificationCounts = DB::table('buy_items')
+            ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+            ->where('deals.store_id', $storeId)
+            ->when($request->filled('date_from'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '>=', $request->date_from);
+            })
+            ->when($request->filled('date_to'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '<=', $request->date_to);
+            })
+            ->whereNotNull('buy_items.classification')
+            ->where('buy_items.classification', '!=', '')
+            ->select('buy_items.classification as classification', DB::raw('COUNT(*) as count'))
+            ->groupBy('buy_items.classification')
+            ->orderByDesc('count')
+            ->get();
+
+        $classificationTotal = $classificationCounts->sum('count');
+        $classificationStats = $classificationCounts->map(function ($row) use ($classificationTotal) {
+            $percent = $classificationTotal > 0 ? round(($row->count / $classificationTotal) * 100, 1) : 0;
+            return [
+                'label' => $row->classification,
+                'count' => $row->count,
+                'percent' => $percent,
+            ];
+        });
+
+        $campaignCounts = DB::table('deals')
+            ->join('master_campaigns', 'deals.campaign_id', '=', 'master_campaigns.id')
+            ->where('deals.store_id', $storeId)
+            ->where('master_campaigns.store_id', $storeId)
+            ->when($request->filled('date_from'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '>=', $request->date_from);
+            })
+            ->when($request->filled('date_to'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '<=', $request->date_to);
+            })
+            ->select('master_campaigns.campaign as campaign', DB::raw('COUNT(*) as count'))
+            ->groupBy('master_campaigns.campaign')
+            ->orderByDesc('count')
+            ->get();
+
+        $campaignTotal = $campaignCounts->sum('count');
+        $campaignStats = $campaignCounts->map(function ($row) use ($campaignTotal) {
+            $percent = $campaignTotal > 0 ? round(($row->count / $campaignTotal) * 100, 1) : 0;
+            return [
+                'label' => $row->campaign,
+                'count' => $row->count,
+                'percent' => $percent,
+            ];
+        });
+
+        return view('customer.buy_analysis', [
+            'arrivalStats' => $arrivalStats,
+            'arrivalTotal' => $arrivalTotal,
+            'classificationStats' => $classificationStats,
+            'classificationTotal' => $classificationTotal,
+            'campaignStats' => $campaignStats,
+            'campaignTotal' => $campaignTotal,
+        ]);
+    }
 
 }

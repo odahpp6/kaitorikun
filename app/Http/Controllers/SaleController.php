@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -229,5 +230,73 @@ class SaleController extends Controller
         }
         $sale->delete();
         return redirect()->route('sale.list')->with('success', '販売登録が正常に削除されました。');
+    }
+
+    public function sales_summary()
+    {
+        $storeId = Auth::id();
+
+        $purchaseRows = DB::table('buy_items')
+            ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+            ->where('deals.store_id', $storeId)
+            ->select(
+                DB::raw('YEAR(deals.created_at) as year'),
+                DB::raw('MONTH(deals.created_at) as month'),
+                DB::raw('SUM(buy_items.buy_price) as purchase_total')
+            )
+            ->groupBy('year', 'month')
+            ->get();
+
+        $salesRows = DB::table('sale')
+            ->where('store_id', $storeId)
+            ->where('is_confirmed', 1)
+            ->whereNotNull('deposit_date')
+            ->select(
+                DB::raw('YEAR(deposit_date) as year'),
+                DB::raw('MONTH(deposit_date) as month'),
+                DB::raw('SUM(selling_price) as sales_total')
+            )
+            ->groupBy('year', 'month')
+            ->get();
+
+        $summaryMap = [];
+
+        foreach ($purchaseRows as $row) {
+            $key = $row->year . '-' . str_pad($row->month, 2, '0', STR_PAD_LEFT);
+            $summaryMap[$key] = [
+                'year' => (int) $row->year,
+                'month' => (int) $row->month,
+                'purchase_total' => (float) $row->purchase_total,
+                'sales_total' => 0.0,
+            ];
+        }
+
+        foreach ($salesRows as $row) {
+            $key = $row->year . '-' . str_pad($row->month, 2, '0', STR_PAD_LEFT);
+            if (!isset($summaryMap[$key])) {
+                $summaryMap[$key] = [
+                    'year' => (int) $row->year,
+                    'month' => (int) $row->month,
+                    'purchase_total' => 0.0,
+                    'sales_total' => 0.0,
+                ];
+            }
+            $summaryMap[$key]['sales_total'] = (float) $row->sales_total;
+        }
+
+        $summaries = array_values($summaryMap);
+        usort($summaries, function ($a, $b) {
+            if ($a['year'] === $b['year']) {
+                return $b['month'] <=> $a['month'];
+            }
+            return $b['year'] <=> $a['year'];
+        });
+
+        foreach ($summaries as &$row) {
+            $row['gross_profit'] = $row['sales_total'] - $row['purchase_total'];
+        }
+        unset($row);
+
+        return view('customer.sales_summary', compact('summaries'));
     }
 }                    

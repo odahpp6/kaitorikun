@@ -105,15 +105,27 @@
         <!-- 顧客・売上グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-pink-300">顧客・売上管理</li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-pink-200 hover:bg-pink-800 transition-colors duration-200">
-                <i class="fa-solid fa-users w-4 h-4 text-pink-200"></i>
+            <a href="{{ route('customer.search') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/search*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+                <i class="fa-solid fa-users w-4 h-4 {{ request()->is('customer/search*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>顧客管理</span>
             </a>
         </li>
         <li>
-            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg text-pink-200 hover:bg-pink-800 transition-colors duration-200">
-                <i class="fa-solid fa-chart-line w-4 h-4 text-pink-200"></i>
-                <span>売上管理</span>
+            <a href="{{ route('customer.mail') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/mail*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+                <i class="fa-solid fa-envelope w-4 h-4 {{ request()->is('customer/mail*') ? 'text-white' : 'text-pink-200' }}"></i>
+                <span>顧客メール送信</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('customer.buy_analysis') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/buy_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+                <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/buy_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
+                <span>買取分析</span>
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('customer.sales_summary') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/sales_summary*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+                <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/sales_summary*') ? 'text-white' : 'text-pink-200' }}"></i>
+                <span>売り上げ管理</span>
             </a>
         </li>
 

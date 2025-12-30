@@ -11,6 +11,9 @@ use App\Http\Controllers\CashController;
 use App\Http\Controllers\CashManagementController;
 use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,6 +153,13 @@ Route::get('/cash_management/list', [CashManagementController::class, 'cash_mana
 
 //顧客検索
 Route::get('/customer/search', [CustomerController::class, 'customer_search'])->name('customer.search');
+//買取上分析
+Route::get('/customer/buy_analysis', [BuyController::class, 'buy_analysis'])->name('customer.buy_analysis');
+//顧客メール送信
+Route::get('/customer/mail', [CustomerController::class, 'mail'])->name('customer.mail');
+Route::post('/customer/mail', [CustomerController::class, 'send_mail'])->name('customer.mail.send');
+//売り上げ管理
+Route::get('/customer/sales_summary', [SaleController::class, 'sales_summary'])->name('customer.sales_summary');
 
 
 
@@ -165,7 +175,26 @@ Route::get('/customer/search', [CustomerController::class, 'customer_search'])->
 
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $storeId = Auth::id();
+    $startOfMonth = Carbon::now()->startOfMonth();
+    $endOfMonth = Carbon::now()->endOfMonth();
+
+    $purchaseTotal = DB::table('buy_items')
+        ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+        ->where('deals.store_id', $storeId)
+        ->whereBetween('deals.created_at', [$startOfMonth, $endOfMonth])
+        ->sum('buy_items.buy_price');
+
+    $salesTotal = DB::table('sale')
+        ->where('store_id', $storeId)
+        ->where('is_confirmed', 1)
+        ->whereDate('deposit_date', '>=', $startOfMonth)
+        ->whereDate('deposit_date', '<=', $endOfMonth)
+        ->sum('selling_price');
+
+    $currentMonthLabel = $startOfMonth->format('Y年n月');
+
+    return view('dashboard', compact('purchaseTotal', 'salesTotal', 'currentMonthLabel'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

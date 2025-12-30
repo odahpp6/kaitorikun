@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Deal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CustomerController extends Controller
 {
@@ -37,5 +38,53 @@ class CustomerController extends Controller
         $customers = $query->orderByDesc('last_visit_at')->paginate(15);
 
         return view('customer.search', compact('customers'));
+    }
+
+    public function mail()
+    {
+        $customers = Customer::query()
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->orderBy('name')
+            ->get(['id', 'name', 'email']);
+
+        return view('customer.mail', compact('customers'));
+    }
+
+    public function send_mail(Request $request)
+    {
+        $validated = $request->validate([
+            'subject' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+            'customers' => ['array'],
+            'customers.*' => ['integer'],
+        ]);
+
+        $customerIds = $validated['customers'] ?? [];
+        if (empty($customerIds)) {
+            return back()->withErrors(['customers' => '送信先を選択してください。'])->withInput();
+        }
+
+        $emails = Customer::query()
+            ->whereIn('id', $customerIds)
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->pluck('email')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($emails->isEmpty()) {
+            return back()->withErrors(['customers' => '送信可能なメールアドレスが見つかりませんでした。'])->withInput();
+        }
+
+        foreach ($emails as $email) {
+            Mail::raw($validated['body'], function ($message) use ($email, $validated) {
+                $message->to($email)
+                    ->subject($validated['subject']);
+            });
+        }
+
+        return back()->with('status', 'メールを送信しました。');
     }
 }
