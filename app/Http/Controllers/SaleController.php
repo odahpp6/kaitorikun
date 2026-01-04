@@ -116,11 +116,11 @@ class SaleController extends Controller
         if (request()->filled('classification')) {
             $query->where('classification', request('classification'));
         }
-        if (request()->filled('created_from')) {
-            $query->whereDate('created_at', '>=', request('created_from'));
+        if (request()->filled('deposit_date_from')) {
+            $query->whereDate('deposit_date', '>=', request('deposit_date_from'));
         }
-        if (request()->filled('created_to')) {
-            $query->whereDate('created_at', '<=', request('created_to'));
+        if (request()->filled('deposit_date_to')) {
+            $query->whereDate('deposit_date', '<=', request('deposit_date_to'));
         }
         if (request()->filled('purchase_month_from') || request()->filled('purchase_month_to')) {
             $fromMonth = request('purchase_month_from');
@@ -138,10 +138,21 @@ class SaleController extends Controller
             });
         }
 
+        $totalsQuery = clone $query;
+        $totalSellingPrice = (int) $totalsQuery->sum('selling_price');
+        $totalBuyPrice = (int) $totalsQuery->sum('buy_price');
+        $totalGrossProfit = $totalSellingPrice - $totalBuyPrice;
+
         $sales = $query->orderBy('created_at', 'desc')->paginate(20);
         $wholesales = MasterWholesale::where('store_id', $storeId)->get();
 
-        return view('sale.list', compact('sales', 'wholesales'));
+        return view('sale.list', compact(
+            'sales',
+            'wholesales',
+            'totalSellingPrice',
+            'totalBuyPrice',
+            'totalGrossProfit'
+        ));
     }
     //販売登録修正画面表示
     public function edit($id)

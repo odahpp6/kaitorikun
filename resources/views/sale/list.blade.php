@@ -39,11 +39,11 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs text-gray-500 mb-1">登録日時（期間）</label>
+                <label class="block text-xs text-gray-500 mb-1">入金日（期間）</label>
                 <div class="flex items-center space-x-2">
-                    <input type="date" name="created_from" value="{{ request('created_from') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    <input type="date" name="deposit_date_from" value="{{ request('deposit_date_from') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                     <span class="text-gray-400">〜</span>
-                    <input type="date" name="created_to" value="{{ request('created_to') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    <input type="date" name="deposit_date_to" value="{{ request('deposit_date_to') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                 </div>
             </div>
             <div>
@@ -64,6 +64,18 @@
             </div>
         </div>
     </form>
+
+    <div class="mb-4 flex flex-col md:flex-row md:items-center md:justify-end gap-2 text-sm text-gray-700">
+        <div class="bg-gray-50 border border-gray-200 rounded px-3 py-2">
+            販売価格合計：<span class="font-semibold">{{ number_format($totalSellingPrice ?? 0) }}</span>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded px-3 py-2">
+            買取価格合計：<span class="font-semibold">{{ number_format($totalBuyPrice ?? 0) }}</span>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded px-3 py-2">
+            粗利益：<span class="font-semibold">{{ number_format($totalGrossProfit ?? 0) }}</span>
+        </div>
+    </div>
 
     <div class="overflow-x-auto">
         <table class="w-full border border-gray-300 text-sm">

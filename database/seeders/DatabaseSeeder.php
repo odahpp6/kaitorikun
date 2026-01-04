@@ -17,13 +17,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'id' => 1,
-            'name' => 'Store User',
-            'email' => 'store@example.com',
-            'password' => Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ]);
+        User::updateOrCreate(
+            ['id' => 1],
+            [
+                'name' => 'Store User',
+                'email' => 'store@example.com',
+                'password' => Hash::make('password'),
+                'remember_token' => Str::random(10),
+            ]
+        );
 
         $this->call([
             CustomerSeeder::class,
