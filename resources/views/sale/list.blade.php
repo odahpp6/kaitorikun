@@ -1,10 +1,10 @@
 @extends('layouts.member')
 
-@section('title', '買取販売一覧')
+@section('title', '販売履歴')
 @section('content')
 
 <div class="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取販売一覧</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">販売履歴</h2>
 
     <form action="{{ route('sale.list') }}" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">

@@ -1,10 +1,10 @@
 @extends('layouts.member')
 
-@section('title', '買取契約一覧')
+@section('title', '買取契約履歴')
 @section('content')
 
 <div class="max-w-6xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約一覧</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約履歴</h2>
 
     @if (session('success'))
         <div class="bg-green-50 border border-green-200 rounded-md p-4 mb-6">

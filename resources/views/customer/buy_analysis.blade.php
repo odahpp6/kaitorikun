@@ -1,10 +1,10 @@
 @extends('layouts.member')
 
-@section('title', '買取上分析')
+@section('title', '買取分析')
 @section('content')
 
 <div class="max-w-6xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-emerald-500">買取上分析</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-emerald-500">買取分析</h2>
 
     <form action="{{ route('customer.buy_analysis') }}" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">

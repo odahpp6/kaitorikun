@@ -1,9 +1,9 @@
 @extends('layouts.member')
 
-@section('title', '現金出納帳登録')
+@section('title', '入出金管理')
 @section('content')
 <div class="max-w-6xl mx-auto p-6 space-y-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">現金出納帳登録</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">入出金管理</h2>
     <p class="text-sm text-gray-600">入出金の内容を入力して登録してください。</p>
 
     @if (session('success'))

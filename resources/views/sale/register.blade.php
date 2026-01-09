@@ -1,17 +1,19 @@
 @extends('layouts.member')
 
-@section('title', '買取販売登録')
+@section('title', '販売登録')
 @section('content')
 
 <div class="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取販売登録</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">販売登録</h2>
 
     <form class="space-y-4" action="{{ route('sale.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @php
             $dealId = old('deal_id', $dealId ?? request('deal_id'));
-            $selectedImage = old('product_img', request('product_img'));
+            $selectedImage = old('product_img', $prefillProductImg ?? request('product_img'));
             $totalPrice = old('total_price', request('total_price'));
+            $productValue = old('product', $prefillProduct ?? '');
+            $classificationValue = old('classification', $prefillClassification ?? '');
         @endphp
         <div class="flex flex-wrap -mx-2">
             <div class="w-full md:w-1/2 px-2 mb-4">
@@ -41,7 +43,7 @@
 
             <div class="w-full md:w-1/2 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">商品名 <span class="text-red-500">必須</span></label>
-                <input type="text" name="product" maxlength="100" value="{{ old('product', request('product')) }}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <input type="text" name="product" maxlength="100" value="{{ $productValue }}" class="w-full border border-gray-300 rounded px-3 py-2" required>
             </div>
 
             <div class="w-full md:w-1/4 px-2 mb-4">
@@ -49,7 +51,7 @@
                 <select name="classification" class="w-full border border-gray-300 rounded px-3 py-2" required >
                     <option value="">選択</option>
                     @foreach(['ブランド','時計','貴金属','携帯・タブレット','ジュエリー','金券','酒類','切手','通貨','古銭','テレカ','勲章','骨董品・絵画','楽器','食器','家電','カメラ','雑貨','喫煙具','万年筆・ボールペン','おもちゃ','工具','衣類','パソコン','その他'] as $cat)
-                        <option value="{{ $cat }}" @selected(old('classification', request('classification')) === $cat)>{{ $cat }}</option>
+                        <option value="{{ $cat }}" @selected($classificationValue === $cat)>{{ $cat }}</option>
                     @endforeach
                 </select>
             </div>

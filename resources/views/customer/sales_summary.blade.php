@@ -1,10 +1,10 @@
 @extends('layouts.member')
 
-@section('title', '売り上げ管理')
+@section('title', '売上管理')
 @section('content')
 
 <div class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-indigo-500">売り上げ管理</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-indigo-500">売上管理</h2>
 
     <div class="overflow-x-auto">
         <table class="w-full border-collapse border border-gray-300 text-sm">

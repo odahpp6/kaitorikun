@@ -1,10 +1,10 @@
 @extends('layouts.member')
 
-@section('title', '顧客検索')
+@section('title', '顧客管理')
 @section('content')
 
 <div class="max-w-6xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">顧客検索</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">顧客管理</h2>
 
     <form action="{{ route('customer.search') }}" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">

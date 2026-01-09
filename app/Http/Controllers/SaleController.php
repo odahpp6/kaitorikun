@@ -18,13 +18,62 @@ class SaleController extends Controller
     // 商品登録画面表示
     public function register_view()
     {
-        $wholesales = MasterWholesale::all();
+        $storeId = Auth::id();
+        $wholesales = MasterWholesale::where('store_id', $storeId)->get();
         $dealId = request('deal_id');
+        $deal = null;
         if (!$dealId && request()->filled('slip_number')) {
-            $dealId = Deal::where('slip_number', request('slip_number'))->value('id');
+            $deal = Deal::where('slip_number', request('slip_number'))
+                ->where('store_id', $storeId)
+                ->first();
+            $dealId = $deal?->id;
+        }
+        if ($dealId && !$deal) {
+            $deal = Deal::where('id', $dealId)
+                ->where('store_id', $storeId)
+                ->first();
         }
 
-        return view('sale.register', compact('wholesales', 'dealId'));
+        $prefillProduct = null;
+        if (request()->filled('product')) {
+            $prefillProduct = request('product');
+        } elseif (request()->filled('items.0.product')) {
+            $prefillProduct = request('items.0.product');
+        }
+
+        $prefillClassification = null;
+        if (request()->filled('classification')) {
+            $prefillClassification = request('classification');
+        } elseif (request()->filled('items.0.classification')) {
+            $prefillClassification = request('items.0.classification');
+        }
+
+        $prefillProductImg = null;
+        if (request()->filled('product_img')) {
+            $prefillProductImg = request('product_img');
+        } elseif (request()->filled('items.0.product_img')) {
+            $prefillProductImg = request('items.0.product_img');
+        }
+
+        if (!$prefillProduct || !$prefillClassification) {
+            $dealItem = $deal?->buyItems()->orderBy('id')->first();
+            if ($dealItem) {
+                if (!$prefillProduct) {
+                    $prefillProduct = $dealItem->product;
+                }
+                if (!$prefillClassification) {
+                    $prefillClassification = $dealItem->classification;
+                }
+            }
+        }
+
+        return view('sale.register', compact(
+            'wholesales',
+            'dealId',
+            'prefillProduct',
+            'prefillClassification',
+            'prefillProductImg'
+        ));
     }
     //DB登録処理
     public function register(Request $request)

@@ -1,6 +1,6 @@
 @extends('layouts.member')
 
-@section('title', '見積一覧')
+@section('title', '見積履歴')
 @section('content')
 
 
@@ -9,7 +9,7 @@
 
 
 <div class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
-  <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">見積一覧</h2>
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">見積履歴</h2>
 
    <!-- 成功メッセージ -->
              @if (session('success'))

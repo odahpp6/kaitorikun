@@ -86,7 +86,7 @@
         <li>
             <a href="{{ route('cash_balance.view') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-money-bill-wave w-4 h-4 text-purple-200"></i>
-                <span>金庫更新</span>
+                <span>現金残高登録</span>
             </a>
         </li>
         <li>
@@ -98,7 +98,7 @@
         <li>
             <a href="{{ route('cash_management.list') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-book w-4 h-4 text-purple-200"></i>
-                <span>出納帳</span>
+                <span>現金出納帳</span>
             </a>
         </li>
 
@@ -125,7 +125,7 @@
         <li>
             <a href="{{ route('customer.sales_summary') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/sales_summary*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/sales_summary*') ? 'text-white' : 'text-pink-200' }}"></i>
-                <span>売り上げ管理</span>
+                <span>売上管理</span>
             </a>
         </li>
 
@@ -137,22 +137,10 @@
                 <span>取引先マスタ登録</span>
             </a>
         </li>
-        <li>
-            <a href="/master/list_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/list_wholesale') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
-                <i class="fa-solid fa-list w-4 h-4 {{ request()->is('master/list_wholesale') ? 'text-white' : 'text-gray-200' }}"></i>
-                <span>取引先マスタ一覧</span>
-            </a>
-        </li>
           <li>
             <a href="/master/create_campaign" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_campaign') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                 <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_campaign') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>折り込みマスタ登録</span>
-            </a>
-        </li>
-        <li>
-            <a href="/master/campaign_list" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/campaign_list') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
-                <i class="fa-solid fa-list w-4 h-4 {{ request()->is('master/campaign_list') ? 'text-white' : 'text-gray-200' }}"></i>
-                <span>折り込みマスタ一覧</span>
             </a>
         </li>
 
