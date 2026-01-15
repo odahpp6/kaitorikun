@@ -50,7 +50,7 @@
 
             <div class="w-full md:w-1/2 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">商品名 <span class="text-red-500">必須</span></label>
-                <input type="text" name="product" maxlength="100" value="{{ old('product', $sale->product) }}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <input type="text" name="product" maxlength="100" value="{{ old('product', $sale->product) }}" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
 
             <div class="w-full md:w-1/4 px-2 mb-4">
@@ -83,8 +83,8 @@
             </div>
 
             <div class="w-full md:w-1/3 px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">販売価格 <span class="text-red-500">必須</span></label>
-                <input type="number" name="selling_price" min="0" value="{{ old('selling_price', $sale->selling_price) }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required>
+                <label class="block text-sm font-bold mb-1">販売価格</label>
+                <input type="number" name="selling_price" min="0" value="{{ old('selling_price', $sale->selling_price) }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right">
             </div>
         </div>
 
@@ -95,8 +95,8 @@
             </div>
 
             <div class="w-full md:w-1/4 px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">入金日 <span class="text-red-500">必須</span></label>
-                <input type="date" name="deposit_date" value="{{ old('deposit_date', $sale->deposit_date) }}" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <label class="block text-sm font-bold mb-1">入金日</label>
+                <input type="date" name="deposit_date" value="{{ old('deposit_date', $sale->deposit_date) }}" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
 
             <div class="w-full md:w-1/2 px-2 mb-4">
@@ -110,16 +110,16 @@
             </div>
         </div>
 
-        <div class="flex flex-wrap -mx-2">
+        <div class="flex flex-wrap -mx-2 hidden">
             <div class="w-full px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">販売確定 <span class="text-red-500">必須</span></label>
+                <label class="block text-sm font-bold mb-1">販売確定</label>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="is_confirmed" value="1" required @checked(old('is_confirmed', (int) $sale->is_confirmed) === 1)>
+                        <input type="radio" name="is_confirmed" value="1" @checked(old('is_confirmed', (int) $sale->is_confirmed) === 1)>
                         <span>確定</span>
                     </label>
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="is_confirmed" value="0" required @checked(old('is_confirmed', (int) $sale->is_confirmed) === 0)>
+                        <input type="radio" name="is_confirmed" value="0" @checked(old('is_confirmed', (int) $sale->is_confirmed) === 0)>
                         <span>未確定</span>
                     </label>
                 </div>

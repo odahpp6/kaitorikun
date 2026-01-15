@@ -46,6 +46,10 @@
         </div>
     </form>
 
+    <div class="mb-6 border border-red-400 bg-red-50 text-red-700 rounded-md p-4 text-sm">
+        販売登録の手順： 登録通知メール（または画面）にある「登録日時」のリンクをクリックしてください。遷移先のページ最下部にある「商品登録ページへ」ボタンから、商品の登録を行っていただけます。
+    </div>
+
     <div class="overflow-x-auto">
         <table class="w-full border-collapse border border-gray-300 text-sm">
             <thead>

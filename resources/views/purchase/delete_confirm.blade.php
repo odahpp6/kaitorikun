@@ -1,6 +1,6 @@
 @extends('layouts.member')
 
-@section('title', '買取削除確認')
+@section('title', '買取契約削除確認')
 @section('content')
 
 <div class="max-w-6xl mx-auto p-6 space-y-6 bg-white rounded-lg shadow-md">

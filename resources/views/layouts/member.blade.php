@@ -62,18 +62,20 @@
         <li>
             <a href="/purchase/list" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase/list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
                 <i class="fa-solid fa-file-lines w-4 h-4 {{ request()->is('purchase/list*') ? 'text-white' : 'text-green-200' }}"></i>
-                <span>契約履歴</span>
+                <span>契約履歴<br>販売登録</span>
             </a>
         </li>
 
         <!-- 販売グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-amber-300">販売管理</li>
+        <!--
         <li>
             <a href="{{ route('sale.register') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('sale') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
                 <i class="fa-solid fa-cart-plus w-4 h-4 {{ request()->is('sale') ? 'text-white' : 'text-amber-200' }}"></i>
                 <span>販売登録</span>
             </a>
         </li>
+        -->
         <li>
             <a href="{{ route('sale.list') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('sale/list*') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
                 <i class="fa-solid fa-receipt w-4 h-4 {{ request()->is('sale/list*') ? 'text-white' : 'text-amber-200' }}"></i>

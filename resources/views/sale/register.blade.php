@@ -14,6 +14,7 @@
             $totalPrice = old('total_price', request('total_price'));
             $productValue = old('product', $prefillProduct ?? '');
             $classificationValue = old('classification', $prefillClassification ?? '');
+            $buyPriceValue = old('buy_price', $prefillBuyPrice ?? request('buy_price'));
         @endphp
         <div class="flex flex-wrap -mx-2">
             <div class="w-full md:w-1/2 px-2 mb-4">
@@ -39,6 +40,9 @@
                 <input type="file" name="product_img" class="w-full text-sm border border-gray-300 bg-white rounded p-1" data-preview="product" >
                 <input type="hidden" name="product_img_existing" value="{{ $selectedImage ?? '' }}">
                 <img class="mt-2 w-full h-28 object-contain border border-gray-200 rounded {{ $selectedImage ? '' : 'hidden' }}" data-preview="product" @if ($selectedImage) src="{{ asset('storage/' . $selectedImage) }}" @endif>
+                <p class="mt-1 text-xs text-gray-500 break-all">
+                    {{ $selectedImage ? $selectedImage : '—' }}
+                </p>
             </div>
 
             <div class="w-full md:w-1/2 px-2 mb-4">
@@ -67,7 +71,7 @@
         <div class="flex flex-wrap -mx-2">
             <div class="w-full md:w-1/3 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">買取価格 <span class="text-red-500">必須</span></label>
-                <input type="number" name="buy_price" min="0" value="{{ old('buy_price', request('buy_price')) }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required>
+                <input type="number" name="buy_price" min="0" value="{{ $buyPriceValue }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required>
             </div>
 
             <div class="w-full md:w-1/3 px-2 mb-4">
@@ -76,8 +80,8 @@
             </div>
 
             <div class="w-full md:w-1/3 px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">販売価格 <span class="text-red-500">必須</span></label>
-                <input type="number" name="selling_price" min="0" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required >
+                <label class="block text-sm font-bold mb-1">販売価格</label>
+                <input type="number" name="selling_price" min="0" class="w-full border border-gray-300 rounded px-3 py-2 text-right">
             </div>
         </div>
 
@@ -88,8 +92,8 @@
             </div>
 
             <div class="w-full md:w-1/4 px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">入金日 <span class="text-red-500">必須</span></label>
-                <input type="date" name="deposit_date" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                <label class="block text-sm font-bold mb-1">入金日</label>
+                <input type="date" name="deposit_date" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
 
             <div class="w-full md:w-1/2 px-2 mb-4">
@@ -103,16 +107,16 @@
             </div>
         </div>
 
-        <div class="flex flex-wrap -mx-2">
+        <div class="flex flex-wrap -mx-2 hidden">
             <div class="w-full px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">販売確定 <span class="text-red-500">必須</span></label>
+                <label class="block text-sm font-bold mb-1">販売確定</label>
                 <div class="flex flex-wrap gap-4 text-sm">
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="is_confirmed" value="1" required checked>
+                        <input type="radio" name="is_confirmed" value="1" checked>
                         <span>確定</span>
                     </label>
                     <label class="flex items-center gap-2">
-                        <input type="radio" name="is_confirmed" value="0" required>
+                        <input type="radio" name="is_confirmed" value="0">
                         <span>未確定</span>
                     </label>
                 </div>

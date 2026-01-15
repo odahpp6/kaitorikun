@@ -38,7 +38,7 @@
                     @endforeach
                 </select>
             </div>
-            <div>
+            <div class="md:col-span-2">
                 <label class="block text-xs text-gray-500 mb-1">入金日（期間）</label>
                 <div class="flex items-center space-x-2">
                     <input type="date" name="deposit_date_from" value="{{ request('deposit_date_from') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
@@ -46,7 +46,7 @@
                     <input type="date" name="deposit_date_to" value="{{ request('deposit_date_to') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                 </div>
             </div>
-            <div>
+            <div class="mt-3 md:col-span-2">
                 <label class="block text-xs text-gray-500 mb-1">買取日時（月）</label>
                 <div class="flex items-center space-x-2">
                     <input type="month" name="purchase_month_from" value="{{ request('purchase_month_from') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
@@ -54,7 +54,7 @@
                     <input type="month" name="purchase_month_to" value="{{ request('purchase_month_to') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                 </div>
             </div>
-            <div class="flex space-x-2">
+            <div class="flex space-x-2 md:col-span-4 md:justify-end">
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
                     検索
                 </button>
@@ -81,7 +81,8 @@
         <table class="w-full border border-gray-300 text-sm">
             <thead>
                 <tr class="bg-gray-100">
-                    <th class="border px-2 py-2">登録日</th>
+                    <th class="border px-2 py-2">買取日時</th>
+                    <th class="border px-2 py-2">入金日</th>
                     <th class="border px-2 py-2">商品名</th>
                     <th class="border px-2 py-2">分類</th>
                     <th class="border px-2 py-2 text-right">販売価格</th>
@@ -94,7 +95,10 @@
             <tbody>
                 @forelse ($sales as $sale)
                     <tr class="hover:bg-gray-50">
-                        <td class="border px-2 py-1">{{ $sale->created_at?->format('Y/m/d') ?? '—' }}</td>
+                        <td class="border px-2 py-1">{{ $sale->deal?->created_at?->format('Y/m/d') ?? '—' }}</td>
+                        <td class="border px-2 py-1">
+                            {{ $sale->deposit_date ? \Carbon\Carbon::parse($sale->deposit_date)->format('Y/m/d') : '—' }}
+                        </td>
                         <td class="border px-2 py-1">
                             <a href="{{ route('sale.detail', $sale->id) }}" class="text-blue-600 hover:underline">
                                 {{ $sale->product }}
@@ -121,7 +125,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="border px-2 py-4 text-center text-gray-500" colspan="8">登録データがありません</td>
+                        <td class="border px-2 py-4 text-center text-gray-500" colspan="9">登録データがありません</td>
                     </tr>
                 @endforelse
             </tbody>

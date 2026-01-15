@@ -1,6 +1,6 @@
 @extends('layouts.member')
 
-@section('title', '見積詳細')
+@section('title', '買取契約詳細')
 @section('content')
 @php
     $customer = $deal->customer;
@@ -21,6 +21,9 @@
         <a href="{{ route('purchase.print', $deal->id) }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-800 text-white rounded">
             PDF出力
         </a>
+    </div>
+     <div class="mb-6 border border-red-400 bg-red-50 text-red-700 rounded-md p-4 text-sm">
+        販売登録は最下部にある「商品登録ページへ」ボタンから、商品の登録を行っていただけます。
     </div>
 
     <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
@@ -333,12 +336,11 @@
         @empty
             <p class="text-sm text-slate-500">商品が登録されていません</p>
         @endforelse
-    </div>
-
-    <div class="flex justify-end">
-        <button type="submit" @disabled($deal->buyItems->isEmpty()) class="inline-flex items-center rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">
-            商品登録ページへ
-        </button>
+        <div class="flex justify-end">
+            <button type="submit" @disabled($deal->buyItems->isEmpty()) class="inline-flex items-center rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">
+                商品登録ページへ
+            </button>
+        </div>
     </div>
 </form>
     <div class="flex justify-center">

@@ -55,6 +55,13 @@ class SaleController extends Controller
             $prefillProductImg = request('items.0.product_img');
         }
 
+        $prefillBuyPrice = null;
+        if (request()->filled('buy_price')) {
+            $prefillBuyPrice = request('buy_price');
+        } elseif (request()->filled('items.0.buy_price')) {
+            $prefillBuyPrice = request('items.0.buy_price');
+        }
+
         if (!$prefillProduct || !$prefillClassification) {
             $dealItem = $deal?->buyItems()->orderBy('id')->first();
             if ($dealItem) {
@@ -64,6 +71,9 @@ class SaleController extends Controller
                 if (!$prefillClassification) {
                     $prefillClassification = $dealItem->classification;
                 }
+                if ($prefillBuyPrice === null) {
+                    $prefillBuyPrice = $dealItem->buy_price;
+                }
             }
         }
 
@@ -72,7 +82,8 @@ class SaleController extends Controller
             'dealId',
             'prefillProduct',
             'prefillClassification',
-            'prefillProductImg'
+            'prefillProductImg',
+            'prefillBuyPrice'
         ));
     }
     //DB登録処理
@@ -84,12 +95,12 @@ class SaleController extends Controller
             'product' => 'required|string|max:255',
             'classification' => 'required|string|max:50',
             'buy_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
+            'selling_price' => 'nullable|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'sale_date' => 'nullable|date',
-            'deposit_date' => 'required|date',
+            'deposit_date' => 'nullable|date',
             'destination_id' => 'required|exists:master_wholesales,id',
-            'is_confirmed' => 'required|boolean',
+            'is_confirmed' => 'nullable|boolean',
             'product_img' => 'nullable|image|max:10240',
             'product_img_existing' => 'nullable|string',
         ]);
@@ -101,13 +112,14 @@ class SaleController extends Controller
         $sale->classification = $validatedData['classification'];
         $sale->quantity = $validatedData['quantity'];
         $sale->buy_price = $validatedData['buy_price'];
-        $sale->unit_price = $validatedData['quantity'] > 0
-            ? ($validatedData['selling_price'] / $validatedData['quantity'])
+        $sellingPrice = $validatedData['selling_price'] ?? null;
+        $sale->unit_price = $sellingPrice !== null && $validatedData['quantity'] > 0
+            ? ($sellingPrice / $validatedData['quantity'])
             : 0;
-        $sale->selling_price = $validatedData['selling_price'];
+        $sale->selling_price = $sellingPrice;
         $sale->sale_date = $validatedData['sale_date'] ?? null;
-        $sale->deposit_date = $validatedData['deposit_date'];
-        $sale->is_confirmed = (bool) $validatedData['is_confirmed'];
+        $sale->deposit_date = $validatedData['deposit_date'] ?? null;
+        $sale->is_confirmed = !empty($sale->deposit_date);
         $sale->wholesale = $validatedData['destination_id'];
 
         if ($request->hasFile('product_img')) {
@@ -118,7 +130,7 @@ class SaleController extends Controller
 
         $sale->save();
 
-        return redirect()->back()->with('success', '商品が正常に登録されました。');
+        return redirect('/sale/list')->with('success', '商品が正常に登録されました。');
     }
     // 商品詳細画面表示
     public function detail($id)
@@ -143,7 +155,8 @@ class SaleController extends Controller
 
         return view('sale.detail', compact('sale', 'deal', 'wholesale', 'relatedSales'));
     }
-    //商品一覧画面表示
+    
+    //販売履歴商品一覧画面表示
     public function list()
     {
         $storeId = Auth::id();
@@ -188,8 +201,10 @@ class SaleController extends Controller
         }
 
         $totalsQuery = clone $query;
-        $totalSellingPrice = (int) $totalsQuery->sum('selling_price');
-        $totalBuyPrice = (int) $totalsQuery->sum('buy_price');
+        $totalSellingPrice = (int) (clone $totalsQuery)
+            ->whereNotNull('deposit_date')
+            ->sum('selling_price');
+        $totalBuyPrice = (int) (clone $totalsQuery)->sum('buy_price');
         $totalGrossProfit = $totalSellingPrice - $totalBuyPrice;
 
         $sales = $query->orderBy('created_at', 'desc')->paginate(20);
@@ -203,6 +218,8 @@ class SaleController extends Controller
             'totalGrossProfit'
         ));
     }
+
+
     //販売登録修正画面表示
     public function edit($id)
     {
@@ -232,12 +249,12 @@ class SaleController extends Controller
             'product' => 'required|string|max:255',
             'classification' => 'required|string|max:50',
             'buy_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
+            'selling_price' => 'nullable|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'sale_date' => 'nullable|date',
-            'deposit_date' => 'required|date',
+            'deposit_date' => 'nullable|date',
             'destination_id' => 'required|exists:master_wholesales,id',
-            'is_confirmed' => 'required|boolean',
+            'is_confirmed' => 'nullable|boolean',
             'product_img' => 'nullable|image|max:10240',
             'product_img_existing' => 'nullable|string',
         ]);
@@ -247,13 +264,14 @@ class SaleController extends Controller
         $sale->classification = $validatedData['classification'];
         $sale->quantity = $validatedData['quantity'];
         $sale->buy_price = $validatedData['buy_price'];
-        $sale->selling_price = $validatedData['selling_price'];
+        $sellingPrice = $validatedData['selling_price'] ?? null;
+        $sale->selling_price = $sellingPrice;
         $sale->sale_date = $validatedData['sale_date'] ?? null;
-        $sale->deposit_date = $validatedData['deposit_date'];
-        $sale->is_confirmed = (bool) $validatedData['is_confirmed'];
+        $sale->deposit_date = $validatedData['deposit_date'] ?? null;
+        $sale->is_confirmed = !empty($sale->deposit_date);
         $sale->wholesale = $validatedData['destination_id'];
-        $sale->unit_price = $validatedData['quantity'] > 0
-            ? ($validatedData['selling_price'] / $validatedData['quantity'])
+        $sale->unit_price = $sellingPrice !== null && $validatedData['quantity'] > 0
+            ? ($sellingPrice / $validatedData['quantity'])
             : 0;
         if ($request->hasFile('product_img')) {
             // 古い画像を削除
