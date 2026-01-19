@@ -53,7 +53,7 @@ class MasterCampaignController extends Controller
         ]);
 
         
-         return redirect()->route('master.create_campaign')->with('success', '卸売り先マスターが登録されました。');
+         return redirect()->route('master.create_campaign')->with('success', '折込マスターが登録されました。');
 
     }
 

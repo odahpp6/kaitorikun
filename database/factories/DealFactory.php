@@ -23,7 +23,7 @@ class DealFactory extends Factory
             'store_id' => 1,
             'slip_number' => '伝票-' . $this->faker->unique()->numerify('########'),
             'customer_id' => null,
-            'remarks_1' => $this->faker->optional()->sentence(),
+            'staff_id' => null,
             'payment_method' => $this->faker->randomElement(['現金', '振込']),
             'invoice_issuer' => $this->faker->randomElement(['適格請求書発行事業者ではありません', '適格請求書発行事業者です']),
             'buy_type' => $this->faker->randomElement(['店頭買取', 'そのほか']),

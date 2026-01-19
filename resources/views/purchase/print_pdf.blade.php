@@ -107,6 +107,10 @@
         <td colspan="3">{{ $store->company_name ?? '—' }}</td>
     </tr>
     <tr>
+        <th>担当者</th>
+        <td colspan="3">{{ $deal->staff?->staff_name ?? '—' }}</td>
+    </tr>
+    <tr>
         <th>住所</th>
         <td colspan="3">{{ $store?->postal_code ? '〒' . $store->postal_code . ' ' : '' }}{{ $store->address ?? '—' }}</td>
     </tr>
@@ -222,15 +226,37 @@
             <td class="text-center" colspan="6">商品が登録されていません</td>
         </tr>
     @endforelse
-    <tr>
-        <th class="text-right" colspan="5">消費税額(10%)</th>
-        <td class="text-right">{{ $hasBuyItems ? number_format($buyItemsTax) : '—' }}</td>
-    </tr>
+
     <tr>
         <th class="text-right" colspan="5">合計金額</th>
         <td class="text-right">{{ $hasBuyItems ? number_format($buyItemsTotal) : '—' }}</td>
     </tr>
 </table>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>税率区分</th>
+      <th>対象金額</th>
+      <th>消費税額</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>10％対象</td>
+      <td>{{ $hasBuyItems ? number_format($buyItemsTotal) : '—' }}</td>
+      <td>{{ $hasBuyItems ? number_format($buyItemsTax) : '—' }}</td>
+    </tr>
+    <tr>
+      <td>非課税対象</td>
+      <td>0円</td>
+      <td>0円</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
 
 <table>
     <tr>

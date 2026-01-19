@@ -16,7 +16,7 @@ return new class extends Migration {
                   ->comment('所持店舗ID (users.id)');
             $table->string('slip_number', 50)->unique(); // 伝票番号（自動採番・ユニーク制約）
             $table->foreignId('customer_id')->constrained('customers'); // 契約者（顧客ID）
-            $table->text('remarks_1')->nullable(); // 備考
+            $table->unsignedBigInteger('staff_id')->nullable()->comment('担当者ID (master_staff.id)');
             $table->text('payment_method'); // 支払い
             $table->text('payment_remarks')->nullable(); // 支払い備考
             $table->text('invoice_issuer');//適格業者

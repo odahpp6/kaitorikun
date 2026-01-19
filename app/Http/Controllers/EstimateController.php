@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB; // ★追加：トランザクション用
 use Illuminate\Http\RedirectResponse; // ★追加：戻り値の型用
 use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Validator;
 
 
 class EstimateController extends Controller
@@ -59,22 +60,55 @@ public function create()
         // $request->validate() は第1引数にルール、第2引数にカスタムメッセージ、
         // 第3引数にカスタム属性（表示名）を取ることができます。
         
-        $request->validate(
-            // 第1引数: バリデーションルール
+        $validator = Validator::make(
             [
-                'title' => ['required', 'string', 'max:50'], 
+                'title' => $request->title,
+                'adjustment' => $request->adjustment,
+                'text' => $request->input('text', []),
+                'num1' => $request->input('num1', []),
+                'num2' => $request->input('num2', []),
+                'remarks' => $request->input('remarks', []),
+            ],
+            [
+                'title' => ['required', 'string', 'max:50'],
                 'adjustment' => ['nullable', 'numeric'],
-            ], 
-            
-            // 第2引数: カスタムメッセージ (標準の日本語訳を使う場合は空の配列でOK)
-            [], 
-            
-            // 🚨 第3引数: カスタム属性 (フィールド名を日本語にする) 🚨
+                'text.*' => ['nullable', 'string', 'max:100'],
+                'num1.*' => ['nullable', 'numeric', 'min:0'],
+                'num2.*' => ['nullable', 'numeric', 'min:1'],
+                'remarks.*' => ['nullable', 'string', 'max:255'],
+            ],
+            [],
             [
                 'title' => 'タイトル',
                 'adjustment' => '調整金額',
+                'text.*' => '買取品目',
+                'num1.*' => '査定価格',
+                'num2.*' => '数量',
+                'remarks.*' => '備考',
             ]
         );
+
+        $validator->after(function ($validator) use ($request) {
+            $texts = $request->input('text', []);
+            $num1s = $request->input('num1', []);
+            $num2s = $request->input('num2', []);
+            $remarks = $request->input('remarks', []);
+
+            $max = max(count($texts), count($num1s), count($num2s), count($remarks));
+            for ($i = 0; $i < $max; $i++) {
+                $text = $texts[$i] ?? null;
+                $num1 = $num1s[$i] ?? null;
+                $num2 = $num2s[$i] ?? null;
+                $remark = $remarks[$i] ?? null;
+
+                $hasAny = (string) $text !== '' || (string) $num1 !== '' || (string) $num2 !== '' || (string) $remark !== '';
+                if ($hasAny && ((string) $num2 === '')) {
+                    $validator->errors()->add("num2.$i", '数量は必須です。');
+                }
+            }
+        });
+
+        $validator->validate();
         
         
         // 1. 認証ユーザーからDBに必要な情報を取得（仮の値から認証情報に変更）
@@ -96,7 +130,7 @@ public function create()
             // 2-1. 見積登録テーブル (estimates) への登録
             $estimate = Estimate::create([
                 'title' => $request->title,
-                'adjustment' => $request->adjustment,
+                'adjustment' => $request->filled('adjustment') ? $request->adjustment : 0,
                 'store_id' => $storeId, // ★必須：store_idを設定
                 'role' => $role,         // ★必須：roleを設定
             ]);
@@ -248,18 +282,55 @@ public function create()
 
     public function update(Request $request, $id): RedirectResponse // ★$idパラメータを追加
     {
-        // バリデーション
-        $request->validate(
+        $validator = Validator::make(
             [
-                'title' => ['required', 'string', 'max:50'], 
+                'title' => $request->title,
+                'adjustment' => $request->adjustment,
+                'text' => $request->input('text', []),
+                'num1' => $request->input('num1', []),
+                'num2' => $request->input('num2', []),
+                'remarks' => $request->input('remarks', []),
+            ],
+            [
+                'title' => ['required', 'string', 'max:50'],
                 'adjustment' => ['nullable', 'numeric'],
-            ], 
-            [], 
+                'text.*' => ['nullable', 'string', 'max:100'],
+                'num1.*' => ['nullable', 'numeric', 'min:0'],
+                'num2.*' => ['nullable', 'numeric', 'min:1'],
+                'remarks.*' => ['nullable', 'string', 'max:255'],
+            ],
+            [],
             [
                 'title' => 'タイトル',
                 'adjustment' => '調整金額',
+                'text.*' => '買取品目',
+                'num1.*' => '査定価格',
+                'num2.*' => '数量',
+                'remarks.*' => '備考',
             ]
         );
+
+        $validator->after(function ($validator) use ($request) {
+            $texts = $request->input('text', []);
+            $num1s = $request->input('num1', []);
+            $num2s = $request->input('num2', []);
+            $remarks = $request->input('remarks', []);
+
+            $max = max(count($texts), count($num1s), count($num2s), count($remarks));
+            for ($i = 0; $i < $max; $i++) {
+                $text = $texts[$i] ?? null;
+                $num1 = $num1s[$i] ?? null;
+                $num2 = $num2s[$i] ?? null;
+                $remark = $remarks[$i] ?? null;
+
+                $hasAny = (string) $text !== '' || (string) $num1 !== '' || (string) $num2 !== '' || (string) $remark !== '';
+                if ($hasAny && ((string) $num2 === '')) {
+                    $validator->errors()->add("num2.$i", '数量は必須です。');
+                }
+            }
+        });
+
+        $validator->validate();
         
         // 1. 認証ユーザーなどからDBに必要な情報を取得
         $storeId = Auth::id();
@@ -275,7 +346,7 @@ public function create()
             
             $estimate->update([
                 'title' => $request->title,
-                'adjustment' => $request->adjustment,
+                'adjustment' => $request->filled('adjustment') ? $request->adjustment : 0,
             ]);
 
             // 2-2. 既存の見積行を全て削除

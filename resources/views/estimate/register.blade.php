@@ -133,6 +133,16 @@
 <form action="{{ url('/estimate') }}" method="POST">
 @csrf
 
+@if ($errors->any())
+<div class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+  <ul class="list-disc pl-5">
+    @foreach ($errors->all() as $error)
+      <li>{{ $error }}</li>
+    @endforeach
+  </ul>
+</div>
+@endif
+
 <p class="mb-4">タイトル:<input type="text" placeholder="タイトルを入力してください" name="title" :min="0" value="{{ old('title') }}" class="w-50 border-2 border-blue-600 rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-700" />
 <span class="block text-xs text-red-600 mt-1">わかりやすいタイトルを入れてください。</span>
 </p>
@@ -335,7 +345,7 @@ Vue.createApp({
       data() {
         return {
           rows: [
-            { text: '', remarks:'',num1: 0, num2: 1 , gold1:'', gold2:'0', ratio1:100, calc:80, weight:0,showGoldCalcForRow: false }
+            { text: '', remarks:'',num1: 0, num2: 1 , gold1:'', gold2:'0', ratio1:100, calc:75, weight:0,showGoldCalcForRow: false }
       ],
           adjustment:0,
           goldPriceLabels: {
@@ -375,7 +385,7 @@ Vue.createApp({
     gold2: '0', // デフォルトをコンビ無しにする
     ratio1: 100,
     ratio2: '',
-    calc: 80,
+    calc: 75,
     weight: 0,
     showGoldCalcForRow: false // 新しい行にも追加
              });

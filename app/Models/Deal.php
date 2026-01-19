@@ -21,5 +21,10 @@ class Deal extends Model
     {
         return $this->hasMany(BuyItem::class, 'deal_id', 'id');
     }
+
+    public function staff()
+    {
+        return $this->belongsTo(MasterStaff::class, 'staff_id', 'id');
+    }
    
 }

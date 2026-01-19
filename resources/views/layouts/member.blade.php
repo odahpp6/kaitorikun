@@ -125,6 +125,12 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('customer.repeat_analysis') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/repeat_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+                <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/repeat_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
+                <span>リピート分析</span>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('customer.sales_summary') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/sales_summary*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/sales_summary*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>売上管理</span>
@@ -136,15 +142,20 @@
         <li>
             <a href="/master/create_wholesale" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_wholesale') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                 <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_wholesale') ? 'text-white' : 'text-gray-200' }}"></i>
-                <span>取引先マスタ登録</span>
+                <span>取引先登録</span>
             </a>
         </li>
           <li>
             <a href="/master/create_campaign" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_campaign') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                 <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_campaign') ? 'text-white' : 'text-gray-200' }}"></i>
-                <span>折り込みマスタ登録</span>
+                <span>折り込み登録</span>
             </a>
         </li>
+            <li>
+                <a href="/master/create_staff" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_staff') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                    <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_staff') ? 'text-white' : 'text-gray-200' }}"></i>
+                    <span>担当者登録</span>
+            </a>
 
     </ul>
 </nav>

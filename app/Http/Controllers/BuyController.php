@@ -6,6 +6,7 @@ use App\Models\BuyItem;
 use App\Models\Customer;
 use App\Models\Deal;
 use App\Models\MasterCampaign;
+use App\Models\MasterStaff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +17,7 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PurchaseRegistered;
+use Illuminate\Validation\Rule;
 
 class BuyController extends Controller
 {
@@ -23,7 +25,8 @@ class BuyController extends Controller
     {
         $storeId = Auth::id();
         $mastercampaigns = MasterCampaign::where('store_id', $storeId)->get();
-        return view('purchase.register', compact('mastercampaigns'));
+        $masterstaffs = MasterStaff::where('store_id', $storeId)->get();
+        return view('purchase.register', compact('mastercampaigns', 'masterstaffs'));
     }
 
     public function store(Request $request)
@@ -42,6 +45,11 @@ class BuyController extends Controller
              'payment_method' => 'required|string', // arrayではなくstringにする
              'payment_remarks' => 'nullable|string',
              'remarks' => 'nullable|string',
+             'staff_id' => [
+                 'nullable',
+                 'integer',
+                 Rule::exists('master_staff', 'id')->where('store_id', Auth::id()),
+             ],
         ]);
 
         DB::beginTransaction();
@@ -90,6 +98,7 @@ class BuyController extends Controller
             $deal->payment_remarks = $request->payment_remarks;
             $deal->invoice_issuer = $request->invoice_issuer;
             $deal->remarks = $request->remarks;
+            $deal->staff_id = $request->staff_id;
             
             // 同意フラグ
             $deal->agree_received_amount = $request->has('agree_received_amount');
@@ -241,7 +250,8 @@ public function index(Request $request)
                     ->with(['customer', 'buyItems'])
                     ->firstOrFail();
         $mastercampaigns = MasterCampaign::where('store_id', $storeId)->get(); 
-        return view('purchase.edit', compact('deal', 'mastercampaigns'));
+        $masterstaffs = MasterStaff::where('store_id', $storeId)->get();
+        return view('purchase.edit', compact('deal', 'mastercampaigns', 'masterstaffs'));
     }
 
     public function purchase_update(Request $request, $id) // IDを受け取る
@@ -257,6 +267,11 @@ public function index(Request $request)
             'payment_method' => 'required|string',
             'payment_remarks' => 'nullable|string',
             'remarks' => 'nullable|string',
+            'staff_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('master_staff', 'id')->where('store_id', Auth::id()),
+            ],
         ]);
 
     DB::beginTransaction();
@@ -282,7 +297,7 @@ public function index(Request $request)
 
         // 4. 取引情報の更新
         $deal->fill($request->only([
-            'buy_type', 'arrival_type', 'campaign_id', 'payment_method', 'payment_remarks', 'invoice_issuer', 'remarks'
+            'buy_type', 'arrival_type', 'campaign_id', 'payment_method', 'payment_remarks', 'invoice_issuer', 'remarks', 'staff_id'
         ]));
         $deal->agree_received_amount = $request->has('agree_received_amount');
         $deal->agree_no_return = $request->has('agree_no_return');
@@ -450,6 +465,91 @@ public function index(Request $request)
             'classificationTotal' => $classificationTotal,
             'campaignStats' => $campaignStats,
             'campaignTotal' => $campaignTotal,
+        ]);
+    }
+
+    public function repeat_analysis(Request $request)
+    {
+        $storeId = Auth::id();
+
+        $arrivalTypes = Deal::where('store_id', $storeId)
+            ->whereNotNull('arrival_type')
+            ->where('arrival_type', '!=', '')
+            ->select('arrival_type')
+            ->distinct()
+            ->orderBy('arrival_type')
+            ->pluck('arrival_type');
+
+        $classifications = DB::table('buy_items')
+            ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+            ->where('deals.store_id', $storeId)
+            ->whereNotNull('buy_items.classification')
+            ->where('buy_items.classification', '!=', '')
+            ->select('buy_items.classification as classification')
+            ->distinct()
+            ->orderBy('buy_items.classification')
+            ->pluck('classification');
+
+        $dealBase = Deal::query()->where('deals.store_id', $storeId);
+        if ($request->filled('date_from')) {
+            $dealBase->whereDate('deals.created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $dealBase->whereDate('deals.created_at', '<=', $request->date_to);
+        }
+
+        $arrivalType = $request->input('arrival_type');
+        $classification = $request->input('classification');
+
+        $repeatCustomers = (clone $dealBase)
+            ->join('customers', 'deals.customer_id', '=', 'customers.id')
+            ->select(
+                'customers.name',
+                'customers.phone_number',
+                DB::raw('COUNT(DISTINCT deals.id) as visit_count')
+            )
+            ->groupBy('customers.name', 'customers.phone_number')
+            ->having('visit_count', '>=', 2);
+
+        $repeatItems = DB::table('buy_items')
+            ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+            ->join('customers', 'deals.customer_id', '=', 'customers.id')
+            ->joinSub($repeatCustomers, 'repeat_customers', function ($join) {
+                $join->on('customers.name', '=', 'repeat_customers.name')
+                    ->on('customers.phone_number', '=', 'repeat_customers.phone_number');
+            })
+            ->where('deals.store_id', $storeId)
+            ->when($request->filled('date_from'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '>=', $request->date_from);
+            })
+            ->when($request->filled('date_to'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '<=', $request->date_to);
+            })
+            ->when($arrivalType !== null && $arrivalType !== '', function ($query) use ($arrivalType) {
+                $query->whereRaw('TRIM(deals.arrival_type) = ?', [$arrivalType]);
+            })
+            ->when($classification !== null && $classification !== '', function ($query) use ($classification) {
+                $query->whereRaw('TRIM(buy_items.classification) = ?', [$classification]);
+            })
+            ->select(
+                'deals.arrival_type',
+                'customers.name',
+                'customers.phone_number',
+                'deals.created_at',
+                'buy_items.classification',
+                'buy_items.product',
+                'buy_items.buy_price',
+                'repeat_customers.visit_count'
+            )
+            ->orderByDesc('repeat_customers.visit_count')
+            ->orderBy('customers.name')
+            ->orderByDesc('deals.created_at')
+            ->get();
+
+        return view('customer.repeat_analysis', [
+            'repeatItems' => $repeatItems,
+            'arrivalTypes' => $arrivalTypes,
+            'classifications' => $classifications,
         ]);
     }
 

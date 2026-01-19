@@ -10,6 +10,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\CashController;
 use App\Http\Controllers\CashManagementController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MasterStaffController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -70,13 +71,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/master/{id}/edit_campaign', [MasterCampaignController::class, 'update_campaign'])->name('master.update_campaign');
      //折り込みマスター削除確認
     Route::get('/master/{id}/dlete_campaign',[MasterCampaignController::class, 'delete_campaign'])->name('master.delete_campaign');
-   
-   
+  
     //折り込みマスター削除実行
     Route::delete('/master/{id}/dlete_campaign',[MasterCampaignController::class, 'delete_campaign_excecute'])->name('master.delete_campaign_excecute');
-
-
-
     //卸先マスター登録
     Route::get('/master/create_wholesale',[MasterWholesaleController::class, 'create_wholesale'])->name('master.create_wholesale');
     //卸売りマスター登録
@@ -85,7 +82,7 @@ Route::middleware('auth')->group(function () {
     //卸先マスター登録DB保存
     Route::post('/master/create_wholesale',[MasterWholesaleController::class, 'store_wholesale'])->name('master.store_wholesale');
 
-   // web.php (修正後)
+   
 
 // 卸先マスター一覧 (リスト表示に戻るために必要)
 Route::get('/master/list_wholesale',[MasterWholesaleController::class, 'list_wholesale'])->name('master.list_wholesale');
@@ -97,6 +94,16 @@ Route::get('/master/list_wholesale/{id}/delete',[MasterWholesaleController::clas
 // 卸先マスター削除実行 (DELETE)
 // ★DELETEルートを追加し、フォームが参照する名前を付ける
 Route::delete('/master/list_wholesale/{id}/delete',[MasterWholesaleController::class, 'delete'])->name('master.delete_wholesale');
+
+//担当者マスター登録
+Route::get('/master/create_staff',[MasterStaffController::class, 'create_staff'])->name('master.create_staff');
+Route::post('/master/create_staff',[MasterStaffController::class, 'store_staff'])->name('master.store_staff');  
+//担当者マスター登録削除確認
+Route::get('/master/{id}/delete_confirm',[MasterStaffController::class, 'delete_confirm'])->name('master.delete_confirm_staff');
+//担当者マスター登録削除実行
+Route::delete('/master/{id}/delete',[MasterStaffController::class, 'delete'])->name('master.delete_staff');
+
+
 
 // 買取契約登録
 Route::get('/purchase',[BuyController::class, 'purchase'])->name('purchase.register');
@@ -155,6 +162,8 @@ Route::get('/cash_management/list', [CashManagementController::class, 'cash_mana
 Route::get('/customer/search', [CustomerController::class, 'customer_search'])->name('customer.search');
 //買取上分析
 Route::get('/customer/buy_analysis', [BuyController::class, 'buy_analysis'])->name('customer.buy_analysis');
+//リピート分析
+Route::get('/customer/repeat_analysis', [BuyController::class, 'repeat_analysis'])->name('customer.repeat_analysis');
 //顧客メール送信
 Route::get('/customer/mail', [CustomerController::class, 'mail'])->name('customer.mail');
 Route::post('/customer/mail', [CustomerController::class, 'send_mail'])->name('customer.mail.send');

@@ -13,6 +13,7 @@
     $paymentMethod = $deal->payment_method ?: '—';
     $paymentRemarks = $deal->payment_remarks ?: '—';
     $dealRemarks = $deal->remarks ?: '—';
+    $staffName = $deal->staff?->staff_name ?: '—';
 @endphp
 
 <div class="max-w-6xl mx-auto p-6 space-y-6">
@@ -169,6 +170,12 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">お支払い方法</p>
                     <p class="font-semibold">{{ $paymentMethod }}</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap -mx-3">
+                <div class="w-full md:w-1/2 px-3">
+                    <p class="text-xs text-gray-500">担当者</p>
+                    <p class="font-semibold">{{ $staffName }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap -mx-3">

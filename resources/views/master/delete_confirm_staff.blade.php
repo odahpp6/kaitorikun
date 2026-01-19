@@ -1,12 +1,12 @@
 @extends('layouts.member')
 
-@section('title', '卸売り先削除確認')
+@section('title', 'スタッフ削除確認')
 @section('content')
 
 <div class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">卸売り先削除確認</h1>
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">スタッフ削除確認</h1>
     
-    {{-- コントローラーから渡された単一のレコード情報 ($wholesale) を表示 --}}
+    {{-- コントローラーから渡された単一のレコード情報 ($staff) を表示 --}}
     <div class="mb-4 p-4 border rounded-lg bg-gray-50">
         <p><strong>ID:</strong> {{ $staff->id }}</p>
         <p><strong>スタッフ:</strong> {{ $staff->staff_name }}</p>
@@ -28,8 +28,8 @@
         </form>
 
         {{-- キャンセルボタン (一覧に戻る) --}}
-        <a href="{{ route('master.list_staff') }}" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-400 transition-colors duration-200">
-            キャンセルして一覧に戻る
+        <a href="{{ route('master.store_staff') }}" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-400 transition-colors duration-200">
+            キャンセルして戻る
         </a>
     </div>
 </div>

@@ -3,6 +3,17 @@
 @section('title', '買取契約登録')
 @section('content')
 
+<style>
+@media (max-width: 1024px) {
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"] {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+</style>
+
 <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約登録</h2>
 
 @if ($errors->any())
@@ -384,6 +395,22 @@
                         <label class="block text-sm font-bold mb-1">取引備考</label>
                         <textarea name="remarks" rows="2" class="w-full border border-gray-300 rounded-md">{{ old('remarks') }}</textarea>
                         @error('remarks')
+                            <p class="text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full px-3">
+                        <label class="block text-sm font-bold mb-1">担当者</label>
+                        <select name="staff_id" class="w-full border border-gray-300 rounded-md">
+                            <option value="" @selected(old('staff_id') === '')></option>
+                            @foreach ($masterstaffs ?? [] as $staff)
+                                <option value="{{ $staff->id }}" @selected((string) old('staff_id') === (string) $staff->id)>
+                                    {{ $staff->staff_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('staff_id')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

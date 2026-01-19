@@ -3,6 +3,17 @@
 @section('title', '買取契約詳細')
 @section('content')
 
+<style>
+@media (max-width: 1024px) {
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"] {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+}
+</style>
+
 <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約詳細</h2>
 
 @if ($errors->any())
@@ -143,8 +154,8 @@
                     @enderror
                     </div>
                     <div class="w-full md:w-1/2 px-3">
-                    <label class="block text-sm font-bold mb-1">身分証明書番号 <span class="text-red-500">必須</span></label>
-                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num', $customer->proof_num ?? null) }}" required>
+                    <label class="block text-sm font-bold mb-1">身分証明書番号 </label>
+                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num', $customer->proof_num ?? null) }}" >
                     @error('proof_num')
                         <p class="text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -402,6 +413,22 @@
                         <label class="block text-sm font-bold mb-1">備考</label>
                         <textarea name="payment_remarks" rows="2" class="w-full border border-gray-300 rounded-md">{{ old('payment_remarks', $deal->payment_remarks ?? null) }}</textarea>
                         @error('payment_remarks')
+                            <p class="text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-3">
+                    <div class="w-full px-3">
+                        <label class="block text-sm font-bold mb-1">担当者</label>
+                        <select name="staff_id" class="w-full border border-gray-300 rounded-md">
+                            <option value="" @selected(old('staff_id', $deal->staff_id ?? '') === '')></option>
+                            @foreach ($masterstaffs ?? [] as $staff)
+                                <option value="{{ $staff->id }}" @selected((string) old('staff_id', $deal->staff_id ?? null) === (string) $staff->id)>
+                                    {{ $staff->staff_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('staff_id')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
