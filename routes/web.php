@@ -27,8 +27,7 @@ use Carbon\Carbon;
 |
 */
 
-Route::get('/', [AuthenticatedSessionController::class, 'create'])
-                ->name('login');
+
 
 //認証済みユーザーのみアクセス可能
 Route::middleware('auth')->group(function () {
