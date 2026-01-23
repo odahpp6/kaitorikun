@@ -41,6 +41,12 @@
   </table>
 </div>
 
+<div class="max-w-4xl mx-auto mt-6">
+  <a href="{{ route('user.edit', $user->id) }}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+    ユーザー更新する
+  </a>
+</div>
+
 
 
 @endsection

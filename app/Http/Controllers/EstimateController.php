@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse; // ★追加：戻り値の型用
 use Illuminate\Support\Facades\Auth; // ★Authファサードの追加
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Carbon;
 
 
 class EstimateController extends Controller
@@ -161,9 +162,33 @@ public function create()
 
 
     //一覧表示
-    public function list(){
+    public function list(Request $request){
         $storeId = Auth::id(); // ログインユーザーのIDを取得
-        $Estimates=Estimate::where('store_id',$storeId)->get();
+        $query = Estimate::where('store_id', $storeId);
+
+        $title = trim((string) $request->input('title', ''));
+        if ($title !== '') {
+            $query->where('title', 'like', '%' . $title . '%');
+        }
+
+        $dateFrom = $request->input('date_from');
+        if (!empty($dateFrom)) {
+            $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+        }
+
+        $dateTo = $request->input('date_to');
+        if (!empty($dateTo)) {
+            $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+        }
+
+        $itemText = trim((string) $request->input('item_text', ''));
+        if ($itemText !== '') {
+            $query->whereHas('items', function ($itemQuery) use ($itemText) {
+                $itemQuery->where('text', 'like', '%' . $itemText . '%');
+            });
+        }
+
+        $Estimates = $query->orderByDesc('created_at')->get();
         // ★修正★ キー名を 'Estimates' (複数形) に変更
     return view('estimate.list', ['Estimates' => $Estimates]);
     //'Estimates'はキーである。bladeには変数で渡る

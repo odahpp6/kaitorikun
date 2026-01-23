@@ -109,11 +109,9 @@ Route::delete('/master/{id}/delete',[MasterStaffController::class, 'delete'])->n
 Route::get('/purchase',[BuyController::class, 'purchase'])->name('purchase.register');
 Route::post('/purchase',[BuyController::class, 'store'])->name('purchase.store');
 
-// 買取契約登録一覧
-Route::get('/purchase/list',[BuyController::class, 'purchase_list'])->name('purchase.list');
-
-// 買取契約検索
-Route::get('/purchase/list',[BuyController::class, 'index'])->name('purchase.search');
+// 買取契約登録一覧（検索も同じルートで処理）
+Route::get('/purchase/list',[BuyController::class, 'index'])->name('purchase.list');
+Route::get('/purchase/list/csv',[BuyController::class, 'exportCsv'])->name('purchase.list.csv');
 
 // 買取登録詳細
 Route::get('/purchase/{id}/detail',[BuyController::class, 'purchase_detail'])->name('purchase.detail');
@@ -162,6 +160,8 @@ Route::get('/cash_management/list', [CashManagementController::class, 'cash_mana
 Route::get('/customer/search', [CustomerController::class, 'customer_search'])->name('customer.search');
 //買取上分析
 Route::get('/customer/buy_analysis', [BuyController::class, 'buy_analysis'])->name('customer.buy_analysis');
+//チラシ効果分析
+Route::get('/customer/flyer_analysis', [BuyController::class, 'flyer_analysis'])->name('customer.flyer_analysis');
 //リピート分析
 Route::get('/customer/repeat_analysis', [BuyController::class, 'repeat_analysis'])->name('customer.repeat_analysis');
 //顧客メール送信

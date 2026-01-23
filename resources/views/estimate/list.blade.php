@@ -26,6 +26,36 @@
       </div>
     </div>
   @endif
+
+  <form action="{{ route('estimate.list') }}" method="GET" class="mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <label class="block text-sm font-bold mb-1">タイトル名</label>
+        <input type="text" name="title" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ request('title') }}">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">日付（開始）</label>
+        <input type="date" name="date_from" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ request('date_from') }}">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">日付（終了）</label>
+        <input type="date" name="date_to" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ request('date_to') }}">
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-1">買取品目</label>
+        <input type="text" name="item_text" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ request('item_text') }}">
+      </div>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-3">
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+        検索
+      </button>
+      <a href="{{ route('estimate.list') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg transition duration-200">
+        クリア
+      </a>
+    </div>
+  </form>
+
   <table class="w-full border border-gray-300 text-sm mb-4">
     <thead>
     <tr class="bg-gray-100">

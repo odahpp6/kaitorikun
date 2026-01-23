@@ -109,7 +109,7 @@
                         <td class="border px-2 py-1 text-right">{{ number_format($sale->buy_price) }}</td>
                         <td class="border px-2 py-1">
                             @if ($sale->deal_id)
-                                <a href="{{ route('purchase.detail', $sale->deal_id) }}" class="text-blue-600 hover:underline">
+                                <a href="{{ route('purchase.detail', $sale->deal_id) }}" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
                                     {{ $sale->deal?->slip_number ?? '—' }}
                                 </a>
                             @else

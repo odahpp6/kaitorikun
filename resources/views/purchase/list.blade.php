@@ -15,8 +15,8 @@
         </div>
     @endif
 
-    <form action="{{ route('purchase.search') }}" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+    <form action="{{ route('purchase.list') }}" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
             <div>
                 <label class="block text-xs text-gray-500 mb-1">顧客名</label>
                 <input type="text" name="customer_name" value="{{ request('customer_name') }}" 
@@ -39,8 +39,11 @@
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
                     検索
                 </button>
-                <a href="{{ route('purchase.search') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md transition duration-200 text-center">
+                <a href="{{ route('purchase.list') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md transition duration-200 text-center">
                     クリア
+                </a>
+                <a href="{{ route('purchase.list.csv', request()->query()) }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-200 text-center">
+                    CSV出力
                 </a>
             </div>
         </div>
@@ -66,11 +69,13 @@
                 @forelse ($deals as $deal)
                 <tr class="hover:bg-blue-50 transition duration-150">
                     <td class="border px-3 py-2 text-gray-600">
+                        {{ $deal->created_at->format('Y/m/d H:i') }}
+                    </td>
+                    <td class="border px-3 py-2 font-mono text-xs">
                         <a href="{{ route('purchase.detail', $deal->id) }}" class="text-blue-600 hover:underline">
-                            {{ $deal->created_at->format('Y/m/d H:i') }}
+                            {{ $deal->slip_number ?? '—' }}
                         </a>
                     </td>
-                    <td class="border px-3 py-2 font-mono text-xs">{{ $deal->slip_number ?? '—' }}</td>
                     <td class="border px-3 py-2 font-bold">{{ $deal->customer->name }}</td>
                     <td class="border px-3 py-2">
                         {{ $deal->buyItems->first()->product ?? '商品なし' }}

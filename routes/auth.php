@@ -16,20 +16,6 @@ Route::middleware('guest')->group(function () {
                 ->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('user/list',[RegisteredUserController::class, 'list'])
-              ->name('auth.list');
-
-    Route::get('user/{id}/detail',[RegisteredUserController::class, 'detail'])
-              ->name('auth.detail');          
-    Route::get('user/{id}/edit', [RegisteredUserController::class, 'edit'])->name('user.edit');
-    
-    Route::put('user/{id}/update', [RegisteredUserController::class, 'update'])->name('user.update');
-
-    Route::get('user/{id}/delete_confirm', [RegisteredUserController::class, 'delete_confirm'])->name('user.delete_confirm');
-    
-    // 実行処理（DELETE）
-    Route::delete('user/{id}', [RegisteredUserController::class, 'destroy'])->name('user.destroy');
-    
 
 
     Route::post('', [RegisteredUserController::class, 'update']);
@@ -46,4 +32,20 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+    
+    Route::get('user/{id}/detail',[RegisteredUserController::class, 'detail'])
+              ->name('auth.detail');          
+    Route::get('user/{id}/edit', [RegisteredUserController::class, 'edit'])->name('user.edit');
+    
+    Route::put('user/{id}/update', [RegisteredUserController::class, 'update'])->name('user.update');
+
+    Route::middleware('master')->group(function () {
+        Route::get('user/list',[RegisteredUserController::class, 'list'])
+                  ->name('auth.list');
+
+        Route::get('user/{id}/delete_confirm', [RegisteredUserController::class, 'delete_confirm'])->name('user.delete_confirm');
+        
+        // 実行処理（DELETE）
+        Route::delete('user/{id}', [RegisteredUserController::class, 'destroy'])->name('user.destroy');              
+    });
 });

@@ -3,17 +3,6 @@
 @section('title', '買取契約登録')
 @section('content')
 
-<style>
-@media (max-width: 1024px) {
-  input[type="text"],
-  input[type="tel"],
-  input[type="email"] {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-  }
-}
-</style>
-
 <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">買取契約登録</h2>
 
 @if ($errors->any())
@@ -68,7 +57,7 @@
 
             <div class="w-full md:w-1/2 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">商品名 <span class="text-red-500">必須</span></label>
-                <input type="text" name="items[INDEX][product]" maxlength="100" class="w-full border border-gray-300 rounded px-3 py-2" required disabled>
+                <input type="text" name="items[INDEX][product]" maxlength="100" class="w-full border border-gray-300 rounded px-3 py-3" required disabled>
             </div>
 
             <div class="w-full md:w-1/4 px-2 mb-4">
@@ -128,7 +117,7 @@
                     </div>
                     <div class="w-full md:w-1/2 px-3">
                     <label class="block text-sm font-bold mb-1">身分証明書番号 </label>
-                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md" value="{{ old('proof_num') }}">
+                    <input type="text" name="proof_num" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('proof_num') }}">
                     @error('proof_num')
                         <p class="text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -159,14 +148,14 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">顧客名 <span class="text-red-500">必須</span></label>
-                        <input type="text" v-on:input="checkName"v-bind:class="message.name.class" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md"  value="{{ old('name') }}" required>
+                        <input type="text" v-on:input="checkName"v-bind:class="message.name.class" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md px-3 py-3"  value="{{ old('name') }}" required>
                         @error('name')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">フリガナ</label>
-                        <input type="text" name="furigana" maxlength="50" placeholder="カタカナ" class="w-full border border-gray-300 rounded-md" value="{{ old('furigana') }}">
+                        <input type="text" name="furigana" maxlength="50" placeholder="カタカナ" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('furigana') }}">
                         @error('furigana')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -176,14 +165,14 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">電話番号 <span class="text-red-500">必須</span></label>
-                        <input type="tel" v-on:input="checkTel"v-bind:class="message.tel.class" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md" value="{{ old('phone_number') }}" required>
+                        <input type="tel" v-on:input="checkTel"v-bind:class="message.tel.class" name="phone_number" placeholder="09012345678" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('phone_number') }}" required>
                         @error('phone_number')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">Email</label>
-                        <input type="email" name="email" class="w-full border border-gray-300 rounded-md" value="{{ old('email') }}">
+                        <input type="email" name="email" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('email') }}">
                         @error('email')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -279,7 +268,7 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">郵便番号</label>
-                        <input type="text" name="postal_code" placeholder="1234567" class="w-full border border-gray-300 rounded-md" value="{{ old('postal_code') }}">
+                        <input type="text" name="postal_code" placeholder="1234567" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('postal_code') }}">
                         @error('postal_code')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -300,7 +289,7 @@
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">市区町村 <span class="text-red-500">必須</span></label>
                         <input type="text" name="city" v-on:input="checkCity" :class="{
-                        'animate-shadow-red':!message.city.valid && message.city.touched}" class="w-full border border-gray-300 rounded-md" value="{{ old('city') }}" required>
+                        'animate-shadow-red':!message.city.valid && message.city.touched}" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('city') }}" required>
                         @error('city')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -310,14 +299,14 @@
                     <div class="w-full md:w-2/3 px-3">
                         <label class="block text-sm font-bold mb-1">番地以降 <span class="text-red-500">必須</span></label>
                         <input type="text" name="address_detail" v-on:input="checkAddressDetail" :class="{
-                        'animate-shadow-red':!message.address_detail.valid && message.address_detail.touched}" class="w-full border border-gray-300 rounded-md" value="{{ old('address_detail') }}" required>
+                        'animate-shadow-red':!message.address_detail.valid && message.address_detail.touched}" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('address_detail') }}" required>
                         @error('address_detail')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
                     <div class="w-full md:w-1/3 px-3">
                         <label class="block text-sm font-bold mb-1">建物名</label>
-                        <input type="text" name="address_building" class="w-full border border-gray-300 rounded-md" value="{{ old('address_building') }}">
+                        <input type="text" name="address_building" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('address_building') }}">
                         @error('address_building')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror

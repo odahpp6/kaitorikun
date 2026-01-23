@@ -207,7 +207,7 @@ class SaleController extends Controller
         $totalBuyPrice = (int) (clone $totalsQuery)->sum('buy_price');
         $totalGrossProfit = $totalSellingPrice - $totalBuyPrice;
 
-        $sales = $query->orderBy('created_at', 'desc')->paginate(20);
+        $sales = $query->orderBy('created_at', 'desc')->paginate(100);
         $wholesales = MasterWholesale::where('store_id', $storeId)->get();
 
         return view('sale.list', compact(

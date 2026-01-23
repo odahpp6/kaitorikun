@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Deal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
 class CustomerController extends Controller
@@ -42,7 +43,9 @@ class CustomerController extends Controller
 
     public function mail()
     {
+        $storeId = Auth::id();
         $customers = Customer::query()
+            ->where('store_id', $storeId)
             ->whereNotNull('email')
             ->where('email', '!=', '')
             ->orderBy('name')
@@ -53,6 +56,7 @@ class CustomerController extends Controller
 
     public function send_mail(Request $request)
     {
+        $storeId = Auth::id();
         $validated = $request->validate([
             'subject' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
@@ -67,6 +71,7 @@ class CustomerController extends Controller
 
         $emails = Customer::query()
             ->whereIn('id', $customerIds)
+            ->where('store_id', $storeId)
             ->whereNotNull('email')
             ->where('email', '!=', '')
             ->pluck('email')

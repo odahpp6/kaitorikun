@@ -206,18 +206,175 @@ class BuyController extends Controller
 
 public function index(Request $request)
 {
-    // 1. クエリの準備（Eager Loadingでリレーションも取得）
-    $query = Deal::with(['customer', 'buyItems']);
+    $query = $this->buildPurchaseListQuery($request);
+    $deals = $query->orderBy('created_at', 'desc')->paginate(100);
 
-    // 2. 顧客名で検索 (Customerテーブルを結合して検索)
+    return view('purchase.list', compact('deals'));
+}
+
+public function exportCsv(Request $request)
+{
+    $query = $this->buildPurchaseListQuery($request);
+    $filename = 'purchase_list_' . now()->format('Ymd_His') . '.csv';
+
+    $headers = [
+        '身分証明書種類',
+        '顧客名',
+        'フリガナ',
+        '電話番号',
+        'Email',
+        '生年月日(西暦)',
+        '性別',
+        '職業',
+        '郵便番号',
+        '都道府県',
+        '市区町村',
+        '番地以降',
+        '建物名',
+        '登録日時',
+        '伝票番号',
+        '合計金額',
+        '買取区分',
+        '来店区分',
+        'お支払い方法',
+        '担当者',
+        '備考',
+        '取引備考',
+        '適格請求書発行事業者',
+        '提示金額受領',
+        '返品不可同意',
+        '個人情報同意',
+        '同意・署名',
+        '消費税額(10%)',
+        '個数合計',
+        '商品番号',
+        '商品画像',
+        '商品名',
+        '買取分類',
+        '商品備考',
+        '個数',
+        '買取金額',
+    ];
+
+    $genderLabelMap = [
+        'male' => '男性',
+        'female' => '女性',
+        'other' => 'その他',
+    ];
+
+    return response()->streamDownload(function () use ($query, $headers, $genderLabelMap) {
+        $output = fopen('php://output', 'w');
+        fwrite($output, "\xEF\xBB\xBF");
+        fputcsv($output, $headers);
+
+        $deals = $query->orderBy('created_at', 'desc')->get();
+        foreach ($deals as $deal) {
+            $customer = $deal->customer;
+            $items = $deal->buyItems ?? collect();
+            $itemCount = $items->sum('quantity');
+
+            $formatItemLines = function ($items, callable $valueForItem) {
+                $lines = [];
+                foreach ($items as $index => $item) {
+                    $value = $valueForItem($item);
+                    $lines[] = ($index + 1) . ':' . ($value ?? '');
+                }
+                return implode("\n", $lines);
+            };
+
+            $itemNumbers = $items->map(function ($item, $index) {
+                return (string) ($index + 1);
+            })->implode("\n");
+
+            $itemImages = $formatItemLines($items, function ($item) {
+                if (!$item->product_img) {
+                    return '';
+                }
+                return Storage::disk('public')->url($item->product_img);
+            });
+            $itemProducts = $formatItemLines($items, function ($item) {
+                return $item->product;
+            });
+            $itemClassifications = $formatItemLines($items, function ($item) {
+                return $item->classification;
+            });
+            $itemRemarks = $formatItemLines($items, function ($item) {
+                return $item->remarks_2;
+            });
+            $itemQuantities = $formatItemLines($items, function ($item) {
+                return $item->quantity;
+            });
+            $itemPrices = $formatItemLines($items, function ($item) {
+                return $item->buy_price;
+            });
+
+            $birthDate = $customer
+                ? sprintf('%04d-%02d-%02d', $customer->birth_y, $customer->birth_m, $customer->birth_d)
+                : '';
+            $gender = $customer ? ($genderLabelMap[$customer->gender] ?? $customer->gender) : '';
+            $staffName = $deal->staff ? $deal->staff->staff_name : '';
+            $signatureStatus = $deal->signature_image_data ? '有' : '無';
+            $taxAmount = $deal->total_price ? round($deal->total_price / 11) : 0;
+
+            fputcsv($output, [
+                $customer->proof_type ?? '',
+                $customer->name ?? '',
+                $customer->furigana ?? '',
+                $customer->phone_number ?? '',
+                $customer->email ?? '',
+                $birthDate,
+                $gender,
+                $customer->occupation ?? '',
+                $customer->postal_code ?? '',
+                $customer->prefecture ?? '',
+                $customer->city ?? '',
+                $customer->address_detail ?? '',
+                $customer->address_building ?? '',
+                $deal->created_at ? $deal->created_at->format('Y-m-d H:i:s') : '',
+                $deal->slip_number ?? '',
+                $deal->total_price ?? 0,
+                $deal->buy_type ?? '',
+                $deal->arrival_type ?? '',
+                $deal->payment_method ?? '',
+                $staffName,
+                $deal->remarks ?? '',
+                $deal->payment_remarks ?? '',
+                $deal->invoice_issuer ?? '',
+                $deal->agree_received_amount ? 'はい' : 'いいえ',
+                $deal->agree_no_return ? 'はい' : 'いいえ',
+                $deal->agree_privacy ? 'はい' : 'いいえ',
+                $signatureStatus,
+                $taxAmount,
+                $itemCount,
+                $itemNumbers,
+                $itemImages,
+                $itemProducts,
+                $itemClassifications,
+                $itemRemarks,
+                $itemQuantities,
+                $itemPrices,
+            ]);
+        }
+
+        fclose($output);
+    }, $filename, [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+    ]);
+}
+
+private function buildPurchaseListQuery(Request $request)
+{
+    $storeId = Auth::id();
+    $query = Deal::with(['customer', 'buyItems', 'staff'])
+                 ->where('store_id', $storeId);
+
     if ($request->filled('customer_name')) {
         $name = $request->customer_name;
-        $query->whereHas('customer', function($q) use ($name) {
+        $query->whereHas('customer', function ($q) use ($name) {
             $q->where('name', 'like', "%{$name}%");
         });
     }
 
-    // 3. 日時〜日時で検索
     if ($request->filled('date_from')) {
         $query->whereDate('created_at', '>=', $request->date_from);
     }
@@ -225,18 +382,14 @@ public function index(Request $request)
         $query->whereDate('created_at', '<=', $request->date_to);
     }
 
-    // 4. 商品名で検索 (BuyItemsテーブルの中身を検索)
     if ($request->filled('product_name')) {
         $product = $request->product_name;
-        $query->whereHas('buyItems', function($q) use ($product) {
+        $query->whereHas('buyItems', function ($q) use ($product) {
             $q->where('product', 'like', "%{$product}%");
         });
     }
 
-    // 5. 結果を取得（ページネーションを使うのがおすすめ）
-    $deals = $query->orderBy('created_at', 'desc')->paginate(20);
-
-    return view('purchase.list', compact('deals'));
+    return $query;
 }
 
 
@@ -381,7 +534,7 @@ public function index(Request $request)
     {
         $storeId = Auth::id();
 
-        $baseDealsQuery = Deal::query()->where('store_id', $storeId);
+        $baseDealsQuery = Deal::query()->where('deals.store_id', $storeId);
         if ($request->filled('date_from')) {
             $baseDealsQuery->whereDate('created_at', '>=', $request->date_from);
         }
@@ -390,10 +543,10 @@ public function index(Request $request)
         }
 
         $arrivalCounts = (clone $baseDealsQuery)
-            ->whereNotNull('arrival_type')
-            ->where('arrival_type', '!=', '')
-            ->select('arrival_type', DB::raw('COUNT(*) as count'))
-            ->groupBy('arrival_type')
+            ->whereNotNull('deals.arrival_type')
+            ->where('deals.arrival_type', '!=', '')
+            ->select('deals.arrival_type as arrival_type', DB::raw('COUNT(*) as count'))
+            ->groupBy('deals.arrival_type')
             ->orderByDesc('count')
             ->get();
 
@@ -458,11 +611,107 @@ public function index(Request $request)
             ];
         });
 
+        $genderCounts = (clone $baseDealsQuery)
+            ->join('customers', 'deals.customer_id', '=', 'customers.id')
+            ->whereNotNull('customers.gender')
+            ->select('customers.gender as gender', DB::raw('COUNT(*) as count'))
+            ->groupBy('customers.gender')
+            ->orderByDesc('count')
+            ->get();
+
+        $genderTotal = $genderCounts->sum('count');
+        $genderLabelMap = [
+            'male' => '男性',
+            'female' => '女性',
+            'other' => 'その他',
+        ];
+        $genderStats = $genderCounts->map(function ($row) use ($genderTotal, $genderLabelMap) {
+            $percent = $genderTotal > 0 ? round(($row->count / $genderTotal) * 100, 1) : 0;
+            return [
+                'label' => $genderLabelMap[$row->gender] ?? $row->gender,
+                'count' => $row->count,
+                'percent' => $percent,
+            ];
+        });
+
         return view('customer.buy_analysis', [
             'arrivalStats' => $arrivalStats,
             'arrivalTotal' => $arrivalTotal,
             'classificationStats' => $classificationStats,
             'classificationTotal' => $classificationTotal,
+            'campaignStats' => $campaignStats,
+            'campaignTotal' => $campaignTotal,
+            'genderStats' => $genderStats,
+            'genderTotal' => $genderTotal,
+        ]);
+    }
+
+    public function flyer_analysis(Request $request)
+    {
+        $storeId = Auth::id();
+        $campaigns = MasterCampaign::where('store_id', $storeId)
+            ->orderBy('campaign')
+            ->get();
+
+        $flyerItems = DB::table('buy_items')
+            ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+            ->join('customers', 'deals.customer_id', '=', 'customers.id')
+            ->join('master_campaigns', 'deals.campaign_id', '=', 'master_campaigns.id')
+            ->where('deals.store_id', $storeId)
+            ->where('master_campaigns.store_id', $storeId)
+            ->when($request->filled('date_from'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '>=', $request->date_from);
+            })
+            ->when($request->filled('date_to'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '<=', $request->date_to);
+            })
+            ->when($request->filled('campaign_id'), function ($query) use ($request) {
+                $query->where('deals.campaign_id', $request->campaign_id);
+            })
+            ->select(
+                'deals.created_at',
+                'deals.slip_number',
+                'deals.arrival_type',
+                'customers.name',
+                'buy_items.classification',
+                'buy_items.product',
+                'buy_items.buy_price',
+                'master_campaigns.campaign'
+            )
+            ->orderByDesc('deals.created_at')
+            ->get();
+
+        $campaignCounts = DB::table('deals')
+            ->join('master_campaigns', 'deals.campaign_id', '=', 'master_campaigns.id')
+            ->where('deals.store_id', $storeId)
+            ->where('master_campaigns.store_id', $storeId)
+            ->when($request->filled('date_from'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '>=', $request->date_from);
+            })
+            ->when($request->filled('date_to'), function ($query) use ($request) {
+                $query->whereDate('deals.created_at', '<=', $request->date_to);
+            })
+            ->when($request->filled('campaign_id'), function ($query) use ($request) {
+                $query->where('deals.campaign_id', $request->campaign_id);
+            })
+            ->select('master_campaigns.campaign as campaign', DB::raw('COUNT(*) as count'))
+            ->groupBy('master_campaigns.campaign')
+            ->orderByDesc('count')
+            ->get();
+
+        $campaignTotal = $campaignCounts->sum('count');
+        $campaignStats = $campaignCounts->map(function ($row) use ($campaignTotal) {
+            $percent = $campaignTotal > 0 ? round(($row->count / $campaignTotal) * 100, 1) : 0;
+            return [
+                'label' => $row->campaign,
+                'count' => $row->count,
+                'percent' => $percent,
+            ];
+        });
+
+        return view('customer.flyer_analysis', [
+            'campaigns' => $campaigns,
+            'flyerItems' => $flyerItems,
             'campaignStats' => $campaignStats,
             'campaignTotal' => $campaignTotal,
         ]);

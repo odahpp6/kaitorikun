@@ -31,6 +31,9 @@
 
     <div class="mb-10">
         <h3 class="text-lg font-semibold text-gray-700 mb-3">来店区分比率</h3>
+        <div class="mb-4 h-64">
+            <canvas id="arrivalChart"></canvas>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-300 text-sm">
                 <thead>
@@ -66,8 +69,51 @@
         </div>
     </div>
 
+    <div class="mb-10">
+        <h3 class="text-lg font-semibold text-gray-700 mb-3">男女比率</h3>
+        <div class="mb-4 h-64">
+            <canvas id="genderChart"></canvas>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border border-gray-300 text-sm">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-700">
+                        <th class="border px-3 py-3 text-left">性別</th>
+                        <th class="border px-3 py-3 text-right">件数</th>
+                        <th class="border px-3 py-3 text-right">比率(%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($genderStats as $row)
+                        <tr class="hover:bg-emerald-50 transition duration-150">
+                            <td class="border px-3 py-2">{{ $row['label'] }}</td>
+                            <td class="border px-3 py-2 text-right">{{ number_format($row['count']) }}</td>
+                            <td class="border px-3 py-2 text-right">{{ number_format($row['percent'], 1) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="3" class="border px-3 py-10 text-center text-gray-500">
+                                該当データがありません。
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+                <tfoot>
+                    <tr class="bg-gray-50">
+                        <th class="border px-3 py-2 text-left">合計</th>
+                        <th class="border px-3 py-2 text-right">{{ number_format($genderTotal) }}</th>
+                        <th class="border px-3 py-2 text-right">{{ $genderTotal > 0 ? '100.0' : '0.0' }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
     <div>
         <h3 class="text-lg font-semibold text-gray-700 mb-3">買取分類比率</h3>
+        <div class="mb-4 h-64">
+            <canvas id="classificationChart"></canvas>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-300 text-sm">
                 <thead>
@@ -105,6 +151,9 @@
 
     <div class="mt-10">
         <h3 class="text-lg font-semibold text-gray-700 mb-3">チラシキャンペーン分析</h3>
+        <div class="mb-4 h-64">
+            <canvas id="campaignChart"></canvas>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse border border-gray-300 text-sm">
                 <thead>
@@ -140,5 +189,55 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+    const arrivalLabels = @json($arrivalStats->pluck('label'));
+    const arrivalCounts = @json($arrivalStats->pluck('count'));
+    const genderLabels = @json($genderStats->pluck('label'));
+    const genderCounts = @json($genderStats->pluck('count'));
+    const classificationLabels = @json($classificationStats->pluck('label'));
+    const classificationCounts = @json($classificationStats->pluck('count'));
+    const campaignLabels = @json($campaignStats->pluck('label'));
+    const campaignCounts = @json($campaignStats->pluck('count'));
+
+    const chartColors = [
+        '#0f766e', '#14b8a6', '#22c55e', '#84cc16', '#eab308',
+        '#f97316', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6',
+        '#3b82f6', '#06b6d4'
+    ];
+
+    const buildPieChart = (canvasId, labels, data) => {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx || !labels.length) return;
+        return new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels,
+                datasets: [{
+                    data,
+                    backgroundColor: labels.map((_, i) => chartColors[i % chartColors.length]),
+                    borderColor: '#ffffff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 14 }
+                    }
+                }
+            }
+        });
+    };
+
+    buildPieChart('arrivalChart', arrivalLabels, arrivalCounts);
+    buildPieChart('genderChart', genderLabels, genderCounts);
+    buildPieChart('classificationChart', classificationLabels, classificationCounts);
+    buildPieChart('campaignChart', campaignLabels, campaignCounts);
+</script>
 
 @endsection

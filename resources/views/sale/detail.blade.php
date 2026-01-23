@@ -28,7 +28,7 @@
             <label class="block text-sm font-bold mb-1">伝票番号</label>
             @if ($sale->deal_id)
                 <p class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-50">
-                    <a href="/purchase/{{ $sale->deal_id }}/detail" class="text-blue-600 hover:underline">
+                    <a href="/purchase/{{ $sale->deal_id }}/detail" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
                         {{ $deal?->slip_number ?? '—' }}
                     </a>
                 </p>
@@ -185,7 +185,7 @@
 
     <div class="mt-6 text-center">
         <a href="{{ route('sale.edit', $sale->id) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
-            更新
+            更新ページに移動する
         </a>
     </div>
 </div>

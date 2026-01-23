@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegisteredUserController extends Controller
 {
@@ -73,17 +74,20 @@ class RegisteredUserController extends Controller
 
     public function detail($id): View
     {
+        $this->authorizeUserAccess($id);
         $user = User::findOrFail($id);
         return view('auth.detail', ['user' => $user]);
     }
 
     public function edit($id):View
     {
+         $this->authorizeUserAccess($id);
          $user = User::findOrFail($id);
          return view('auth.edit',['user'=>$user]);
     }
     public function update(Request $request, $id): RedirectResponse
         {
+    $this->authorizeUserAccess($id);
     $request->validate([
         'name' => ['required', 'string', 'max:255'],
         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$id],
@@ -125,6 +129,22 @@ class RegisteredUserController extends Controller
         $user->delete();
         return redirect()->route('auth.list')->with('success', 'ユーザー情報が削除されました。');    
     
+    }
+
+    private function authorizeUserAccess($id): void
+    {
+        $authUser = Auth::user();
+        if (!$authUser) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        if ($authUser->role === 'master') {
+            return;
+        }
+
+        if ((int) $authUser->id !== (int) $id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
     }
     
 }

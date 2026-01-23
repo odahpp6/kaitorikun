@@ -125,6 +125,12 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('customer.flyer_analysis') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/flyer_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+                <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/flyer_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
+                <span>チラシ効果分析</span>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('customer.repeat_analysis') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/repeat_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/repeat_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>リピート分析</span>
@@ -156,6 +162,17 @@
                     <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_staff') ? 'text-white' : 'text-gray-200' }}"></i>
                     <span>担当者登録</span>
             </a>
+        </li>
+
+        @auth
+        <li class="mt-4 mb-1 text-xs font-bold text-gray-300">ユーザー</li>
+        <li>
+            <a href="{{ route('auth.detail', Auth::id()) }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('user/*/detail') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                <i class="fa-solid fa-user w-4 h-4 {{ request()->is('user/*/detail') ? 'text-white' : 'text-gray-200' }}"></i>
+                <span>ユーザー情報</span>
+            </a>
+        </li>
+        @endauth
 
     </ul>
 </nav>
