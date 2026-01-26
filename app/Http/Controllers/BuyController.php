@@ -538,8 +538,20 @@ private function buildPurchaseListQuery(Request $request)
                         ->where('store_id', $storeId)
                         ->firstOrFail();
 
+            $customerId = $deal->customer_id;
             $deal->buyItems()->delete();
             $deal->delete();
+
+            if ($customerId) {
+                $hasOtherDeals = Deal::where('store_id', $storeId)
+                    ->where('customer_id', $customerId)
+                    ->exists();
+                if (! $hasOtherDeals) {
+                    Customer::where('id', $customerId)
+                        ->where('store_id', $storeId)
+                        ->delete();
+                }
+            }
 
             DB::commit();
             return redirect('/purchase/list')->with('success', '契約を削除しました。');
@@ -549,6 +561,7 @@ private function buildPurchaseListQuery(Request $request)
         }
     }
 
+    // 買取分析画面表示    
     public function buy_analysis(Request $request)
     {
         $storeId = Auth::id();
