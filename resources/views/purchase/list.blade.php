@@ -103,6 +103,11 @@
         </table>
     </div>
 
+    <div class="mt-4 flex justify-end text-sm text-gray-700">
+        <span class="font-medium">合計金額：</span>
+        <span class="ml-2 text-orange-600 font-bold">¥{{ number_format($totalAmount ?? 0) }}</span>
+    </div>
+
     <div class="mt-6">
        
         {{ $deals->appends(request()->query())->links() }}

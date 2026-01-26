@@ -173,7 +173,9 @@ class BuyController extends Controller
                   ->orderBy('created_at', 'desc')
                   ->get();
                   
-    return view('purchase.list', compact('deals'));
+    $totalAmount = $deals->sum('total_price');
+
+    return view('purchase.list', compact('deals', 'totalAmount'));
     }
     public function purchase_detail($id)
     {
@@ -214,9 +216,10 @@ class BuyController extends Controller
 public function index(Request $request)
 {
     $query = $this->buildPurchaseListQuery($request);
+    $totalAmount = (clone $query)->sum('total_price');
     $deals = $query->orderBy('created_at', 'desc')->paginate(100);
 
-    return view('purchase.list', compact('deals'));
+    return view('purchase.list', compact('deals', 'totalAmount'));
 }
 
 public function exportCsv(Request $request)
