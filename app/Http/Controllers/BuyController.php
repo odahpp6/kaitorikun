@@ -473,6 +473,13 @@ private function buildPurchaseListQuery(Request $request)
             Storage::disk('public')->put('signatures/' . $sigImageName, base64_decode($sigData));
             $deal->signature_image_data = 'signatures/' . $sigImageName;
         }
+
+        $totalPrice = collect($request->items)->sum(function ($item) {
+            $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1;
+            $price = isset($item['buy_price']) ? (float) $item['buy_price'] : 0;
+            return $quantity * $price;
+        });
+        $deal->total_price = $request->filled('total_price') ? $request->total_price : $totalPrice;
         $deal->save();
 
         // 5. 商品情報の更新（一度消して作り直すのが確実）
@@ -486,6 +493,8 @@ private function buildPurchaseListQuery(Request $request)
                 $item->deal_id = $deal->id;
                 $item->product = $itemData['product'];
                 $item->classification = $itemData['classification'] ?? '未分類';
+                $item->remarks_2 = $itemData['remarks_2'] ?? null;
+                $item->quantity = isset($itemData['quantity']) ? (int) $itemData['quantity'] : 1;
                 $item->buy_price = $itemData['buy_price'];
                 
                 // 画像が新しい場合は保存、ない場合は以前のパスを引き継ぐロジックが必要（今回は新規のみ想定）
