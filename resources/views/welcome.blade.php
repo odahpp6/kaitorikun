@@ -9,7 +9,7 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <div class="flex justify-center mb-6">
-            <img src="http://localhost/images/logo.png" alt="Logo" class="h-8">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-8">
         </div>
         
         <form method="POST" action="{{ route('login') }}">
