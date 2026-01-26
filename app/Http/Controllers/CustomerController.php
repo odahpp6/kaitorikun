@@ -83,8 +83,15 @@ class CustomerController extends Controller
             return back()->withErrors(['customers' => '送信可能なメールアドレスが見つかりませんでした。'])->withInput();
         }
 
+        $fromAddress = config('mail.from.address');
+        $fromName = config('mail.from.name');
+
         foreach ($emails as $email) {
-            Mail::raw($validated['body'], function ($message) use ($email, $validated) {
+            Mail::raw($validated['body'], function ($message) use ($email, $validated, $fromAddress, $fromName) {
+                if ($fromAddress) {
+                    $message->from($fromAddress, $fromName);
+                }
+
                 $message->to($email)
                     ->subject($validated['subject']);
             });

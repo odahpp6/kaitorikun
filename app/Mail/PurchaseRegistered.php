@@ -9,6 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Deal;
+use Symfony\Component\Mime\Address;
 
 class PurchaseRegistered extends Mailable
 {
@@ -30,6 +31,10 @@ class PurchaseRegistered extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address(
+                config('mail.from.address'),
+                (string) config('mail.from.name')
+            ),
             subject: 'Purchase Registered',
         );
     }
