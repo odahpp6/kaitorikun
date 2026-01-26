@@ -27,6 +27,9 @@ use Carbon\Carbon;
 |
 */
 
+Route::get('/', function () {
+    return view('welcome');
+})->middleware('guest')->name('home');
 
 
 //認証済みユーザーのみアクセス可能
