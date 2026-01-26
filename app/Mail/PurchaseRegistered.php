@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Deal;
-use Symfony\Component\Mime\Address;
+use Illuminate\Mail\Mailables\Address;
 
 class PurchaseRegistered extends Mailable
 {
