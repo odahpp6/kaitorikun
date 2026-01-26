@@ -543,10 +543,10 @@ private function buildPurchaseListQuery(Request $request)
 
         $baseDealsQuery = Deal::query()->where('deals.store_id', $storeId);
         if ($request->filled('date_from')) {
-            $baseDealsQuery->whereDate('created_at', '>=', $request->date_from);
+            $baseDealsQuery->whereDate('deals.created_at', '>=', $request->date_from);
         }
         if ($request->filled('date_to')) {
-            $baseDealsQuery->whereDate('created_at', '<=', $request->date_to);
+            $baseDealsQuery->whereDate('deals.created_at', '<=', $request->date_to);
         }
 
         $arrivalCounts = (clone $baseDealsQuery)
