@@ -49,7 +49,7 @@
  </div>
   <div class="w-full md:w-1/2">
      <p class="text-sm text-stone-600mb-2">住所</p>
-    <input type="text" class="border border-gray-300 rounded-lg p-2 w-[90%] mb-4" placeholder="担当者名" name="address" value="{{ old('address', $user->address) }}">
+    <input type="text" class="border border-gray-300 rounded-lg p-2 w-[90%] mb-4" placeholder="東京都港区..." name="address" value="{{ old('address', $user->address) }}">
  </div>
 </div>
 

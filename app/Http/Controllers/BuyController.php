@@ -50,8 +50,14 @@ class BuyController extends Controller
                  'integer',
                  Rule::exists('master_staff', 'id')->where('store_id', Auth::id()),
              ],
+             'campaign_id' => [
+                 'nullable',
+                 'integer',
+                 Rule::exists('master_campaigns', 'id')->where('store_id', Auth::id()),
+             ],
         ]);
 
+        $storedPublicPaths = [];
         DB::beginTransaction();
         try {
             $storeId = Auth::id(); // ログイン中の店舗ID
@@ -79,9 +85,11 @@ class BuyController extends Controller
             // 本人確認画像の保存
             if ($request->hasFile('proof_img_1')) {
                 $customer->proof_img_1 = $request->file('proof_img_1')->store('proofs', 'public');
+                $storedPublicPaths[] = $customer->proof_img_1;
             }
             if ($request->hasFile('proof_img_2')) {
                 $customer->proof_img_2 = $request->file('proof_img_2')->store('proofs', 'public');
+                $storedPublicPaths[] = $customer->proof_img_2;
             }
             $customer->save();
 
@@ -111,8 +119,10 @@ class BuyController extends Controller
                 $sigData = str_replace('data:image/png;base64,', '', $sigData);
                 $sigData = str_replace(' ', '+', $sigData);
                 $sigImageName = 'sig_' . time() . '_' . Str::random(10) . '.png';
-                Storage::disk('public')->put('signatures/' . $sigImageName, base64_decode($sigData));
-                $deal->signature_image_data = 'signatures/' . $sigImageName;
+                $signaturePath = 'signatures/' . $sigImageName;
+                Storage::disk('public')->put($signaturePath, base64_decode($sigData));
+                $storedPublicPaths[] = $signaturePath;
+                $deal->signature_image_data = $signaturePath;
             }
 
             // 合計金額の計算
@@ -139,6 +149,7 @@ class BuyController extends Controller
                     // 商品画像の保存
                     if (isset($itemData['product_img']) && $itemData['product_img'] instanceof \Illuminate\Http\UploadedFile) {
                         $item->product_img = $itemData['product_img']->store('products', 'public');
+                        $storedPublicPaths[] = $item->product_img;
                     }
                     $item->save();
                 }
@@ -159,6 +170,9 @@ class BuyController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            if (!empty($storedPublicPaths)) {
+                Storage::disk('public')->delete(array_unique($storedPublicPaths));
+            }
             return back()->withInput()->with('error', '保存に失敗しました。' . $e->getMessage());
         }
     }
@@ -435,8 +449,14 @@ private function buildPurchaseListQuery(Request $request)
                 'integer',
                 Rule::exists('master_staff', 'id')->where('store_id', Auth::id()),
             ],
+            'campaign_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('master_campaigns', 'id')->where('store_id', Auth::id()),
+            ],
         ]);
 
+    $storedPublicPaths = [];
     DB::beginTransaction();
     try {
         $storeId = Auth::id();
@@ -455,6 +475,7 @@ private function buildPurchaseListQuery(Request $request)
         // 画像が新しくアップロードされた場合のみ上書き
         if ($request->hasFile('proof_img_1')) {
             $customer->proof_img_1 = $request->file('proof_img_1')->store('proofs', 'public');
+            $storedPublicPaths[] = $customer->proof_img_1;
         }
         $customer->save();
 
@@ -470,8 +491,10 @@ private function buildPurchaseListQuery(Request $request)
         if ($request->signature_image_data && str_contains($request->signature_image_data, 'base64')) {
             $sigData = str_replace(['data:image/png;base64,', ' '], ['', '+'], $request->signature_image_data);
             $sigImageName = 'sig_' . time() . '_' . Str::random(10) . '.png';
-            Storage::disk('public')->put('signatures/' . $sigImageName, base64_decode($sigData));
-            $deal->signature_image_data = 'signatures/' . $sigImageName;
+            $signaturePath = 'signatures/' . $sigImageName;
+            Storage::disk('public')->put($signaturePath, base64_decode($sigData));
+            $storedPublicPaths[] = $signaturePath;
+            $deal->signature_image_data = $signaturePath;
         }
 
         $totalPrice = collect($request->items)->sum(function ($item) {
@@ -500,6 +523,7 @@ private function buildPurchaseListQuery(Request $request)
                 // 画像が新しい場合は保存、ない場合は以前のパスを引き継ぐロジックが必要（今回は新規のみ想定）
                 if (isset($itemData['product_img']) && $itemData['product_img'] instanceof \Illuminate\Http\UploadedFile) {
                     $item->product_img = $itemData['product_img']->store('products', 'public');
+                    $storedPublicPaths[] = $item->product_img;
                 } elseif (!empty($itemData['product_img_existing'])) {
                     $item->product_img = $itemData['product_img_existing'];
                 }
@@ -512,6 +536,9 @@ private function buildPurchaseListQuery(Request $request)
 
         } catch (Exception $e) {
         DB::rollBack();
+        if (!empty($storedPublicPaths)) {
+            Storage::disk('public')->delete(array_unique($storedPublicPaths));
+        }
         return back()->withInput()->with('error', '更新に失敗しました。' . $e->getMessage());
         }
     }
