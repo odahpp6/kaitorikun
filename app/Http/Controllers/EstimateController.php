@@ -414,13 +414,18 @@ public function create()
     //見積削除処理
     public function delete($id): RedirectResponse
     {
+        $storeId = Auth::id();
         // 1. トランザクションで処理をラップし、データの整合性を保証
-        DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id, $storeId) {
+            $estimate = Estimate::where('id', $id)
+                ->where('store_id', $storeId)
+                ->firstOrFail();
+
             // 1-1. 見積行テーブル (estimate_items) から関連する明細を削除
-            EstimateItem::where('estimate_no', $id)->delete();
+            EstimateItem::where('estimate_no', $estimate->id)->delete();
 
             // 1-2. 見積登録テーブル (estimates) から見積自体を削除
-            Estimate::where('id', $id)->delete();
+            $estimate->delete();
         });
 
         // 2. 処理後のリダイレクト

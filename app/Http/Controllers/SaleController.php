@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class SaleController extends Controller
 {
@@ -91,7 +92,10 @@ class SaleController extends Controller
     {
         // バリデーション
         $validatedData = $request->validate([
-            'deal_id' => 'required|exists:deals,id',
+            'deal_id' => [
+                'required',
+                Rule::exists('deals', 'id')->where('store_id', Auth::id()),
+            ],
             'product' => 'required|string|max:255',
             'classification' => 'required|string|max:50',
             'buy_price' => 'required|numeric|min:0',
@@ -99,7 +103,10 @@ class SaleController extends Controller
             'quantity' => 'required|integer|min:1',
             'sale_date' => 'nullable|date',
             'deposit_date' => 'nullable|date',
-            'destination_id' => 'required|exists:master_wholesales,id',
+            'destination_id' => [
+                'required',
+                Rule::exists('master_wholesales', 'id')->where('store_id', Auth::id()),
+            ],
             'is_confirmed' => 'nullable|boolean',
             'product_img' => 'nullable|image|max:10240',
             'product_img_existing' => 'nullable|string',
@@ -228,7 +235,7 @@ class SaleController extends Controller
                       where('store_id', $storeId)->
                       firstOrFail();
 
-        $wholesales = MasterWholesale::all();
+        $wholesales = MasterWholesale::where('store_id', $storeId)->get();
         $dealId = $sale->deal_id;
         $deal = $dealId
             ? Deal::where('id', $dealId)->where('store_id', $storeId)->first()
@@ -245,7 +252,10 @@ class SaleController extends Controller
                       firstOrFail();
         // バリデーション
         $validatedData = $request->validate([
-            'deal_id' => 'required|exists:deals,id',
+            'deal_id' => [
+                'required',
+                Rule::exists('deals', 'id')->where('store_id', Auth::id()),
+            ],
             'product' => 'required|string|max:255',
             'classification' => 'required|string|max:50',
             'buy_price' => 'required|numeric|min:0',
@@ -253,7 +263,10 @@ class SaleController extends Controller
             'quantity' => 'required|integer|min:1',
             'sale_date' => 'nullable|date',
             'deposit_date' => 'nullable|date',
-            'destination_id' => 'required|exists:master_wholesales,id',
+            'destination_id' => [
+                'required',
+                Rule::exists('master_wholesales', 'id')->where('store_id', Auth::id()),
+            ],
             'is_confirmed' => 'nullable|boolean',
             'product_img' => 'nullable|image|max:10240',
             'product_img_existing' => 'nullable|string',

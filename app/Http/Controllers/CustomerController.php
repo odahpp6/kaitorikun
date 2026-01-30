@@ -12,7 +12,9 @@ class CustomerController extends Controller
 {
     public function customer_search(Request $request)
     {
+        $storeId = Auth::id();
         $query = Customer::query()
+            ->where('customers.store_id', $storeId)
             ->leftJoin('deals', 'deals.customer_id', '=', 'customers.id')
             ->selectRaw('
                 customers.name,
@@ -29,11 +31,11 @@ class CustomerController extends Controller
             ->groupBy('customers.name', 'customers.phone_number');
 
         if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
+            $query->where('customers.name', 'like', '%' . $request->input('name') . '%');
         }
 
         if ($request->filled('phone_number')) {
-            $query->where('phone_number', 'like', '%' . $request->input('phone_number') . '%');
+            $query->where('customers.phone_number', 'like', '%' . $request->input('phone_number') . '%');
         }
 
         $customers = $query->orderByDesc('last_visit_at')->paginate(15);

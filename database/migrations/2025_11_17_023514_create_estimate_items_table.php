@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('estimate_no')->constrained(
                 table: 'estimates',
                 column: 'id'
-            )->comment('見積登録ID');
+            )->onDelete('cascade')->comment('見積登録ID');
             $table->string('text', 100)->nullable()->comment('買取品目'); // VARCHAR(100)
             $table->decimal('num1', 10, 0)->nullable()->comment('査定価格'); // DECIMAL(10, 0)
             $table->decimal('num2', 10, 0)->comment('数量'); // DECIMAL(10, 0)

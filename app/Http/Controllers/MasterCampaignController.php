@@ -62,7 +62,7 @@ class MasterCampaignController extends Controller
     public function edit_campaign(Request $request)
     { 
       $storeId = Auth::id(); // ログインユーザーのIDを取得
-      $mastercampaign = MasterCampaign::where($request->id)
+      $mastercampaign = MasterCampaign::where('id', $request->id)
                                       ->where('store_id', $storeId)
                                       ->firstOrFail();
                 
@@ -78,7 +78,10 @@ class MasterCampaignController extends Controller
         'remarks' => 'nullable|string|min:0|max:255',
       ]);
       
-      $mastercampaign = MasterCampaign::find($request->id);
+      $storeId = Auth::id();
+      $mastercampaign = MasterCampaign::where('id', $request->id)
+          ->where('store_id', $storeId)
+          ->firstOrFail();
       $update = $mastercampaign->update($validated);
       if($update) {
         return redirect('/master/')->with('success', 'キャンペーンマスターが更新されました。');
