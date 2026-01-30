@@ -118,12 +118,14 @@ class RegisteredUserController extends Controller
 
      public function delete_confirm($id): View
     {
+        $this->authorizeMasterAccess();
         $user = User::findOrFail($id);
         return view('auth.confirm',['user'=>$user]);
         
     }
     public function destroy($id): RedirectResponse
     {
+        $this->authorizeMasterAccess();
         $user = User::findOrFail($id);
 
         $user->delete();
@@ -143,6 +145,14 @@ class RegisteredUserController extends Controller
         }
 
         if ((int) $authUser->id !== (int) $id) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+    }
+
+    private function authorizeMasterAccess(): void
+    {
+        $authUser = Auth::user();
+        if (!$authUser || $authUser->role !== 'master') {
             abort(Response::HTTP_FORBIDDEN);
         }
     }
