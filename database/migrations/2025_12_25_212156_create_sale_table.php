@@ -29,7 +29,7 @@ return new class extends Migration
             $table->unsignedInteger('quantity'); // 数量
             $table->decimal('buy_price', 10, 2); // 買取価格
             $table->decimal('unit_price', 10, 2); // 単価
-            $table->decimal('selling_price', 10, 2); // 合計金額
+            $table->decimal('selling_price', 10, 2)->nullable(); // 合計金額
             $table->date('sale_date')->nullable(); // 販売日
             $table->date('deposit_date')->nullable(); // 入金日
             $table->boolean('is_confirmed')->nullable(); // 備考欄
