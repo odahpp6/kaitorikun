@@ -71,10 +71,17 @@
             </div>
         </div>
 
+        @php
+            $buyPrice = old('buy_price', $sale->buy_price);
+            $sellingPrice = old('selling_price', $sale->selling_price);
+            $buyPrice = is_numeric($buyPrice) ? number_format($buyPrice, 0, '.', '') : $buyPrice;
+            $sellingPrice = is_numeric($sellingPrice) ? number_format($sellingPrice, 0, '.', '') : $sellingPrice;
+        @endphp
+
         <div class="flex flex-wrap -mx-2">
             <div class="w-full md:w-1/3 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">買取価格 <span class="text-red-500">必須</span></label>
-                <input type="number" name="buy_price" min="0" value="{{ old('buy_price', $sale->buy_price) }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required>
+                <input type="number" name="buy_price" min="0" value="{{ $buyPrice }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required>
             </div>
 
             <div class="w-full md:w-1/3 px-2 mb-4">
@@ -84,7 +91,7 @@
 
             <div class="w-full md:w-1/3 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">販売価格</label>
-                <input type="number" name="selling_price" min="0" value="{{ old('selling_price', $sale->selling_price) }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right">
+                <input type="number" name="selling_price" min="0" value="{{ $sellingPrice }}" class="w-full border border-gray-300 rounded px-3 py-2 text-right">
             </div>
         </div>
 
