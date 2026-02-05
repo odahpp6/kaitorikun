@@ -357,6 +357,36 @@
     </div>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const radios = Array.from(document.querySelectorAll('input[name="selected_item"]'));
+    const setValue = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value ?? '';
+    };
+    const applySelection = (radio) => {
+        if (!radio) return;
+        setValue('selected-product', radio.dataset.product);
+        setValue('selected-product-img', radio.dataset.productImg);
+        setValue('selected-classification', radio.dataset.classification);
+        setValue('selected-quantity', radio.dataset.quantity);
+        setValue('selected-buy-price', radio.dataset.buyPrice);
+    };
+
+    radios.forEach((radio) => {
+        radio.addEventListener('change', () => applySelection(radio));
+    });
+
+    const checked = radios.find((radio) => radio.checked);
+    if (checked) {
+        applySelection(checked);
+    } else if (radios.length > 0) {
+        radios[0].checked = true;
+        applySelection(radios[0]);
+    }
+});
+</script>
+
 
 
 
