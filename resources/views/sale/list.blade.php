@@ -25,9 +25,14 @@
                 </select>
             </div>
             <div>
-                <label class="block text-xs text-gray-500 mb-1">商品番号</label>
-                <input type="text" name="product_number" value="{{ request('product_number') }}"
-                       class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例：123">
+                <label class="block text-xs text-gray-500 mb-1">顧客名</label>
+                <input type="text" name="customer_name" value="{{ request('customer_name') }}"
+                       class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例：山田 太郎">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">伝票番号</label>
+                <input type="text" name="slip_number" value="{{ request('slip_number') }}"
+                       class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例：A-0001">
             </div>
             <div>
                 <label class="block text-xs text-gray-500 mb-1">分類</label>

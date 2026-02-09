@@ -167,7 +167,7 @@ class SaleController extends Controller
     public function list()
     {
         $storeId = Auth::id();
-        $query = Sale::with(['deal', 'wholesaleInfo'])
+        $query = Sale::with(['deal.customer', 'wholesaleInfo'])
             ->where('store_id', $storeId);
 
         if (request()->filled('product_name')) {
@@ -179,8 +179,17 @@ class SaleController extends Controller
                 $q->where('wholesale', 'like', '%' . $wholesaleName . '%');
             });
         }
-        if (request()->filled('product_number')) {
-            $query->where('id', request('product_number'));
+        if (request()->filled('customer_name')) {
+            $customerName = request('customer_name');
+            $query->whereHas('deal.customer', function ($q) use ($customerName) {
+                $q->where('name', 'like', '%' . $customerName . '%');
+            });
+        }
+        if (request()->filled('slip_number')) {
+            $slipNumber = request('slip_number');
+            $query->whereHas('deal', function ($q) use ($slipNumber) {
+                $q->where('slip_number', 'like', '%' . $slipNumber . '%');
+            });
         }
         if (request()->filled('classification')) {
             $query->where('classification', request('classification'));
