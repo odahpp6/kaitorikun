@@ -66,6 +66,12 @@
                 <span>契約履歴<br>販売登録</span>
             </a>
         </li>
+        <li>
+            <a href="{{ route('purchase.products_list') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase/products_list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
+                <i class="fa-solid fa-box-archive w-4 h-4 {{ request()->is('purchase/products_list*') ? 'text-white' : 'text-green-200' }}"></i>
+                <span>商品履歴</span>
+            </a>
+        </li>
 
         <!-- 販売グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-amber-300">販売管理</li>

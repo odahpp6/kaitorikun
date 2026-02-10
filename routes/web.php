@@ -114,6 +114,7 @@ Route::post('/purchase',[BuyController::class, 'store'])->name('purchase.store')
 // 買取契約登録一覧（検索も同じルートで処理）
 Route::get('/purchase/list',[BuyController::class, 'index'])->name('purchase.list');
 Route::get('/purchase/list/csv',[BuyController::class, 'exportCsv'])->name('purchase.list.csv');
+Route::get('/purchase/products_list',[BuyController::class, 'products_list'])->name('purchase.products_list');
 
 // 買取登録詳細
 Route::get('/purchase/{id}/detail',[BuyController::class, 'purchase_detail'])->name('purchase.detail');
