@@ -236,6 +236,61 @@ public function index(Request $request)
     return view('purchase.list', compact('deals', 'totalAmount'));
 }
 
+// 商品履歴一覧
+public function products_list(Request $request)
+{
+    $storeId = Auth::id();
+
+    $saleDealSubquery = DB::table('sale')
+        ->select('deal_id')
+        ->whereNotNull('deal_id')
+        ->distinct();
+
+    $query = BuyItem::query()
+        ->select([
+            'buy_items.id',
+            'buy_items.product',
+            'buy_items.deal_id',
+            'deals.created_at as deal_created_at',
+            'deals.slip_number as slip_number',
+            'customers.name as customer_name',
+            DB::raw('CASE WHEN sale_deals.deal_id IS NULL THEN 0 ELSE 1 END as is_sale_registered'),
+        ])
+        ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
+        ->join('customers', 'deals.customer_id', '=', 'customers.id')
+        ->leftJoinSub($saleDealSubquery, 'sale_deals', function ($join) {
+            $join->on('sale_deals.deal_id', '=', 'deals.id');
+        })
+        ->where('deals.store_id', $storeId)
+        ->where('buy_items.store_id', $storeId);
+
+    if ($request->filled('date_from')) {
+        $query->whereDate('deals.created_at', '>=', $request->date_from);
+    }
+    if ($request->filled('date_to')) {
+        $query->whereDate('deals.created_at', '<=', $request->date_to);
+    }
+    if ($request->filled('customer_name')) {
+        $name = $request->customer_name;
+        $query->where('customers.name', 'like', "%{$name}%");
+    }
+    if ($request->filled('slip_number')) {
+        $slip = $request->slip_number;
+        $query->where('deals.slip_number', 'like', "%{$slip}%");
+    }
+    if ($request->filled('sale_status')) {
+        if ((string) $request->sale_status === '1') {
+            $query->whereNotNull('sale_deals.deal_id');
+        } elseif ((string) $request->sale_status === '0') {
+            $query->whereNull('sale_deals.deal_id');
+        }
+    }
+
+    $items = $query->orderBy('deals.created_at', 'desc')->paginate(100);
+
+    return view('purchase.products_list', compact('items'));
+}
+
 public function exportCsv(Request $request)
 {
     $query = $this->buildPurchaseListQuery($request);
