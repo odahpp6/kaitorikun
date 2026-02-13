@@ -16,4 +16,9 @@ class BuyItem extends Model
         return $this->belongsTo(Deal::class, 'deal_id', 'id');
     }
 
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'buy_item_id', 'id');
+    }
+
 }

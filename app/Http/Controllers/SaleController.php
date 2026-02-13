@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use App\Models\MasterWholesale;
 use App\Models\Deal;
+use App\Models\BuyItem;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class SaleController extends Controller
 {
@@ -22,6 +24,18 @@ class SaleController extends Controller
         $storeId = Auth::id();
         $wholesales = MasterWholesale::where('store_id', $storeId)->get();
         $dealId = request('deal_id');
+        $buyItemId = request('buy_item_id');
+        $selectedBuyItem = null;
+        if ($buyItemId) {
+            $selectedBuyItem = BuyItem::where('id', $buyItemId)
+                ->where('store_id', $storeId)
+                ->first();
+            if ($selectedBuyItem) {
+                $dealId = $dealId ?: $selectedBuyItem->deal_id;
+            } else {
+                $buyItemId = null;
+            }
+        }
         $deal = null;
         if (!$dealId && request()->filled('slip_number')) {
             $deal = Deal::where('slip_number', request('slip_number'))
@@ -33,6 +47,10 @@ class SaleController extends Controller
             $deal = Deal::where('id', $dealId)
                 ->where('store_id', $storeId)
                 ->first();
+        }
+        if ($selectedBuyItem && $dealId && (int) $selectedBuyItem->deal_id !== (int) $dealId) {
+            $selectedBuyItem = null;
+            $buyItemId = null;
         }
 
         $prefillProduct = null;
@@ -64,7 +82,7 @@ class SaleController extends Controller
         }
 
         if (!$prefillProduct || !$prefillClassification) {
-            $dealItem = $deal?->buyItems()->orderBy('id')->first();
+            $dealItem = $selectedBuyItem ?: $deal?->buyItems()->orderBy('id')->first();
             if ($dealItem) {
                 if (!$prefillProduct) {
                     $prefillProduct = $dealItem->product;
@@ -81,6 +99,7 @@ class SaleController extends Controller
         return view('sale.register', compact(
             'wholesales',
             'dealId',
+            'buyItemId',
             'prefillProduct',
             'prefillClassification',
             'prefillProductImg',
@@ -95,6 +114,11 @@ class SaleController extends Controller
             'deal_id' => [
                 'required',
                 Rule::exists('deals', 'id')->where('store_id', Auth::id()),
+            ],
+            'buy_item_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('buy_items', 'id')->where('store_id', Auth::id()),
             ],
             'product' => 'required|string|max:255',
             'classification' => 'required|string|max:50',
@@ -111,10 +135,23 @@ class SaleController extends Controller
             'product_img' => 'nullable|image|max:10240',
             'product_img_existing' => 'nullable|string',
         ]);
+        $buyItemId = $validatedData['buy_item_id'] ?? null;
+        if ($buyItemId) {
+            $matchedItem = BuyItem::where('id', $buyItemId)
+                ->where('store_id', Auth::id())
+                ->where('deal_id', $validatedData['deal_id'])
+                ->first();
+            if (!$matchedItem) {
+                throw ValidationException::withMessages([
+                    'buy_item_id' => '選択された商品が取引情報と一致しません。',
+                ]);
+            }
+        }
 
         $sale = new Sale();
         $sale->store_id = Auth::id();
         $sale->deal_id = $validatedData['deal_id'];
+        $sale->buy_item_id = $buyItemId;
         $sale->product = $validatedData['product'];
         $sale->classification = $validatedData['classification'];
         $sale->quantity = $validatedData['quantity'];
@@ -265,6 +302,11 @@ class SaleController extends Controller
                 'required',
                 Rule::exists('deals', 'id')->where('store_id', Auth::id()),
             ],
+            'buy_item_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('buy_items', 'id')->where('store_id', Auth::id()),
+            ],
             'product' => 'required|string|max:255',
             'classification' => 'required|string|max:50',
             'buy_price' => 'required|numeric|min:0',
@@ -280,8 +322,21 @@ class SaleController extends Controller
             'product_img' => 'nullable|image|max:10240',
             'product_img_existing' => 'nullable|string',
         ]);
+        $buyItemId = $validatedData['buy_item_id'] ?? $sale->buy_item_id;
+        if ($buyItemId) {
+            $matchedItem = BuyItem::where('id', $buyItemId)
+                ->where('store_id', Auth::id())
+                ->where('deal_id', $validatedData['deal_id'])
+                ->first();
+            if (!$matchedItem) {
+                throw ValidationException::withMessages([
+                    'buy_item_id' => '選択された商品が取引情報と一致しません。',
+                ]);
+            }
+        }
 
         $sale->deal_id = $validatedData['deal_id'];
+        $sale->buy_item_id = $buyItemId;
         $sale->product = $validatedData['product'];
         $sale->classification = $validatedData['classification'];
         $sale->quantity = $validatedData['quantity'];

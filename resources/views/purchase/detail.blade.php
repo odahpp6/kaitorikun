@@ -316,6 +316,7 @@
 <form action="{{ route('sale.register') }}" method="GET" class="space-y-4">
     <input type="hidden" name="slip_number" value="{{ $deal->slip_number ?? '' }}">
     <input type="hidden" name="deal_id" value="{{ $deal->id }}">
+    <input type="hidden" name="buy_item_id" id="selected-buy-item-id" value="">
     <input type="hidden" name="product" id="selected-product" value="">
     <input type="hidden" name="product_img" id="selected-product-img" value="">
     <input type="hidden" name="classification" id="selected-classification" value="">
@@ -334,6 +335,7 @@
                     type="radio"
                     name="selected_item"
                     value="{{ $index }}"
+                    data-buy-item-id="{{ $item->id }}"
                     data-product="{{ $item->product }}"
                     data-product-img="{{ $item->product_img ?? '' }}"
                     data-classification="{{ $item->classification ?? '' }}"
@@ -385,6 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const applySelection = (radio) => {
         if (!radio) return;
+        setValue('selected-buy-item-id', radio.dataset.buyItemId);
         setValue('selected-product', radio.dataset.product);
         setValue('selected-product-img', radio.dataset.productImg);
         setValue('selected-classification', radio.dataset.classification);

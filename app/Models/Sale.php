@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Deal;
 use App\Models\MasterWholesale;
+use App\Models\BuyItem;
 
 class Sale extends Model
 {
@@ -22,5 +23,10 @@ class Sale extends Model
     public function wholesaleInfo()
     {
         return $this->belongsTo(MasterWholesale::class, 'wholesale');
+    }
+
+    public function buyItem()
+    {
+        return $this->belongsTo(BuyItem::class, 'buy_item_id');
     }
 }

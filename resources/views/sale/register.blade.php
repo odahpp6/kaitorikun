@@ -10,6 +10,7 @@
         @csrf
         @php
             $dealId = old('deal_id', $dealId ?? request('deal_id'));
+            $buyItemId = old('buy_item_id', $buyItemId ?? request('buy_item_id'));
             $selectedImage = old('product_img', $prefillProductImg ?? request('product_img'));
             $totalPrice = old('total_price', request('total_price'));
             $productValue = old('product', $prefillProduct ?? '');
@@ -29,6 +30,7 @@
                 @if ($dealId)
                     <a href="/purchase/{{ $dealId }}/detail" class="text-blue-600 hover:underline">詳細</a>
                     <input type="hidden" name="deal_id" value="{{ $dealId }}">
+                    <input type="hidden" name="buy_item_id" value="{{ $buyItemId ?? '' }}">
                 @else
                     <p class="text-gray-500">未指定</p>
                 @endif

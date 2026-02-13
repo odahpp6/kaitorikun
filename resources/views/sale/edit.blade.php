@@ -32,6 +32,7 @@
                 @if ($dealId)
                     <a href="/purchase/{{ $dealId }}/detail" class="text-blue-600 hover:underline">詳細</a>
                     <input type="hidden" name="deal_id" value="{{ $dealId }}">
+                    <input type="hidden" name="buy_item_id" value="{{ old('buy_item_id', $sale->buy_item_id) }}">
                 @else
                     <p class="text-gray-500">未指定</p>
                 @endif

@@ -241,10 +241,22 @@ public function products_list(Request $request)
 {
     $storeId = Auth::id();
 
-    $saleDealSubquery = DB::table('sale')
-        ->select('deal_id')
-        ->whereNotNull('deal_id')
-        ->distinct();
+    $saleRegisteredExpr = 'EXISTS (
+        SELECT 1
+        FROM sale s
+        WHERE s.store_id = ?
+          AND (
+              s.buy_item_id = buy_items.id
+              OR (
+                  s.buy_item_id IS NULL
+                  AND s.deal_id = buy_items.deal_id
+                  AND s.product = buy_items.product
+                  AND s.classification = buy_items.classification
+                  AND s.buy_price = buy_items.buy_price
+                  AND s.quantity = buy_items.quantity
+              )
+          )
+    )';
 
     $query = BuyItem::query()
         ->select([
@@ -254,13 +266,10 @@ public function products_list(Request $request)
             'deals.created_at as deal_created_at',
             'deals.slip_number as slip_number',
             'customers.name as customer_name',
-            DB::raw('CASE WHEN sale_deals.deal_id IS NULL THEN 0 ELSE 1 END as is_sale_registered'),
         ])
+        ->selectRaw("CASE WHEN {$saleRegisteredExpr} THEN 1 ELSE 0 END as is_sale_registered", [$storeId])
         ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
         ->join('customers', 'deals.customer_id', '=', 'customers.id')
-        ->leftJoinSub($saleDealSubquery, 'sale_deals', function ($join) {
-            $join->on('sale_deals.deal_id', '=', 'deals.id');
-        })
         ->where('deals.store_id', $storeId)
         ->where('buy_items.store_id', $storeId);
 
@@ -280,9 +289,9 @@ public function products_list(Request $request)
     }
     if ($request->filled('sale_status')) {
         if ((string) $request->sale_status === '1') {
-            $query->whereNotNull('sale_deals.deal_id');
+            $query->whereRaw($saleRegisteredExpr, [$storeId]);
         } elseif ((string) $request->sale_status === '0') {
-            $query->whereNull('sale_deals.deal_id');
+            $query->whereRaw("NOT {$saleRegisteredExpr}", [$storeId]);
         }
     }
 
