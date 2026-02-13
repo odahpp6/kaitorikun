@@ -360,7 +360,7 @@
         @endforelse
         <div class="flex justify-end">
             <button type="submit" @disabled($deal->buyItems->isEmpty()) class="inline-flex items-center rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300">
-                商品登録ページへ
+                販売履歴登録ページへ
             </button>
         </div>
     </div>
