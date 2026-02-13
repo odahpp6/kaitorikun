@@ -1,6 +1,9 @@
 @extends('layouts.member')
 
 @section('title', '買取契約詳細')
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+@endpush
 @section('content')
 @php
     $customer = $deal->customer;
@@ -49,7 +52,9 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">身分証明書画像（表面）</p>
                     @if (!empty($customer->proof_img_1))
-                        <img src="{{ asset('storage/' . $customer->proof_img_1) }}" alt="身分証明書画像（表面）" loading="lazy" class="mt-2 w-full h-28 object-contain border border-gray-200 rounded">
+                        <a href="{{ asset('storage/' . $customer->proof_img_1) }}" class="js-lightbox inline-block mt-2" data-gallery="purchase-proof" data-title="身分証明書画像（表面）">
+                            <img src="{{ asset('storage/' . $customer->proof_img_1) }}" alt="身分証明書画像（表面）" loading="lazy" class="w-full h-28 object-contain border border-gray-200 rounded">
+                        </a>
                     @else
                         <p class="text-gray-500">未登録</p>
                     @endif
@@ -57,7 +62,9 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">身分証明書画像（裏面）</p>
                     @if (!empty($customer->proof_img_2))
-                        <img src="{{ asset('storage/' . $customer->proof_img_2) }}" alt="身分証明書画像（裏面）" loading="lazy" class="mt-2 w-full h-28 object-contain border border-gray-200 rounded">
+                        <a href="{{ asset('storage/' . $customer->proof_img_2) }}" class="js-lightbox inline-block mt-2" data-gallery="purchase-proof" data-title="身分証明書画像（裏面）">
+                            <img src="{{ asset('storage/' . $customer->proof_img_2) }}" alt="身分証明書画像（裏面）" loading="lazy" class="w-full h-28 object-contain border border-gray-200 rounded">
+                        </a>
                     @else
                         <p class="text-gray-500">未登録</p>
                     @endif
@@ -227,7 +234,9 @@
                             <td class="border px-2 py-1 text-center">{{ $index + 1 }}</td>
                             <td class="border px-2 py-1">
                                 @if (!empty($item->product_img))
-                                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" loading="lazy" class="w-24 h-20 object-contain border border-gray-200 rounded">
+                                    <a href="{{ asset('storage/' . $item->product_img) }}" class="js-lightbox inline-block" data-gallery="purchase-items" data-title="{{ $item->product }}">
+                                        <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" loading="lazy" class="w-24 h-20 object-contain border border-gray-200 rounded">
+                                    </a>
                                 @else
                                     <span class="text-gray-500">未登録</span>
                                 @endif
@@ -290,7 +299,9 @@
                 <div class="w-full md:w-1/2 px-3">
                     <p class="text-xs text-gray-500">署名画像</p>
                     @if (!empty($deal->signature_image_data))
-                        <img src="{{ asset('storage/' . $deal->signature_image_data) }}" alt="署名" loading="lazy" class="mt-2 w-full max-w-xl h-40 object-contain border border-gray-200 rounded">
+                        <a href="{{ asset('storage/' . $deal->signature_image_data) }}" class="js-lightbox inline-block mt-2" data-gallery="purchase-signature" data-title="署名画像">
+                            <img src="{{ asset('storage/' . $deal->signature_image_data) }}" alt="署名" loading="lazy" class="w-full max-w-xl h-40 object-contain border border-gray-200 rounded">
+                        </a>
                     @else
                         <p class="text-gray-500">未登録</p>
                     @endif
@@ -331,7 +342,9 @@
                     @checked($defaultItemIndex === $index)
                 >
                 @if (!empty($item->product_img))
-                    <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" loading="lazy" class="w-16 h-12 object-contain border border-slate-200 rounded bg-white">
+                    <a href="{{ asset('storage/' . $item->product_img) }}" class="js-lightbox inline-block" data-gallery="purchase-items" data-title="{{ $item->product }}">
+                        <img src="{{ asset('storage/' . $item->product_img) }}" alt="商品画像" loading="lazy" class="w-16 h-12 object-contain border border-slate-200 rounded bg-white">
+                    </a>
                 @else
                     <div class="w-16 h-12 flex items-center justify-center rounded border border-dashed border-slate-300 text-slate-400 text-xs">No Image</div>
                 @endif
@@ -357,8 +370,14 @@
     </div>
 </div>
 
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    GLightbox({
+        selector: '.js-lightbox',
+    });
+
     const radios = Array.from(document.querySelectorAll('input[name="selected_item"]'));
     const setValue = (id, value) => {
         const el = document.getElementById(id);
@@ -386,8 +405,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
-
-
+@endpush
 
 @endsection

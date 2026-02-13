@@ -124,7 +124,7 @@
         </div>
         <div class="flex flex-wrap -mx-2">
             <div class="w-full px-2 mb-4">
-                <label class="block text-sm font-bold mb-1">合計金額</label>
+                <label class="block text-sm font-bold mb-1">同一買取商品の合計金額</label>
                 <p class="w-full border border-gray-300 rounded px-3 py-2 bg-gray-50 text-right font-semibold">
                     {{ $totalPrice !== null && $totalPrice !== '' ? number_format((int) $totalPrice) : '—' }}
                 </p>
