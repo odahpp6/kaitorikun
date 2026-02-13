@@ -194,7 +194,7 @@ Route::get('/dashboard', function () {
     $purchaseTotal = DB::table('buy_items')
         ->join('deals', 'buy_items.deal_id', '=', 'deals.id')
         ->where('deals.store_id', $storeId)
-        ->whereBetween('buy_items.created_at', [$startOfMonth, $endOfMonth])
+        ->whereBetween('deals.created_at', [$startOfMonth, $endOfMonth])
         ->sum(DB::raw('buy_items.buy_price * buy_items.quantity'));
 
     $salesTotal = DB::table('sale')

@@ -34,9 +34,9 @@
     </a>
  </div>
  <div class="md:w-1/4 w-full p-2">
-    <a href="{{ route('sale.register') }}" class="text-blue rounded-lg bg-amber-100 p-4 block mb-4 text-center">
+    <a href="/purchase/list" class="text-blue rounded-lg bg-amber-100 p-4 block mb-4 text-center">
       <i class="fa-solid fa-clock-rotate-left w-8 h-8 text-2xl text-amber-600"></i>
-      <span class="text-amber-600">販売登録</span>
+      <span class="text-amber-600">販売履歴登録</span>
     </a>
  </div>
  <div class="md:w-1/4 w-full p-2">
@@ -51,14 +51,6 @@
       <span class="text-purple-600">入出金管理</span>
     </a>
  </div>
- <div class="md:w-1/4 w-full p-2">
-    <a href="{{ route('cash_balance.view') }}" class="text-blue rounded-lg bg-purple-100 p-4 block mb-4 text-center">
-      <i class="fa-solid fa-clock-rotate-left w-8 h-8 text-2xl text-purple-600"></i>
-      <span class="text-purple-600">現金残高管理</span>
-    </a>
- </div>
-
-
  <!-- 以下、3つ繰り返し -->
 </div>
 
