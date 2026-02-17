@@ -26,9 +26,16 @@
         @error('items.*.quantity')
             <p class="text-sm text-red-600">{{ $message }}</p>
         @enderror
-        @error('items.*.buy_price')
-            <p class="text-sm text-red-600">{{ $message }}</p>
-        @enderror
+        @foreach ($errors->get('items.*.classification') as $messages)
+            @foreach ($messages as $message)
+                <p class="text-sm text-red-600">{{ $message }}</p>
+            @endforeach
+        @endforeach
+        @foreach ($errors->get('items.*.buy_price') as $messages)
+            @foreach ($messages as $message)
+                <p class="text-sm text-red-600">{{ $message }}</p>
+            @endforeach
+        @endforeach
 
         <div class="mt-6 space-y-3">
             <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-right">
@@ -254,6 +261,8 @@
                             <option value="役員" @selected(old('occupation') === '役員')>役員</option>
                             <option value="個人事業主" @selected(old('occupation') === '個人事業主')>個人事業主</option>
                             <option value="パートアルバイト" @selected(old('occupation') === 'パートアルバイト')>パートアルバイト</option>
+                            <option value="主婦" @selected(old('occupation') === '主婦')>主婦</option>
+                            <option value="公務員" @selected(old('occupation') === '公務員')>公務員</option>
                             <option value="学生" @selected(old('occupation') === '学生')>学生</option>
                             <option value="定年退職" @selected(old('occupation') === '定年退職')>定年退職</option>
                             <option value="その他" @selected(old('occupation') === 'その他')>その他</option>

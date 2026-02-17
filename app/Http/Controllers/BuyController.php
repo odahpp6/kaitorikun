@@ -39,6 +39,7 @@ class BuyController extends Controller
              'email' => 'nullable|email',
              'proof_img_1' => 'required|image|max:10240', // 10MB
              'items.*.product' => 'required',
+             'items.*.classification' => 'required',
              'items.*.quantity' => 'required|integer|min:1',
              'items.*.buy_price' => 'required|numeric',
              'signature_image_data' => 'required', // 署名は必須
@@ -55,6 +56,9 @@ class BuyController extends Controller
                  'integer',
                  Rule::exists('master_campaigns', 'id')->where('store_id', Auth::id()),
              ],
+        ], [], [
+             'items.*.classification' => '買取分類',
+             'items.*.buy_price' => '買取金額',
         ]);
 
         $storedPublicPaths = [];
@@ -504,6 +508,7 @@ private function buildPurchaseListQuery(Request $request)
             'email' => 'nullable|email',
             // 更新時は画像が必須でない場合が多いので nullable や required_without などにする
             'items.*.product' => 'required',
+            'items.*.classification' => 'required',
             'items.*.buy_price' => 'required|numeric',
             'payment_method' => 'required|string',
             'payment_remarks' => 'nullable|string',
@@ -518,6 +523,9 @@ private function buildPurchaseListQuery(Request $request)
                 'integer',
                 Rule::exists('master_campaigns', 'id')->where('store_id', Auth::id()),
             ],
+        ], [], [
+            'items.*.classification' => '買取分類',
+            'items.*.buy_price' => '買取金額',
         ]);
 
     $storedPublicPaths = [];
