@@ -80,10 +80,16 @@
                             <span class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-100 rounded">未登録</span>
                         @endif
                         <div class="mt-2">
-                            <a href="{{ route('sale.register', ['slip_number' => $item->slip_number, 'deal_id' => $item->deal_id, 'buy_item_id' => $item->id]) }}"
-                               class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 transition">
-                                販売登録へ
-                            </a>
+                            @if ((int) $item->is_sale_registered === 1)
+                                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold text-gray-400 bg-gray-200 rounded cursor-not-allowed">
+                                    販売登録へ
+                                </span>
+                            @else
+                                <a href="{{ route('sale.register', ['slip_number' => $item->slip_number, 'deal_id' => $item->deal_id, 'buy_item_id' => $item->id]) }}"
+                                   class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 transition">
+                                    販売登録へ
+                                </a>
+                            @endif
                         </div>
                     </td>
                 </tr>
