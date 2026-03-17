@@ -266,6 +266,7 @@ public function products_list(Request $request)
         ->select([
             'buy_items.id',
             'buy_items.product',
+            'buy_items.buy_price',
             'buy_items.deal_id',
             'deals.created_at as deal_created_at',
             'deals.slip_number as slip_number',
