@@ -50,6 +50,7 @@
             <thead>
                 <tr class="bg-gray-100 text-gray-700">
                     <th class="border px-3 py-3 text-left">契約日</th>
+                    <th class="border px-3 py-3 text-right">買取金額</th>
                     <th class="border px-3 py-3 text-left">商品名</th>
                     <th class="border px-3 py-3 text-left">顧客名</th>
                     <th class="border px-3 py-3 text-left">伝票番号</th>
@@ -61,6 +62,9 @@
                 <tr class="hover:bg-blue-50 transition duration-150">
                     <td class="border px-3 py-2 text-gray-600">
                         {{ $item->deal_created_at ? \Carbon\Carbon::parse($item->deal_created_at)->format('Y/m/d') : '—' }}
+                    </td>
+                    <td class="border px-3 py-2 text-right">
+                        {{ isset($item->buy_price) ? number_format($item->buy_price) . '円' : '—' }}
                     </td>
                     <td class="border px-3 py-2">
                         {{ $item->product ?? '—' }}
@@ -95,7 +99,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="border px-3 py-10 text-center text-gray-500">
+                    <td colspan="6" class="border px-3 py-10 text-center text-gray-500">
                         該当する商品履歴が見つかりませんでした。
                     </td>
                 </tr>
