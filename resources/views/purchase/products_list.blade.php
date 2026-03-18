@@ -6,6 +6,16 @@
 <div class="max-w-6xl mx-auto p-4 bg-white rounded-lg shadow-md">
     <h2 class="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">商品履歴</h2>
 
+    <div class="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
+            <div>
+                <p class="text-xs text-blue-700">検索結果の買取合計</p>
+                <p class="text-2xl font-bold text-blue-900">{{ number_format($totalAmount ?? 0) }}円</p>
+            </div>
+            <p class="text-sm text-gray-600">該当件数: {{ number_format($items->total()) }}件</p>
+        </div>
+    </div>
+
     <form action="{{ route('purchase.products_list') }}" method="GET" class="mb-8 p-4 bg-gray-50 rounded-lg">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
             <div>

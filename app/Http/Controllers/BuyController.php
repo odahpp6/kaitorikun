@@ -300,9 +300,10 @@ public function products_list(Request $request)
         }
     }
 
+    $totalAmount = (clone $query)->sum('buy_items.buy_price');
     $items = $query->orderBy('deals.created_at', 'desc')->paginate(100);
 
-    return view('purchase.products_list', compact('items'));
+    return view('purchase.products_list', compact('items', 'totalAmount'));
 }
 
 public function exportCsv(Request $request)
