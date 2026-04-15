@@ -40,13 +40,13 @@
         <!-- 見積グループ -->
         <li class="mt-2 mb-1 text-xs font-bold text-blue-300">見積管理</li>
         <li>
-            <a href="/estimate" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('estimate') ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'text-blue-200 hover:bg-blue-800' }}">
+            <a href="/estimate" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('estimate') ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'text-blue-200 hover:bg-blue-800' }}">
                 <i class="fa-solid fa-file-pen w-4 h-4 {{ request()->is('estimate') ? 'text-white' : 'text-blue-200' }}"></i>
                 <span>見積登録</span>
             </a>
         </li>
         <li>
-            <a href="/estimate/list" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('estimate/list*') ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'text-blue-200 hover:bg-blue-800' }}">
+            <a href="/estimate/list" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('estimate/list*') ? 'bg-blue-600 text-white font-medium hover:bg-blue-700' : 'text-blue-200 hover:bg-blue-800' }}">
                 <i class="fa-solid fa-clock-rotate-left w-4 h-4 {{ request()->is('estimate/list*') ? 'text-white' : 'text-blue-200' }}"></i>
                 <span>見積履歴</span>
             </a>
@@ -55,19 +55,19 @@
         <!-- 契約グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-green-300">契約管理</li>
         <li>
-            <a href="/purchase" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
+            <a href="/purchase" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('purchase') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
                 <i class="fa-solid fa-file-signature w-4 h-4 {{ request()->is('purchase') ? 'text-white' : 'text-green-200' }}"></i>
                 <span>契約登録</span>
             </a>
         </li>
         <li>
-            <a href="/purchase/list" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase/list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
+            <a href="/purchase/list" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('purchase/list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
                 <i class="fa-solid fa-file-lines w-4 h-4 {{ request()->is('purchase/list*') ? 'text-white' : 'text-green-200' }}"></i>
-                <span>契約履歴 販売登録</span>
+                <span>契約履歴<br>販売登録</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('purchase.products_list') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('purchase/products_list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
+            <a href="{{ route('purchase.products_list') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('purchase/products_list*') ? 'bg-green-600 text-white font-medium hover:bg-green-700' : 'text-green-200 hover:bg-green-800' }}">
                 <i class="fa-solid fa-box-archive w-4 h-4 {{ request()->is('purchase/products_list*') ? 'text-white' : 'text-green-200' }}"></i>
                 <span>商品履歴</span>
             </a>
@@ -77,14 +77,14 @@
         <li class="mt-4 mb-1 text-xs font-bold text-amber-300">販売管理</li>
         <!--
         <li>
-            <a href="{{ route('sale.register') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('sale') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
+            <a href="{{ route('sale.register') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('sale') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
                 <i class="fa-solid fa-cart-plus w-4 h-4 {{ request()->is('sale') ? 'text-white' : 'text-amber-200' }}"></i>
                 <span>販売登録</span>
             </a>
         </li>
         -->
         <li>
-            <a href="{{ route('sale.list') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('sale/list*') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
+            <a href="{{ route('sale.list') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('sale/list*') ? 'bg-amber-600 text-white font-medium hover:bg-amber-700' : 'text-amber-200 hover:bg-amber-800' }}">
                 <i class="fa-solid fa-receipt w-4 h-4 {{ request()->is('sale/list*') ? 'text-white' : 'text-amber-200' }}"></i>
                 <span>販売履歴</span>
             </a>
@@ -93,19 +93,19 @@
         <!-- 金庫・入出金グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-purple-300">金庫・入出金管理</li>
         <li>
-            <a href="{{ route('cash_balance.view') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
+            <a href="{{ route('cash_balance.view') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-money-bill-wave w-4 h-4 text-purple-200"></i>
                 <span>現金残高登録</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('cash_management.view') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
+            <a href="{{ route('cash_management.view') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-right-left w-4 h-4 text-purple-200"></i>
                 <span>入出金管理</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('cash_management.list') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
+            <a href="{{ route('cash_management.list') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg text-purple-200 hover:bg-purple-800 transition-colors duration-200">
                 <i class="fa-solid fa-book w-4 h-4 text-purple-200"></i>
                 <span>現金出納帳</span>
             </a>
@@ -114,37 +114,37 @@
         <!-- 顧客・売上グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-pink-300">顧客・売上管理</li>
         <li>
-            <a href="{{ route('customer.search') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/search*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+            <a href="{{ route('customer.search') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('customer/search*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-users w-4 h-4 {{ request()->is('customer/search*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>顧客管理</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('customer.mail') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/mail*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+            <a href="{{ route('customer.mail') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('customer/mail*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-envelope w-4 h-4 {{ request()->is('customer/mail*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>顧客メール送信</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('customer.buy_analysis') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/buy_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+            <a href="{{ route('customer.buy_analysis') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('customer/buy_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/buy_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>買取分析</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('customer.flyer_analysis') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/flyer_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+            <a href="{{ route('customer.flyer_analysis') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('customer/flyer_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/flyer_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>チラシ効果分析</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('customer.repeat_analysis') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/repeat_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+            <a href="{{ route('customer.repeat_analysis') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('customer/repeat_analysis*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/repeat_analysis*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>リピート分析</span>
             </a>
         </li>
         <li>
-            <a href="{{ route('customer.sales_summary') }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('customer/sales_summary*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
+            <a href="{{ route('customer.sales_summary') }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('customer/sales_summary*') ? 'bg-pink-600 text-white font-medium hover:bg-pink-700' : 'text-pink-200 hover:bg-pink-800' }}">
                 <i class="fa-solid fa-chart-line w-4 h-4 {{ request()->is('customer/sales_summary*') ? 'text-white' : 'text-pink-200' }}"></i>
                 <span>売上管理</span>
             </a>
@@ -153,19 +153,19 @@
         <!-- マスタ管理グループ -->
         <li class="mt-4 mb-1 text-xs font-bold text-gray-300">マスタ管理</li>
         <li>
-            <a href="/master/create_wholesale" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_wholesale') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+            <a href="/master/create_wholesale" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('master/create_wholesale') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                 <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_wholesale') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>取引先登録</span>
             </a>
         </li>
           <li>
-            <a href="/master/create_campaign" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_campaign') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+            <a href="/master/create_campaign" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('master/create_campaign') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                 <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_campaign') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>折り込み登録</span>
             </a>
         </li>
             <li>
-                <a href="/master/create_staff" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('master/create_staff') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+                <a href="/master/create_staff" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('master/create_staff') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                     <i class="fa-solid fa-gear w-4 h-4 {{ request()->is('master/create_staff') ? 'text-white' : 'text-gray-200' }}"></i>
                     <span>担当者登録</span>
             </a>
@@ -174,7 +174,7 @@
         @auth
         <li class="mt-4 mb-1 text-xs font-bold text-gray-300">ユーザー</li>
         <li>
-            <a href="{{ route('auth.detail', Auth::id()) }}" class="flex items-center gap-3 md:whitespace-nowrap px-4 py-2 rounded-lg transition-colors duration-200 {{ request()->is('user/*/detail') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
+            <a href="{{ route('auth.detail', Auth::id()) }}" class="flex items-center gap-3 px-4 py-2 text-sm leading-tight md:text-[13px] rounded-lg transition-colors duration-200 {{ request()->is('user/*/detail') ? 'bg-gray-600 text-white font-medium hover:bg-gray-700' : 'text-gray-200 hover:bg-gray-800' }}">
                 <i class="fa-solid fa-user w-4 h-4 {{ request()->is('user/*/detail') ? 'text-white' : 'text-gray-200' }}"></i>
                 <span>ユーザー情報</span>
             </a>
