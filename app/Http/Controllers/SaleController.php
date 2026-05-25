@@ -9,7 +9,6 @@ use App\Models\BuyItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -231,17 +230,18 @@ class SaleController extends Controller
         if (request()->filled('classification')) {
             $query->where('classification', request('classification'));
         }
+        if (request()->filled('is_confirmed')) {
+            $query->where('is_confirmed', request('is_confirmed'));
+        }
         if (request()->filled('deposit_date_from')) {
             $query->whereDate('deposit_date', '>=', request('deposit_date_from'));
         }
         if (request()->filled('deposit_date_to')) {
             $query->whereDate('deposit_date', '<=', request('deposit_date_to'));
         }
-        if (request()->filled('purchase_month_from') || request()->filled('purchase_month_to')) {
-            $fromMonth = request('purchase_month_from');
-            $toMonth = request('purchase_month_to');
-            $fromDate = $fromMonth ? Carbon::parse($fromMonth . '-01')->startOfMonth() : null;
-            $toDate = $toMonth ? Carbon::parse($toMonth . '-01')->endOfMonth() : null;
+        if (request()->filled('purchase_date_from') || request()->filled('purchase_date_to')) {
+            $fromDate = request('purchase_date_from');
+            $toDate = request('purchase_date_to');
 
             $query->whereHas('deal', function ($q) use ($fromDate, $toDate) {
                 if ($fromDate) {

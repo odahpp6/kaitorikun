@@ -43,6 +43,14 @@
                     @endforeach
                 </select>
             </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">販売確定</label>
+                <select name="is_confirmed" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    <option value="">すべて</option>
+                    <option value="1" @selected(request('is_confirmed') === '1')>確定</option>
+                    <option value="0" @selected(request('is_confirmed') === '0')>未確定</option>
+                </select>
+            </div>
             <div class="md:col-span-2">
                 <label class="block text-xs text-gray-500 mb-1">入金日（期間）</label>
                 <div class="flex items-center space-x-2">
@@ -52,11 +60,11 @@
                 </div>
             </div>
             <div class="mt-3 md:col-span-2">
-                <label class="block text-xs text-gray-500 mb-1">買取日時（月）</label>
+                <label class="block text-xs text-gray-500 mb-1">買取日時（期間）</label>
                 <div class="flex items-center space-x-2">
-                    <input type="month" name="purchase_month_from" value="{{ request('purchase_month_from') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    <input type="date" name="purchase_date_from" value="{{ request('purchase_date_from') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                     <span class="text-gray-400">〜</span>
-                    <input type="month" name="purchase_month_to" value="{{ request('purchase_month_to') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
+                    <input type="date" name="purchase_date_to" value="{{ request('purchase_date_to') }}" class="w-full border-gray-300 rounded-md shadow-sm text-sm">
                 </div>
             </div>
             <div class="flex space-x-2 md:col-span-4 md:justify-end">

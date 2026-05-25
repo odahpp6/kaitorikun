@@ -182,7 +182,7 @@
                 <div class="flex flex-wrap -mx-3">
                     <div class="w-full md:w-1/2 px-3">
                         <label class="block text-sm font-bold mb-1">顧客名 <span class="text-red-500">必須</span></label>
-                        <input type="text" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md animate-shadow-red px-3 py-3" value="{{ old('name', $customer->name ?? null) }}" required>
+                        <input type="text" name="name" maxlength="50" class="w-full border border-gray-300 rounded-md px-3 py-3" value="{{ old('name', $customer->name ?? null) }}" required>
                         @error('name')
                             <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror

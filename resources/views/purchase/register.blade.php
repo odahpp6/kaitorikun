@@ -64,12 +64,12 @@
 
             <div class="w-full md:w-1/2 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">商品名 <span class="text-red-500">必須</span></label>
-                <input type="text" name="items[INDEX][product]" maxlength="100" class="w-full border border-gray-300 rounded px-3 py-3" required disabled>
+                <input type="text" name="items[INDEX][product]" maxlength="100" class="w-full border border-gray-300 rounded px-3 py-3 animate-shadow-red" required disabled>
             </div>
 
             <div class="w-full md:w-1/4 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">買取分類 <span class="text-red-500">必須</span></label>
-                <select name="items[INDEX][classification]" class="w-full border border-gray-300 rounded px-3 py-2" required disabled>
+                <select name="items[INDEX][classification]" class="w-full border border-gray-300 rounded px-3 py-2 animate-shadow-red" required disabled>
                     <option value="">選択</option>
                     @foreach(['ブランド','時計','貴金属','携帯・タブレット','ジュエリー','金券','酒類','切手','通貨','古銭','テレカ','勲章','骨董品・絵画','楽器','食器','家電','カメラ','雑貨','喫煙具','万年筆・ボールペン','おもちゃ','工具','衣類','パソコン','その他'] as $cat)
                         <option value="{{ $cat }}">{{ $cat }}</option>
@@ -89,7 +89,7 @@
 
             <div class="w-full md:w-1/4 px-2 mb-4">
                 <label class="block text-sm font-bold mb-1">買取金額 <span class="text-red-500">必須</span></label>
-                <input type="number" name="items[INDEX][buy_price]" min="0" class="w-full border border-gray-300 rounded px-3 py-2 text-right" required disabled>
+                <input type="number" name="items[INDEX][buy_price]" min="0" class="w-full border border-gray-300 rounded px-3 py-2 text-right animate-shadow-red" required disabled>
             </div>
         </div>
         <button type="button" onclick="removeItem(this)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600">×</button>
@@ -287,7 +287,7 @@
                         <select name="prefecture" v-on:change="checkPrefecture" :class="{
                         'animate-shadow-red':!message.prefecture.valid && message.prefecture.touched}" class="w-full border border-gray-300 rounded-md" required>
                             <option value="">選択</option>
-                            @foreach(['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'] as $pref)
+                            @foreach(['東京都','埼玉県','北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','千葉県','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県'] as $pref)
                                 <option value="{{ $pref }}" @selected(old('prefecture') === $pref)>{{ $pref }}</option>
                             @endforeach
                         </select>
@@ -650,6 +650,22 @@ document.addEventListener('DOMContentLoaded', function () {
         totalInput.value = total;
     }
 
+    function updateItemRequiredState(row) {
+        const productInput = row.querySelector('input[name^="items"][name$="[product]"]');
+        const classificationSelect = row.querySelector('select[name^="items"][name$="[classification]"]');
+        const buyPriceInput = row.querySelector('input[name^="items"][name$="[buy_price]"]');
+
+        if (productInput) {
+            productInput.classList.toggle('animate-shadow-red', productInput.value.trim() === '');
+        }
+        if (classificationSelect) {
+            classificationSelect.classList.toggle('animate-shadow-red', classificationSelect.value === '');
+        }
+        if (buyPriceInput) {
+            buyPriceInput.classList.toggle('animate-shadow-red', buyPriceInput.value === '');
+        }
+    }
+
     function addItem() {
         const container = document.getElementById('item-container');
         const count = container.querySelectorAll('.item-row').length;
@@ -669,6 +685,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 挿入した行のフォーム要素を有効化
         const newRow = container.lastElementChild;
         newRow.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
+        updateItemRequiredState(newRow);
 
         itemIdx++;
         updateButtonState();
@@ -714,6 +731,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (buyPriceInput && item.buy_price !== undefined) {
                     buyPriceInput.value = item.buy_price ?? '';
                 }
+                updateItemRequiredState(row);
             });
         } else {
             addItem();
@@ -725,6 +743,22 @@ document.addEventListener('DOMContentLoaded', function () {
         const target = e.target;
         if (target && target.matches('input[name^="items"][name$="[buy_price]"], input[name^="items"][name$="[quantity]"]')) {
             updateTotalPrice();
+        }
+        if (target && target.matches('input[name^="items"][name$="[product]"], input[name^="items"][name$="[buy_price]"]')) {
+            const row = target.closest('.item-row');
+            if (row) {
+                updateItemRequiredState(row);
+            }
+        }
+    });
+
+    document.addEventListener('change', (e) => {
+        const target = e.target;
+        if (target && target.matches('select[name^="items"][name$="[classification]"]')) {
+            const row = target.closest('.item-row');
+            if (row) {
+                updateItemRequiredState(row);
+            }
         }
     });
 </script>
