@@ -130,6 +130,46 @@
 
 
 <div id="app" class="max-w-5xl mx-auto p-4 bg-white rounded-lg shadow-md">
+<div class="mb-4 flex justify-end">
+  <button type="button" @click="calculatorVisible = true" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded shadow">
+    電卓を開く
+  </button>
+</div>
+
+<div v-if="calculatorVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  <div class="w-full max-w-xs rounded-lg bg-white p-4 shadow-xl">
+    <div class="mb-3 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-800">電卓</h3>
+      <button type="button" @click="calculatorVisible = false" class="text-2xl leading-none text-gray-500 hover:text-gray-700">&times;</button>
+    </div>
+    <input type="text" :value="calculatorDisplay" readonly class="mb-3 w-full rounded border border-gray-300 bg-gray-50 px-3 py-3 text-right text-2xl font-semibold">
+    <div class="grid grid-cols-4 gap-2">
+      <button type="button" @click="calculatorClear" class="rounded bg-red-500 px-3 py-3 font-semibold text-white hover:bg-red-600">C</button>
+      <button type="button" @click="calculatorBackspace" class="rounded bg-gray-200 px-3 py-3 font-semibold text-gray-800 hover:bg-gray-300">⌫</button>
+      <button type="button" @click="calculatorAppend('/')" class="rounded bg-gray-200 px-3 py-3 font-semibold text-gray-800 hover:bg-gray-300">÷</button>
+      <button type="button" @click="calculatorAppend('*')" class="rounded bg-gray-200 px-3 py-3 font-semibold text-gray-800 hover:bg-gray-300">×</button>
+
+      <button type="button" @click="calculatorAppend('7')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">7</button>
+      <button type="button" @click="calculatorAppend('8')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">8</button>
+      <button type="button" @click="calculatorAppend('9')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">9</button>
+      <button type="button" @click="calculatorAppend('-')" class="rounded bg-gray-200 px-3 py-3 font-semibold text-gray-800 hover:bg-gray-300">-</button>
+
+      <button type="button" @click="calculatorAppend('4')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">4</button>
+      <button type="button" @click="calculatorAppend('5')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">5</button>
+      <button type="button" @click="calculatorAppend('6')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">6</button>
+      <button type="button" @click="calculatorAppend('+')" class="rounded bg-gray-200 px-3 py-3 font-semibold text-gray-800 hover:bg-gray-300">+</button>
+
+      <button type="button" @click="calculatorAppend('1')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">1</button>
+      <button type="button" @click="calculatorAppend('2')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">2</button>
+      <button type="button" @click="calculatorAppend('3')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">3</button>
+      <button type="button" @click="calculatorCalculate" class="row-span-2 rounded bg-blue-600 px-3 py-3 font-semibold text-white hover:bg-blue-700">=</button>
+
+      <button type="button" @click="calculatorAppend('0')" class="col-span-2 rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">0</button>
+      <button type="button" @click="calculatorAppend('.')" class="rounded bg-white px-3 py-3 font-semibold text-gray-800 border hover:bg-gray-50">.</button>
+    </div>
+  </div>
+</div>
+
 <form action="{{ url('/estimate') }}" method="POST">
 @csrf
 
@@ -348,6 +388,8 @@ Vue.createApp({
             { text: '', remarks:'',num1: 0, num2: 1 , gold1:'', gold2:'0', ratio1:100, calc:75, weight:0,showGoldCalcForRow: false }
       ],
           adjustment:0,
+          calculatorVisible: false,
+          calculatorDisplay: '0',
           goldPriceLabels: {
             '{{ $prices["k24tokutei"] }}': 'k24特定',
             '{{ $prices["k24"] }}': 'k24',
@@ -392,6 +434,51 @@ Vue.createApp({
         },
         removeRow(index) {
       this.rows.splice(index, 1); // ← これで1行削除！
+        },
+        calculatorAppend(value) {
+          const operators = ['+', '-', '*', '/'];
+          const current = this.calculatorDisplay;
+
+          if (current === 'エラー') {
+            this.calculatorDisplay = '0';
+          }
+          if (this.calculatorDisplay === '0' && !operators.includes(value) && value !== '.') {
+            this.calculatorDisplay = value;
+            return;
+          }
+          if (operators.includes(value) && operators.includes(this.calculatorDisplay.slice(-1))) {
+            this.calculatorDisplay = this.calculatorDisplay.slice(0, -1) + value;
+            return;
+          }
+          if (value === '.') {
+            const lastNumber = this.calculatorDisplay.split(/[+\-*/]/).pop();
+            if (lastNumber.includes('.')) {
+              return;
+            }
+          }
+
+          this.calculatorDisplay += value;
+        },
+        calculatorClear() {
+          this.calculatorDisplay = '0';
+        },
+        calculatorBackspace() {
+          this.calculatorDisplay = this.calculatorDisplay.length > 1
+            ? this.calculatorDisplay.slice(0, -1)
+            : '0';
+        },
+        calculatorCalculate() {
+          if (!/^[0-9+\-*/. ()]+$/.test(this.calculatorDisplay)) {
+            this.calculatorDisplay = 'エラー';
+            return;
+          }
+
+          try {
+            const result = Function(`"use strict"; return (${this.calculatorDisplay})`)();
+            this.calculatorDisplay = Number.isFinite(result) ? String(Math.round(result * 100000000) / 100000000) : 'エラー';
+          } catch (error) {
+            this.calculatorDisplay = 'エラー';
+          }
         },
 
 
