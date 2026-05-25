@@ -637,7 +637,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 <script>
-    const oldItems = @json(old('items', []));
+    const oldItems = @json(old('items', request('items', [])));
     let itemIdx = 0; // 行を特定するためのカウンター
 
     function updateButtonState() {

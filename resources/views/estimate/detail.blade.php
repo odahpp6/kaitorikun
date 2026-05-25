@@ -53,6 +53,19 @@
     </table>
 
     <div class="flex justify-center gap-4">
+        <form action="{{ route('purchase.register') }}" method="GET">
+            @php $transferIndex = 0; @endphp
+            @foreach ($Estimate->items as $item)
+                @if (filled($item->text) || filled($item->num1))
+                    <input type="hidden" name="items[{{ $transferIndex }}][product]" value="{{ $item->text }}">
+                    <input type="hidden" name="items[{{ $transferIndex }}][buy_price]" value="{{ $item->num1 }}">
+                    @php $transferIndex++; @endphp
+                @endif
+            @endforeach
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded shadow">
+                新規契約へ転写
+            </button>
+        </form>
         <a href="/estimate/{{$Estimate->id}}/edit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">修正する</a> 
         <a href="{{ route('estimate.list') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">一覧に戻る</a>
         {{-- 必要に応じて印刷ボタンなどを追加 --}}
@@ -64,4 +77,3 @@
 
  
  
-
