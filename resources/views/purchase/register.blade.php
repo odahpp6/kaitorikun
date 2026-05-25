@@ -106,6 +106,30 @@
                 顧客情報（親）
             </h2>
 
+            <div class="mb-6 rounded-lg bg-gray-50 p-4">
+                <h3 class="mb-3 text-sm font-bold text-gray-700">既存客検索</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">顧客名</label>
+                        <input type="text" id="existing-customer-name" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例：田中">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-500 mb-1">電話番号</label>
+                        <input type="text" id="existing-customer-phone" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例：09012345678">
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="button" id="existing-customer-search-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200">
+                            検索
+                        </button>
+                        <button type="button" id="existing-customer-clear-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md transition duration-200">
+                            クリア
+                        </button>
+                    </div>
+                </div>
+                <p id="existing-customer-message" class="mt-2 text-xs text-gray-500"></p>
+                <div id="existing-customer-results" class="mt-3 rounded border border-gray-200 bg-white hidden" style="max-height: 100px; overflow-y: auto;"></div>
+            </div>
+
             <div class="space-y-6">
                 {{-- 本人確認書類 --}}
                 <div class="flex flex-wrap -mx-3">
@@ -766,6 +790,146 @@ document.addEventListener('DOMContentLoaded', function () {
 <script src="{{ asset('js/purchase.js') }}" charset="UTF-8"></script>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchUrl = @json(route('customer.search.json'));
+        const nameInput = document.getElementById('existing-customer-name');
+        const phoneInput = document.getElementById('existing-customer-phone');
+        const searchButton = document.getElementById('existing-customer-search-btn');
+        const clearButton = document.getElementById('existing-customer-clear-btn');
+        const resultsEl = document.getElementById('existing-customer-results');
+        const messageEl = document.getElementById('existing-customer-message');
+
+        const dispatchFieldEvent = (field, eventName) => {
+            field.dispatchEvent(new Event(eventName, { bubbles: true }));
+        };
+
+        const setInputValue = (selector, value, eventName = 'input') => {
+            const field = document.querySelector(selector);
+            if (!field) return;
+            field.value = value ?? '';
+            dispatchFieldEvent(field, eventName);
+        };
+
+        const setSelectValue = (selector, value) => {
+            const field = document.querySelector(selector);
+            if (!field) return;
+            const nextValue = value === null || value === undefined ? '' : String(value);
+            field.value = Array.from(field.options).some(option => option.value === nextValue) ? nextValue : '';
+            dispatchFieldEvent(field, 'change');
+        };
+
+        const setRadioValue = (name, value) => {
+            document.querySelectorAll(`input[type="radio"][name="${name}"]`).forEach((field) => {
+                field.checked = field.value === value;
+                if (field.checked) {
+                    dispatchFieldEvent(field, 'input');
+                    dispatchFieldEvent(field, 'change');
+                }
+            });
+        };
+
+        const transferCustomer = (customer) => {
+            setSelectValue('select[name="proof_type"]', customer.proof_type);
+            setInputValue('input[name="proof_num"]', customer.proof_num);
+            setInputValue('input[name="name"]', customer.name);
+            setInputValue('input[name="furigana"]', customer.furigana);
+            setInputValue('input[name="phone_number"]', customer.phone_number);
+            setInputValue('input[name="email"]', customer.email);
+            setSelectValue('select[name="birth_y"]', customer.birth_y);
+            setSelectValue('select[name="birth_m"]', customer.birth_m);
+            setSelectValue('select[name="birth_d"]', customer.birth_d);
+            setRadioValue('gender', customer.gender);
+            setSelectValue('select[name="occupation"]', customer.occupation);
+            setInputValue('input[name="postal_code"]', customer.postal_code);
+            setSelectValue('select[name="prefecture"]', customer.prefecture);
+            setInputValue('input[name="city"]', customer.city);
+            setInputValue('input[name="address_detail"]', customer.address_detail);
+            setInputValue('input[name="address_building"]', customer.address_building);
+
+            messageEl.textContent = '顧客情報を転写しました。画像ファイルは自動転写されないため、必要に応じて選択してください。';
+            resultsEl.classList.add('hidden');
+            resultsEl.replaceChildren();
+        };
+
+        const renderCustomers = (customers) => {
+            resultsEl.replaceChildren();
+
+            if (customers.length === 0) {
+                resultsEl.classList.add('hidden');
+                messageEl.textContent = '該当する顧客データが見つかりませんでした。';
+                return;
+            }
+
+            customers.forEach((customer) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'block w-full border-b border-gray-100 px-3 py-2 text-left text-sm hover:bg-blue-50';
+
+                const name = document.createElement('span');
+                name.className = 'font-bold text-gray-800';
+                name.textContent = customer.name || '—';
+
+                const detail = document.createElement('span');
+                detail.className = 'ml-2 text-gray-600';
+                detail.textContent = `${customer.phone_number || '—'} / ${customer.prefecture || ''}${customer.city || ''}${customer.address_detail || ''}${customer.address_building || ''}`;
+
+                button.append(name, detail);
+                button.addEventListener('click', () => transferCustomer(customer));
+                resultsEl.appendChild(button);
+            });
+
+            resultsEl.classList.remove('hidden');
+            messageEl.textContent = '転写する顧客をクリックしてください。';
+        };
+
+        const searchCustomers = async () => {
+            const name = nameInput.value.trim();
+            const phoneNumber = phoneInput.value.trim();
+
+            if (!name && !phoneNumber) {
+                resultsEl.classList.add('hidden');
+                resultsEl.replaceChildren();
+                messageEl.textContent = '顧客名または電話番号を入力してください。';
+                return;
+            }
+
+            const params = new URLSearchParams();
+            if (name) params.set('name', name);
+            if (phoneNumber) params.set('phone_number', phoneNumber);
+
+            messageEl.textContent = '検索中です。';
+            const response = await fetch(`${searchUrl}?${params.toString()}`, {
+                headers: {
+                    Accept: 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                resultsEl.classList.add('hidden');
+                messageEl.textContent = '検索に失敗しました。';
+                return;
+            }
+
+            renderCustomers(await response.json());
+        };
+
+        searchButton.addEventListener('click', searchCustomers);
+        [nameInput, phoneInput].forEach((input) => {
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchCustomers();
+                }
+            });
+        });
+        clearButton.addEventListener('click', () => {
+            nameInput.value = '';
+            phoneInput.value = '';
+            messageEl.textContent = '';
+            resultsEl.classList.add('hidden');
+            resultsEl.replaceChildren();
+        });
+    });
 
 //
     function updateImagePreview(input, previewEl) {

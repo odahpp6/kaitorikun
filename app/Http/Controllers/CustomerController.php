@@ -43,6 +43,51 @@ class CustomerController extends Controller
         return view('customer.search', compact('customers'));
     }
 
+    public function customer_search_json(Request $request)
+    {
+        $storeId = Auth::id();
+        $query = Customer::query()
+            ->where('store_id', $storeId);
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->filled('phone_number')) {
+            $query->where('phone_number', 'like', '%' . $request->input('phone_number') . '%');
+        }
+
+        if (!$request->filled('name') && !$request->filled('phone_number')) {
+            return response()->json([]);
+        }
+
+        $customers = $query
+            ->latest('updated_at')
+            ->limit(20)
+            ->get([
+                'id',
+                'name',
+                'furigana',
+                'birth_y',
+                'birth_m',
+                'birth_d',
+                'gender',
+                'occupation',
+                'postal_code',
+                'prefecture',
+                'city',
+                'address_detail',
+                'address_building',
+                'phone_number',
+                'email',
+                'proof_type',
+                'proof_num',
+                'updated_at',
+            ]);
+
+        return response()->json($customers);
+    }
+
     public function mail()
     {
         $storeId = Auth::id();

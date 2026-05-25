@@ -123,6 +123,15 @@
             </table>
         </div>
 
+        <div class="rounded-md border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+            差異：
+            @if ($cashDifference !== null)
+                {{ number_format($cashDifference) }} 円
+            @else
+                —
+            @endif
+        </div>
+
         <div>
             <label for="remarks" class="block text-sm font-semibold text-slate-700">備考</label>
             <textarea id="remarks" name="remarks" rows="3" class="mt-2 w-full rounded-md border-slate-300 text-base shadow-sm focus:border-slate-500 focus:ring-slate-500">{{ old('remarks', $cash?->remarks) }}</textarea>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cash;
 use App\Models\CashManagement;
+use App\Models\Deal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,9 +12,42 @@ class CashController extends Controller
 {
     public function cash_balance_view()
     {
-        $cash = Cash::where('store_id', Auth::id())->latest()->first();
+        $storeId = Auth::id();
+        $cash = Cash::where('store_id', $storeId)->latest()->first();
+        $cashDifference = $cash ? $this->latestCashDifference($storeId, $cash) : null;
 
-        return view('cash.balance', compact('cash'));
+        return view('cash.balance', compact('cash', 'cashDifference'));
+    }
+
+    private function latestCashDifference(int $storeId, Cash $cash): ?int
+    {
+        $previousCash = Cash::where('store_id', $storeId)
+            ->where('updated_at', '<', $cash->updated_at)
+            ->latest('updated_at')
+            ->first();
+
+        if (!$previousCash) {
+            return null;
+        }
+
+        $cashManagementNet = CashManagement::where('store_id', $storeId)
+            ->where('updated_at', '>', $previousCash->updated_at)
+            ->where('updated_at', '<=', $cash->updated_at)
+            ->get()
+            ->sum(function ($management) {
+                return $management->type === 'in'
+                    ? (int) $management->amount
+                    : (int) -$management->amount;
+            });
+
+        $purchaseOut = Deal::where('store_id', $storeId)
+            ->where('created_at', '>', $previousCash->updated_at)
+            ->where('created_at', '<=', $cash->updated_at)
+            ->sum('total_price');
+
+        $expected = (int) $previousCash->total_amount + (int) $cashManagementNet - (int) $purchaseOut;
+
+        return (int) $cash->total_amount - $expected;
     }
 
     public function cash_balance_register(Request $request)

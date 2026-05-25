@@ -161,6 +161,7 @@ Route::get('/cash_management/list', [CashManagementController::class, 'cash_mana
 
 //顧客検索
 Route::get('/customer/search', [CustomerController::class, 'customer_search'])->name('customer.search');
+Route::get('/customer/search/json', [CustomerController::class, 'customer_search_json'])->name('customer.search.json');
 //買取上分析
 Route::get('/customer/buy_analysis', [BuyController::class, 'buy_analysis'])->name('customer.buy_analysis');
 //チラシ効果分析
