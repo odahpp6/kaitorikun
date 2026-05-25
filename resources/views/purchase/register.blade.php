@@ -461,7 +461,7 @@
              </div><!--#app  -->
         <div class="mt-4">
             <p class="text-sm text-gray-600 mb-2">上記確認の上サインお願いします<span class="text-red-500">（必須）</span></p>
-            <canvas id="sigCanvas" width="600" height="240" class="w-full max-w-xl h-48 border-2 border-gray-400 rounded-md bg-white shadow-sm"></canvas>
+            <canvas id="sigCanvas" class="w-full max-w-xl border-2 border-gray-400 rounded-md bg-white shadow-sm touch-none" style="aspect-ratio: 5 / 2; touch-action: none;"></canvas>
             <input type="hidden" name="signature_image_data" id="signature_image_data" value="{{ old('signature_image_data') }}">
 
            <button type="button" id="clear-btn" class="mt-2 px-4 py-2 bg-red-500 text-white rounded shadow-sm hover:bg-red-600"> 書き直す（全部消す）</button>         
@@ -474,9 +474,39 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const canvas = document.getElementById('sigCanvas');
-    const signaturePad = new SignaturePad(canvas);
+    const signaturePad = new SignaturePad(canvas, {
+        minWidth: 1,
+        maxWidth: 2.5,
+    });
     const clearBtn = document.getElementById('clear-btn');
     const hiddenInput = document.getElementById('signature_image_data');
+    const form = document.getElementById('purchase-form');
+    const oldSignature = @json(old('signature_image_data'));
+
+    function resizeSignatureCanvas(dataUrl = null) {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        const rect = canvas.getBoundingClientRect();
+        const signatureData = dataUrl || (!signaturePad.isEmpty() ? signaturePad.toDataURL('image/png') : null);
+
+        canvas.width = Math.round(rect.width * ratio);
+        canvas.height = Math.round(rect.height * ratio);
+        canvas.getContext('2d').scale(ratio, ratio);
+        signaturePad.clear();
+
+        if (signatureData) {
+            signaturePad.fromDataURL(signatureData, {
+                width: rect.width,
+                height: rect.height,
+            });
+            hiddenInput.value = signatureData;
+        }
+    }
+
+    resizeSignatureCanvas(oldSignature);
+
+    window.addEventListener('resize', function () {
+        resizeSignatureCanvas();
+    });
 
     // 署名を消す
     clearBtn.addEventListener('click', function () {
@@ -490,6 +520,16 @@ document.addEventListener('DOMContentLoaded', function () {
             hiddenInput.value = signaturePad.toDataURL('image/png');
         }
     };
+
+    form.addEventListener('submit', function (e) {
+        if (signaturePad.isEmpty()) {
+            e.preventDefault();
+            alert('署名を入力してください。');
+            return;
+        }
+
+        hiddenInput.value = signaturePad.toDataURL('image/png');
+    });
 });
 </script>
 
@@ -727,28 +767,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (proofInput2 && proofPreview2) {
         proofInput2.addEventListener('change', () => updateImagePreview(proofInput2, proofPreview2));
     }
-</script>
-
-<script>
-  const canvas = document.getElementById('sigCanvas');
-  const signaturePad = new SignaturePad(canvas);
-  const form = document.getElementById('purchase-form');
-  const signatureInput = document.getElementById('signature_image_data');
-  const oldSignature = @json(old('signature_image_data'));
-
-  if (oldSignature) {
-    signaturePad.fromDataURL(oldSignature);
-    signatureInput.value = oldSignature;
-  }
-
-  form.addEventListener('submit', (e) => {
-    if (signaturePad.isEmpty()) {
-      e.preventDefault();
-      alert('署名を入力してください。');
-      return;
-    }
-    signatureInput.value = signaturePad.toDataURL('image/png');
-  });
 </script>
 
 @endsection
