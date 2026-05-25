@@ -188,7 +188,7 @@ public function create()
             });
         }
 
-        $Estimates = $query->orderByDesc('created_at')->get();
+        $Estimates = $query->orderByDesc('created_at')->paginate(100);
         // ★修正★ キー名を 'Estimates' (複数形) に変更
     return view('estimate.list', ['Estimates' => $Estimates]);
     //'Estimates'はキーである。bladeには変数で渡る

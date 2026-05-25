@@ -926,7 +926,7 @@ private function buildPurchaseListQuery(Request $request)
             ->orderByDesc('repeat_customers.visit_count')
             ->orderBy('customers.name')
             ->orderByDesc('deals.created_at')
-            ->get();
+            ->paginate(200);
 
         return view('customer.repeat_analysis', [
             'repeatItems' => $repeatItems,

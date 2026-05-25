@@ -83,7 +83,11 @@
     </tr>
     @endforeach
             </tbody>
-          </table>
+  </table>
+
+  <div class="mt-4">
+    {{ $Estimates->appends(request()->query())->links() }}
+  </div>
        
   </div>
 
