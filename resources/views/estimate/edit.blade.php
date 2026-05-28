@@ -182,7 +182,15 @@
                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
 @enderror
 
-  <table class="w-full border border-gray-300 text-sm mb-4">
+  <table class="w-full border border-gray-300 text-sm mb-4 md:table-fixed">
+    <colgroup>
+      <col class="md:w-[40%]">
+      <col class="md:w-[100px]">
+      <col class="md:w-[64px]">
+      <col class="md:w-[96px]">
+      <col class="md:w-[24%]">
+      <col class="md:w-[56px]">
+    </colgroup>
     <thead>
     <tr class="bg-gray-100">
       <th class="border px-2 py-2">買取品目</th>
@@ -204,10 +212,10 @@
       <td class="border px-2 py-1">
       <input type="number" v-model.number="row.num1" :name="'num1[' + index + ']'" :min="0" class="w-20 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" />
       </td>
-      <td class="border px-2 py-1">
-      <input type="number" v-model.number="row.num2" :name="'num2[' + index + ']'" :min="1" class="w-20 border rounded px-2 py-1 focus:outline-none focus:ring focus:border-blue-300" />
+      <td class="border px-1 py-1 md:px-1">
+      <input type="number" v-model.number="row.num2" :name="'num2[' + index + ']'" :min="1" class="w-16 border rounded px-1 py-1 focus:outline-none focus:ring focus:border-blue-300" />
       </td>
-      <td class="border px-2 py-1 text-right">@{{ formatPrice(rowcalc(row)) }}</td>
+      <td class="border px-1 py-1 text-right whitespace-nowrap">@{{ formatPrice(rowcalc(row)) }}</td>
       <td class="border px-2 py-1">
       <textarea v-model="row.remarks" :name="'remarks[' + index + ']'" class="w-full border rounded px-2 py-1 mb-2 focus:outline-none focus:ring focus:border-blue-300" placeholder="備考を入力してください" rows="2"></textarea>
       
