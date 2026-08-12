@@ -23,4 +23,14 @@ class Estimate extends Model
     {
     return $this->hasMany(EstimateItem::class, 'estimate_no', 'id');
     }
+
+
+    /**
+     * 全明細の合計に調整金額を加えた見積総額を返す。
+     */
+    public function getTotalAmountAttribute(): float|int
+    {
+        return $this->items->sum(fn (EstimateItem $item) => $item->line_total)
+            + ($this->adjustment ?? 0);
+    }
 }

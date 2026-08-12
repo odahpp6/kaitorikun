@@ -67,6 +67,7 @@
         <th class="text-center">品目</th>
         <th class="text-right">査定価格</th>
         <th class="text-right">数量</th>
+        <th class="text-right">合計</th>
         <th>備考</th>
     </tr>
     @foreach ($Estimate->items as $item)
@@ -74,16 +75,17 @@
             <td>{{ $item->text }}</td>
             <td class="text-right">{{ number_format($item->num1) }}</td>
             <td class="text-right">{{ number_format($item->num2) }}</td>
+            <td class="text-right">{{ number_format($item->line_total) }}</td>
             <td class="text-right">{{ $item->remarks }}</td>
         </tr>
     @endforeach
     <tr>
-        <th class="text-right" colspan="3">調整金額</th>
+        <th class="text-right" colspan="4">調整金額</th>
         <td class="text-right">{{ number_format($Estimate->adjustment) }}</td>
     </tr>
     <tr>
-        <th class="text-right" colspan="3">総合計</th>
-        <td class="text-right">{{ number_format($Estimate->items->sum('num1') + $Estimate->adjustment) }}</td>
+        <th class="text-right" colspan="4">総合計</th>
+        <td class="text-right">{{ number_format($Estimate->total_amount) }}</td>
     </tr>
 </table>
 </body>

@@ -17,6 +17,7 @@
                 <th class="border px-2 py-2">品目</th>
                 <th class="border px-2 py-2">査定価格 (num1)</th>
                 <th class="border px-2 py-2">数量 (num2)</th>
+                <th class="border px-2 py-2">合計</th>
                 <th class="border px-2 py-2">備考</th>
             </tr>
         </thead>
@@ -28,6 +29,7 @@
                 {{-- 数値を3桁区切りで表示 --}}
                 <td class="border px-2 py-1 text-right">{{ number_format($item->num1) }}</td>
                 <td class="border px-2 py-1 text-right">{{ number_format($item->num2) }}</td>
+                <td class="border px-2 py-1 text-right">{{ number_format($item->line_total) }}</td>
                 {{-- 備考欄の改行を有効化 (備考のデータは登録画面のv-modelで改行が\nとして保存されているはずです) --}}
                 <td class="border px-2 py-1 whitespace-pre-wrap">{{ $item->remarks }}</td>
             </tr>
@@ -36,13 +38,12 @@
         
         <tfoot>
              <tr class="bg-gray-100 font-bold">
-                <td class="border px-2 py-2 text-right" colspan="3">調整金額</td>
+                <td class="border px-2 py-2 text-right" colspan="4">調整金額</td>
                 <td class="border px-2 py-2 text-right">{{ number_format($Estimate->adjustment) }}</td>
             </tr>
             <tr class="bg-blue-100 font-bold">
-                <td class="border px-2 py-2 text-right" colspan="3">総合計</td>
-                {{-- 明細の num1 の合計 + 調整金額 --}}
-                <td class="border px-2 py-2 text-right">{{ number_format($Estimate->items->sum('num1') + $Estimate->adjustment) }}</td>
+                <td class="border px-2 py-2 text-right" colspan="4">総合計</td>
+                <td class="border px-2 py-2 text-right">{{ number_format($Estimate->total_amount) }}</td>
             </tr>
         </tfoot>
     </table>
@@ -63,6 +64,5 @@
 
  
  
-
 
 

@@ -28,4 +28,12 @@ class EstimateItem extends Model
     return $this->belongsTo(Estimate::class, 'estimate_no', 'id');
     }
 
+    /**
+     * 査定価格（単価）× 数量で明細の合計を返す。
+     */
+    public function getLineTotalAttribute(): float|int
+    {
+        return ($this->num1 ?? 0) * ($this->num2 ?? 0);
+    }
+
 }
