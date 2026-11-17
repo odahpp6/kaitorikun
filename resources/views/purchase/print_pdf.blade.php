@@ -286,8 +286,28 @@
     <tr class="signature">
         <th>署名</th>
         <td colspan="3">
-            @if (!empty($deal->signature_image_data))
-                <img src="{{ public_path('storage/' . $deal->signature_image_data) }}" alt="署名">
+            @php
+                // 透過PNGはdompdfがImagickで処理し本番(ロリポップ)のポリシーで失敗するため、GDで白背景JPEGに変換して渡す
+                $sigSrc = null;
+                $sigPath = !empty($deal->signature_image_data) ? public_path('storage/' . $deal->signature_image_data) : null;
+                if ($sigPath && is_file($sigPath) && ($src = @imagecreatefromstring(file_get_contents($sigPath)))) {
+                    $w = imagesx($src);
+                    $h = imagesy($src);
+                    $dst = imagecreatetruecolor($w, $h);
+                    imagefill($dst, 0, 0, imagecolorallocate($dst, 255, 255, 255));
+                    imagecopy($dst, $src, 0, 0, 0, 0, $w, $h);
+                    ob_start();
+                    imagejpeg($dst, null, 90);
+                    $sigSrc = 'data:image/jpeg;base64,' . base64_encode(ob_get_clean());
+                    imagedestroy($src);
+                    imagedestroy($dst);
+                } elseif ($sigPath && is_file($sigPath)) {
+                    // GDが無い環境では従来通りファイルを直接渡す
+                    $sigSrc = $sigPath;
+                }
+            @endphp
+            @if ($sigSrc)
+                <img src="{{ $sigSrc }}" alt="署名">
             @else
                 —
             @endif
